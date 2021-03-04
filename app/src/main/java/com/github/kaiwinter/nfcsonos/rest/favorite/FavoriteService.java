@@ -1,6 +1,5 @@
 package com.github.kaiwinter.nfcsonos.rest.favorite;
 
-import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.rest.favorite.model.Favorites;
 
 import retrofit2.Call;

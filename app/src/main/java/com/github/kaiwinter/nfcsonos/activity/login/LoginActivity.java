@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsClient;
@@ -17,15 +16,15 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.browser.customtabs.CustomTabsServiceConnection;
 import androidx.browser.customtabs.CustomTabsSession;
 
+import com.github.kaiwinter.nfcsonos.R;
+import com.github.kaiwinter.nfcsonos.activity.main.TokenActivity;
+import com.github.kaiwinter.nfcsonos.databinding.ActivityLoginBinding;
 import com.github.kaiwinter.nfcsonos.rest.APIError;
+import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.login.LoginService;
 import com.github.kaiwinter.nfcsonos.rest.login.model.AccessToken;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
-import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
-import com.github.kaiwinter.nfcsonos.activity.main.TokenActivity;
-import com.github.kaiwinter.nfcsonos.databinding.ActivityLoginBinding;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,9 +37,6 @@ public final class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private ActivityLoginBinding binding;
-
-    private SharedPreferencesTokenStore tokenstore;
-    private AccessTokenManager accessTokenManager;
 
     private CustomTabsClient customTabsClient;
 
@@ -66,22 +62,22 @@ public final class LoginActivity extends AppCompatActivity {
 
         Log.e(TAG, "CustomTabsClient.bindCustomTabsService");
         CustomTabsClient.bindCustomTabsService(
-            this,
-            "com.android.chrome",
-            customTabsServiceConnection);
+                this,
+                "com.android.chrome",
+                customTabsServiceConnection);
 
         Log.e(TAG, "CustomTabsClient.done");
-
-        tokenstore = new SharedPreferencesTokenStore(this);
-        tokenstore.setTokens(null, null, 0);
-        accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(this);
+        // tokenstore.setTokens(null, null, 0);
         if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
             return;
         }
+
+        AccessTokenManager accessTokenManager = new AccessTokenManager(this);
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             accessTokenManager.refreshAccessToken(this, this::switchToMainActivity, this::hideLoadingState);
             return;
@@ -97,11 +93,11 @@ public final class LoginActivity extends AppCompatActivity {
         displayLoading("Starting browser for login");
 
         String url = getString(R.string.authorization_endpoint_uri)
-            + "?client_id=" + getString(R.string.client_id)
-            + "&response_type=code"
-            + "&state=random"
-            + "&scope=" + getString(R.string.authorization_scope)
-            + "&redirect_uri=" + getString(R.string.redirect_uri);
+                + "?client_id=" + getString(R.string.client_id)
+                + "&response_type=code"
+                + "&state=random"
+                + "&scope=" + getString(R.string.authorization_scope)
+                + "&redirect_uri=" + getString(R.string.redirect_uri);
 
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder(createSession(Uri.parse(url))).build();
         customTabsIntent.intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
@@ -190,10 +186,10 @@ public final class LoginActivity extends AppCompatActivity {
 
     private void displayLoading(String loadingMessage) {
         runOnUiThread(() -> {
-            findViewById(R.id.loading_container).setVisibility(View.VISIBLE);
-            findViewById(R.id.auth_container).setVisibility(View.GONE);
+            binding.loadingContainer.setVisibility(View.VISIBLE);
+            binding.authContainer.setVisibility(View.GONE);
 
-            ((TextView) findViewById(R.id.loading_description)).setText(loadingMessage);
+            binding.loadingDescription.setText(loadingMessage);
         });
     }
 
@@ -207,15 +203,4 @@ public final class LoginActivity extends AppCompatActivity {
             binding.authContainer.setVisibility(View.VISIBLE);
         });
     }
-
-//    @MainThread
-//    private void displayError(String error) {
-//        runOnUiThread(() -> {
-//            binding.errorContainer.setVisibility(View.VISIBLE);
-//            binding.loadingContainer.setVisibility(View.INVISIBLE);
-//            binding.authContainer.setVisibility(View.VISIBLE);
-//
-//            binding.errorDescription.setText(error);
-//        });
-//    }
 }

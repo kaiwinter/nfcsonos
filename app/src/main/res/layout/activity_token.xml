@@ -27,29 +27,8 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:indeterminate="true"/>
-
-            <!-- Shown when authorization has failed. -->
-            <LinearLayout
-                android:id="@+id/not_authorized"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/not_authorized"
-                    style="@style/Base.TextAppearance.AppCompat.Title" />
-
-                <TextView
-                    android:id="@+id/explanation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
+                android:indeterminate="true"
+                android:visibility="invisible"/>
 
             <!-- Shown when the user is authorized, and there are no pending operations -->
             <LinearLayout
