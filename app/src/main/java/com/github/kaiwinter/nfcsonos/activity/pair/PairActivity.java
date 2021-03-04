@@ -12,12 +12,13 @@ import androidx.appcompat.app.ActionBar;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityPairBinding;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.favorite.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.favorite.model.Favorites;
 import com.github.kaiwinter.nfcsonos.rest.favorite.model.Item;
+import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
+import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 import com.google.android.material.snackbar.Snackbar;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
@@ -32,19 +33,21 @@ import retrofit2.Response;
 
 public class PairActivity extends NfcActivity {
 
-    private static final String TAG = "PairActivity";
+    private static final String TAG = PairActivity.class.getSimpleName();
 
     private ActivityPairBinding binding;
 
     private MaterialDialog dialog;
 
     private SharedPreferencesTokenStore tokenstore;
+    private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         tokenstore = new SharedPreferencesTokenStore(this);
+        accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityPairBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -79,9 +82,11 @@ public class PairActivity extends NfcActivity {
     }
 
     private void loadFavorites() {
+        if (refreshTokenIfNeeded(this::loadFavorites)) {
+            return;
+        }
         binding.pairLoadingContainer.setVisibility(View.VISIBLE);
         binding.pairLoadingStatus.setText("Lade Favoriten");
-
 
         String accessToken = tokenstore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
@@ -93,8 +98,7 @@ public class PairActivity extends NfcActivity {
                 if (status != 200) {
                     // FIXME KW: response.message() durch fehler body ersetzen
                     Snackbar.make(binding.coordinator, "Error: " + response.message(), Snackbar.LENGTH_LONG).show();
-                    binding.pairLoadingContainer.setVisibility(View.INVISIBLE);
-                    binding.pairLoadingStatus.setText("Bereit");
+                    hideLoading("Bereit");
                     return;
                 }
 
@@ -102,15 +106,13 @@ public class PairActivity extends NfcActivity {
 
                 runOnUiThread(() -> {
                     binding.spinner.setItems(favorites.items);
-                    binding.pairLoadingContainer.setVisibility(View.INVISIBLE);
-                    binding.pairLoadingStatus.setText("Bereit");
+                    hideLoading("Bereit");
                 });
             }
 
             @Override
             public void onFailure(Call<Favorites> call, Throwable t) {
-                binding.pairLoadingContainer.setVisibility(View.INVISIBLE);
-                binding.pairLoadingStatus.setText("Fehler: " + t.getMessage());
+                hideLoading("Fehler: " + t.getMessage());
             }
         });
     }
@@ -153,5 +155,21 @@ public class PairActivity extends NfcActivity {
         } finally {
             dialog.dismiss();
         }
+    }
+
+    private void hideLoading(String statusMessage) {
+        runOnUiThread(() -> {
+            binding.pairLoadingContainer.setVisibility(View.INVISIBLE);
+            binding.pairLoadingStatus.setText(statusMessage);
+        });
+    }
+
+    private boolean refreshTokenIfNeeded(Runnable runnable) {
+        if (accessTokenManager.accessTokenRefreshNeeded()) {
+            binding.pairLoadingStatus.setText("Refresh Access Token");
+            accessTokenManager.refreshAccessToken(this, runnable, this::hideLoading);
+            return true;
+        }
+        return false;
     }
 }
