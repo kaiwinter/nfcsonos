@@ -1,0 +1,8 @@
+*.iml
+.gradle
+local.properties
+build
+.idea/*
+app/release/
+app/.idea
+app/src/main/res/values/sonos_rest_config.xml

@@ -1,0 +1,51 @@
+<manifest
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.github.kaiwinter.nfcsonos" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.NFC" />
+
+    <application
+            android:allowBackup="true"
+            android:icon="@drawable/ic_nfc"
+            android:label="@string/app_name_short"
+            android:theme="@style/AppTheme"
+            android:usesCleartextTraffic="true">
+
+        <!-- Main activity -->
+        <activity
+                android:name=".activity.login.LoginActivity"
+                android:label="@string/app_name_short"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:windowSoftInputMode="stateHidden"
+                android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http"
+                    android:host="localhost"
+                    android:path="/com.github.kaiwinter.nfcsonos"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.main.TokenActivity"
+            android:label="@string/app_name_short"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".activity.pair.PairActivity"
+            android:label="Tag verknüpfen"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait">
+        </activity>
+    </application>
+</manifest>

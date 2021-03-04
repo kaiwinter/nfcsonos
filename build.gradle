@@ -1,0 +1,35 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.2'
+    }
+}
+
+plugins {
+    id "com.github.ben-manes.versions" version "0.36.0"
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "http://maven.appfoundry.be" }
+    }
+}
+
+// exclude betas etc. from com.github.ben-manes.versions
+dependencyUpdates.resolutionStrategy = {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+            }
+            if (rejected) {
+                selection.reject('Release candidate')
+            }
+        }
+    }
+}

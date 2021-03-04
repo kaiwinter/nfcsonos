@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="client_id" translatable="false">[CLIENT_ID]</string>
+    <string name="client_secret" translatable="false">[CLIENT_SECRET]</string>
+    <string name="redirect_uri" translatable="false">http://localhost/com.github.kaiwinter.nfcsonos</string>
+    <string name="authorization_scope" translatable="false">playback-control-all</string>
+    <string name="authorization_endpoint_uri" translatable="false">https://api.sonos.com/login/v3/oauth</string>
+    <string name="token_endpoint_uri" translatable="false">https://api.sonos.com/login/v3/oauth/access</string>
+</resources>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.github.kaiwinter.nfcsonos.activity.main.TokenActivity"
+    android:id="@+id/coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+
+            <ProgressBar
+                android:id="@+id/loading_container"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"/>
+
+            <!-- Shown when authorization has failed. -->
+            <LinearLayout
+                android:id="@+id/not_authorized"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/not_authorized"
+                    style="@style/Base.TextAppearance.AppCompat.Title" />
+
+                <TextView
+                    android:id="@+id/explanation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <!-- Shown when the user is authorized, and there are no pending operations -->
+            <LinearLayout
+                android:id="@+id/authorized"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Bereit zum Scannen"
+                    style="@style/Base.TextAppearance.AppCompat.Title" />
+
+                <TextView
+                    android:id="@+id/load_favorite_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    tools:text="Load Favorite HTTP status: "
+                    style="@style/Base.TextAppearance.AppCompat.Body1"/>
+
+                <TextView
+                    android:id="@+id/load_playback_metadata_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Load Playback Metadata HTTP status: "
+                    style="@style/Base.TextAppearance.AppCompat.Body1"/>
+
+                <LinearLayout
+                    android:id="@+id/userinfo_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:padding="8dp"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:id="@+id/track_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:paddingLeft="8dp"
+                        android:paddingStart="8dp"
+                        android:paddingRight="0dp"
+                        android:paddingEnd="0dp"
+                        tools:text="Track title"
+                        style="@style/Base.TextAppearance.AppCompat.Title" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:id="@+id/cover_image"
+                        app:srcCompat="@drawable/ic_nfc"
+                        android:contentDescription="Cover image"
+                        android:onClick="runTestTag"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/refreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="24dp"
+        android:onClick="startPairActivity"
+        app:srcCompat="@drawable/ic_baseline_add_box_24"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
