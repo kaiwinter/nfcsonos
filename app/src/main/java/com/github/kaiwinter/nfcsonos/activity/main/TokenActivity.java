@@ -25,6 +25,7 @@ import com.github.kaiwinter.nfcsonos.rest.favorite.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.favorite.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.model.PlaybackMetadata;
+import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 
 import java.io.FileDescriptor;
@@ -42,12 +43,14 @@ public class TokenActivity extends NfcActivity {
     private ActivityTokenBinding binding;
 
     private SharedPreferencesTokenStore tokenstore;
+    private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         tokenstore = new SharedPreferencesTokenStore(this);
+        accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityTokenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -106,6 +109,9 @@ public class TokenActivity extends NfcActivity {
     }
 
     public void loadAndStartFavorite(String favoriteId) {
+        if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
+            return;
+        }
         displayLoading("Starte Favorit");
 
         runOnUiThread(() -> {
@@ -153,6 +159,10 @@ public class TokenActivity extends NfcActivity {
     }
 
     public void loadPlaybackMetadata() {
+        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
+            return;
+        }
+
         runOnUiThread(() -> binding.status.setText("Lade Metadaten"));
         String accessToken = tokenstore.getAccessToken();
         PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
@@ -251,5 +261,14 @@ public class TokenActivity extends NfcActivity {
             binding.loadingContainer.setVisibility(View.INVISIBLE);
             binding.status.setText(statusMessage);
         });
+    }
+
+    private boolean refreshTokenIfNeeded(Runnable runnable) {
+        if (accessTokenManager.accessTokenRefreshNeeded()) {
+            displayLoading("Refresh Access Token");
+            accessTokenManager.refreshAccessToken(this, runnable, this::hideLoading);
+            return true;
+        }
+        return false;
     }
 }
