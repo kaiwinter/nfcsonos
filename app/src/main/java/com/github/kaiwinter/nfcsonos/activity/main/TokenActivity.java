@@ -4,19 +4,28 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.pair.PairActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityTokenBinding;
+import com.github.kaiwinter.nfcsonos.rest.APIError;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.favorite.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.favorite.LoadFavoriteRequest;
+import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.PlaybackMetadataService;
+import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.model.PlaybackMetadata;
+import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -151,79 +160,81 @@ public class TokenActivity extends NfcActivity {
 
     public void loadPlaybackMetadata() {
         binding.status.setText("Lade Metadaten");
-//        PlaybackMetadataAction action = new PlaybackMetadataAction();
-//
-//        ClientAuthentication clientAuthentication = new ClientSecretBasic(mConfiguration.getClientSecret());
-//
-//        mExecutor.submit(new ExceptionAwareRunnable(() -> {
-//            mStateManager.getCurrent().performActionWithFreshTokens(mAuthService, clientAuthentication, action);
-//            int status = action.getStatus();
-//
-//            runOnUiThread(() -> {
-//                if (status == 200) {
-//                    binding.loadPlaybackMetadataStatus.setText("Metadaten geladen");
-//                } else {
-//                    playSound(R.raw.negative);
-//                    binding.loadPlaybackMetadataStatus.setText("Fehler beim Laden der Metadaten (" + status + "): " + action.getError());
-//                    binding.coverImage.setImageResource(R.drawable.ic_nfc);
-//                    binding.loadingContainer.setVisibility(View.INVISIBLE);
-//                    binding.status.setText("Bereit zum Scannen");
-//                    return;
-//                }
-//
-//                PlaybackMetadata response = action.getResponse();
-//                String containerName = response.container.name;
-//                binding.trackName.setText(containerName);
-//
-//                if (response.currentItem == null) {
-//                    binding.loadingContainer.setVisibility(View.INVISIBLE);
-//                    binding.status.setText("Bereit zum Scannen");
-//                    binding.coverImage.setImageResource(R.drawable.ic_nfc);
-//                    return;
-//                }
-//
-//                String imageUrl = response.currentItem.track.imageUrl;
-//
-//                if (imageUrl != null) {
-//                    binding.status.setText("Lade Cover");
-////                    Picasso.get()
-////                        .load(Uri.parse(action.getResponse().currentItem.track.imageUrl))
-////                        .into(binding.coverImage;
-//
-//                    RequestListener requestListener = new RequestListener() {
-//
-//                        @Override
-//                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
-//                            binding.loadingContainer.setVisibility(View.INVISIBLE);
-//                            binding.status.setText("Bereit zum Scannen");
-//                            return false;
-//                        }
-//
-//                        @Override
-//                        public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-//                            binding.loadingContainer.setVisibility(View.INVISIBLE);
-//                            binding.status.setText("Bereit zum Scannen");
-//                            return false;
-//                        }
-//                    };
-//                    Glide.with(TokenActivity.this)
-//                        .load(Uri.parse(imageUrl))
-//                        .timeout(10000)
-//                        .placeholder(R.drawable.ic_nfc_green)
-//                        .fitCenter()
-//                        .error(R.drawable.error)
-//                        .listener(requestListener)
-//                        .into(binding.coverImage);
-//                }
-//
-//            });
-//        }, throwable -> runOnUiThread(() -> {
-//            playSound(R.raw.negative);
-//            binding.loadPlaybackMetadataStatus.setText("Fehler beim Laden der Metadaten: " + throwable.getMessage());
-//            binding.coverImage.setImageResource(R.drawable.ic_nfc);
-//            binding.loadingContainer.setVisibility(View.INVISIBLE);
-//            binding.status.setText("Bereit zum Scannen");
-//        })));
+        String accessToken = tokenstore.getAccessToken();
+        PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
+
+        service.loadPlaybackMetadata(getString(R.string.group)).enqueue(new Callback<PlaybackMetadata>() {
+            @Override
+            public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
+                int status = response.code();
+                if (status == 200) {
+                    binding.loadPlaybackMetadataStatus.setText("Metadaten geladen");
+                } else {
+                    playSound(R.raw.negative);
+                    APIError apiError = ServiceFactory.parseError(response);
+                    binding.loadPlaybackMetadataStatus.setText("Fehler beim Laden der Metadaten (" + status + "): " + apiError.error + ", " + apiError.errorDescription);
+                    binding.coverImage.setImageResource(R.drawable.ic_nfc);
+                    binding.loadingContainer.setVisibility(View.INVISIBLE);
+                    binding.status.setText("Bereit zum Scannen");
+                    return;
+                }
+
+                PlaybackMetadata playbackMetadata = response.body();
+
+                String containerName = playbackMetadata.container.name;
+                binding.trackName.setText(containerName);
+
+                if (playbackMetadata.currentItem == null) {
+                    binding.loadingContainer.setVisibility(View.INVISIBLE);
+                    binding.status.setText("Bereit zum Scannen");
+                    binding.coverImage.setImageResource(R.drawable.ic_nfc);
+                    return;
+                }
+
+                String imageUrl = playbackMetadata.currentItem.track.imageUrl;
+
+                if (imageUrl != null) {
+                    binding.status.setText("Lade Cover");
+//                    Picasso.get()
+//                        .load(Uri.parse(action.getResponse().currentItem.track.imageUrl))
+//                        .into(binding.coverImage;
+
+                    RequestListener requestListener = new RequestListener() {
+
+                        @Override
+                        public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
+                            binding.loadingContainer.setVisibility(View.INVISIBLE);
+                            binding.status.setText("Bereit zum Scannen");
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                            binding.loadingContainer.setVisibility(View.INVISIBLE);
+                            binding.status.setText("Bereit zum Scannen");
+                            return false;
+                        }
+                    };
+                    Glide.with(TokenActivity.this)
+                            .load(Uri.parse(imageUrl))
+                            .timeout(10000)
+                            .placeholder(R.drawable.ic_nfc_green)
+                            .fitCenter()
+                            .error(R.drawable.error)
+                            .listener(requestListener)
+                            .into(binding.coverImage);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
+                playSound(R.raw.negative);
+                binding.loadPlaybackMetadataStatus.setText("Fehler beim Laden der Metadaten: " + t.getMessage());
+                binding.coverImage.setImageResource(R.drawable.ic_nfc);
+                binding.loadingContainer.setVisibility(View.INVISIBLE);
+                binding.status.setText("Bereit zum Scannen");
+            }
+        });
     }
 
     public void startPairActivity(View view) {
