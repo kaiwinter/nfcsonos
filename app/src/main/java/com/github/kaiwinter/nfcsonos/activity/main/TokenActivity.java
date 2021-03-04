@@ -121,7 +121,7 @@ public class TokenActivity extends NfcActivity {
 
         LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId);
 
-        service.loadFavorite(request).enqueue(new Callback<Void>() {
+        service.loadFavorite(getString(R.string.group), request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 int status = response.code();

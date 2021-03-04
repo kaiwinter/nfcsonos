@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityPairBinding;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
@@ -85,7 +86,7 @@ public class PairActivity extends NfcActivity {
         String accessToken = tokenstore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
 
-        service.loadFavorites().enqueue(new Callback<Favorites>() {
+        service.loadFavorites(getString(R.string.household)).enqueue(new Callback<Favorites>() {
             @Override
             public void onResponse(Call<Favorites> call, Response<Favorites> response) {
                 int status = response.code();
