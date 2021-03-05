@@ -14,5 +14,5 @@ public interface FavoriteService {
     Call<Void> loadFavorite(@Path("group") String group, @Body LoadFavoriteRequest request);
 
     @GET("/control/api/v1/households/{household}/favorites")
-    Call<Favorites> loadFavorites(@Path("household") String group);
+    Call<Favorites> loadFavorites(@Path("household") String household);
 }
