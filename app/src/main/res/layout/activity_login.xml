@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.github.kaiwinter.nfcsonos.activity.login.LoginActivity"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true" >
+    android:fitsSystemWindows="true"
+    tools:context="com.github.kaiwinter.nfcsonos.activity.login.LoginActivity">
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -17,89 +16,135 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/app_name_short"
-                style="@style/Base.TextAppearance.AppCompat.Title" />
-
-            <ImageView
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_nfc"/>
-
-            <!--
-            displayed while the discovery document is loaded, and dynamic client registration is
-            being negotiated
-            -->
             <LinearLayout
-                android:id="@+id/loading_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="250dp"
+                android:background="@color/colorPrimary"
                 android:orientation="vertical"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:visibility="invisible">
+                android:paddingTop="24dp">
 
                 <TextView
-                    android:id="@+id/loading_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <ProgressBar
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:indeterminate="true"/>
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/app_name_short"
+                    android:textAlignment="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp" />
 
+                <View
+                    android:layout_width="80dp"
+                    android:layout_height="4dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/colorAccent" />
             </LinearLayout>
 
-            <!-- Displayed once the authorization server configuration is resolved -->
-            <LinearLayout
-                android:id="@+id/auth_container"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/section_margin"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="-64dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true"
+                app:contentPadding="16dp">
 
-                <Button
-                    android:id="@+id/start_auth"
-                    style="@style/Widget.AppCompat.Button.Colored"
-                    android:text="@string/start_authorization"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:onClick="loginClicked"/>
+                    android:layout_marginBottom="16dp"
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="36dp"
+                        android:layout_marginBottom="24dp"
+                        android:text="Sonos Login"
+                        android:textAlignment="center"
+                        android:textColor="#000000"
+                        android:textSize="24sp" />
 
-            <!-- displayed if there is an error. -->
-            <LinearLayout
-                android:id="@+id/error_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
 
-                <TextView
-                    android:id="@+id/error_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/section_margin"
-                    android:layout_marginBottom="8dp"
-                    android:layout_gravity="center"
-                    style="@style/Base.TextAppearance.AppCompat.Body1"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/login_introduction"
+                        android:textColor="#000000"
+                        android:textSize="16sp" />
 
-            </LinearLayout>
+                    <!--
+                    displayed while the discovery document is loaded, and dynamic client registration is
+                    being negotiated
+                    -->
+                    <LinearLayout
+                        android:id="@+id/loading_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="invisible">
+
+                        <TextView
+                            android:id="@+id/loading_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <ProgressBar
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:indeterminate="true" />
+
+                    </LinearLayout>
+
+                    <!-- Displayed once the authorization server configuration is resolved -->
+                    <LinearLayout
+                        android:id="@+id/auth_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/section_margin"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/start_auth"
+                            style="@style/Widget.AppCompat.Button.Colored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:onClick="loginClicked"
+                            android:text="@string/start_authorization" />
+
+                    </LinearLayout>
+
+                    <!-- displayed if there is an error. -->
+                    <LinearLayout
+                        android:id="@+id/error_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/error_description"
+                            style="@style/Base.TextAppearance.AppCompat.Body1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/section_margin"
+                            android:layout_marginBottom="8dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

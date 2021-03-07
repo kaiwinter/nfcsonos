@@ -134,7 +134,7 @@ public final class LoginActivity extends AppCompatActivity {
         Uri data = intent.getData();
         if (data == null) {
             if (binding.loadingContainer.getVisibility() == View.VISIBLE) {
-                hideLoadingState("Auth cancelled");
+                hideLoadingState("Authorization cancelled");
             }
             return;
         }
