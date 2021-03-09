@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name_short">NFC Sonos</string>
+    <string name="app_name_short" translatable="false">NFC Sonos</string>
+    <string name="sonos_login" translatable="false">Sonos Login</string>
     <string name="login_error">Login error: %1$s</string>
     <string name="start_authorization">Start Login</string>
     <string name="error">Error: %1$s</string>
     <string name="login_introduction">To allow the app to control your Sonos you first have to login with your Sonos account. This happens in a browser window on the website of Sonos. That way the app doesn´t see your login details it just gets an access token from Sonos.</string>
+    <string name="ready_to_scan">Ready to scan</string>
+    <string name="cover_image">Cover image</string>
+    <string name="pair_button_description">Button to pair a NFC tag with a favorite</string>
+
 </resources>

@@ -66,7 +66,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="36dp"
                         android:layout_marginBottom="24dp"
-                        android:text="Sonos Login"
+                        android:text="@string/sonos_login"
                         android:textAlignment="center"
                         android:textColor="#000000"
                         android:textSize="24sp" />
@@ -79,10 +79,6 @@
                         android:textColor="#000000"
                         android:textSize="16sp" />
 
-                    <!--
-                    displayed while the discovery document is loaded, and dynamic client registration is
-                    being negotiated
-                    -->
                     <LinearLayout
                         android:id="@+id/loading_container"
                         android:layout_width="match_parent"
@@ -105,7 +101,6 @@
 
                     </LinearLayout>
 
-                    <!-- Displayed once the authorization server configuration is resolved -->
                     <LinearLayout
                         android:id="@+id/auth_container"
                         android:layout_width="match_parent"
@@ -125,7 +120,6 @@
 
                     </LinearLayout>
 
-                    <!-- displayed if there is an error. -->
                     <LinearLayout
                         android:id="@+id/error_container"
                         android:layout_width="match_parent"

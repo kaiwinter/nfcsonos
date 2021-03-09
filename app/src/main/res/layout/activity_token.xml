@@ -42,7 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Bereit zum Scannen"
+                    android:text="@string/ready_to_scan"
                     style="@style/Base.TextAppearance.AppCompat.Title" />
 
                 <TextView
@@ -86,7 +86,7 @@
                         android:layout_height="300dp"
                         android:id="@+id/cover_image"
                         app:srcCompat="@drawable/ic_nfc"
-                        android:contentDescription="Cover image"
+                        android:contentDescription="@string/cover_image"
                         android:onClick="runTestTag"/>
 
                 </LinearLayout>
@@ -101,5 +101,6 @@
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="24dp"
         android:onClick="startPairActivity"
-        app:srcCompat="@drawable/ic_baseline_add_box_24"/>
+        app:srcCompat="@drawable/ic_baseline_add_box_24"
+        android:contentDescription="@string/pair_button_description" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
