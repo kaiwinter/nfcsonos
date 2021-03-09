@@ -144,8 +144,7 @@ public class TokenActivity extends NfcActivity {
         service.loadFavorite(tokenstore.getGroupId(), request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                int status = response.code();
-                if (status == 200) {
+                if (response.isSuccessful()) {
                     runOnUiThread(() -> binding.loadFavoriteStatus.setText("Favorit gestartet"));
                     loadPlaybackMetadata();
                 } else {
@@ -154,7 +153,7 @@ public class TokenActivity extends NfcActivity {
 
                     runOnUiThread(() -> {
                         APIError apiError = ServiceFactory.parseError(response);
-                        binding.loadFavoriteStatus.setText("Fehler beim Starten (" + status + "): " + apiError.error + ", " + apiError.errorDescription);
+                        binding.loadFavoriteStatus.setText("Fehler beim Starten (" + response.code() + "): " + apiError.error + ", " + apiError.errorDescription);
                         binding.coverImage.setImageResource(R.drawable.ic_nfc);
                     });
                 }
@@ -185,15 +184,14 @@ public class TokenActivity extends NfcActivity {
         service.loadPlaybackMetadata(tokenstore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
             @Override
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
-                int status = response.code();
-                if (status == 200) {
+                if (response.isSuccessful()) {
                     runOnUiThread(() -> binding.loadPlaybackMetadataStatus.setText("Metadaten geladen"));
                 } else {
                     playSound(R.raw.negative);
                     hideLoading("Bereit zum Scannen");
                     APIError apiError = ServiceFactory.parseError(response);
                     runOnUiThread(() -> {
-                        binding.loadPlaybackMetadataStatus.setText("Fehler beim Laden der Metadaten (" + status + "): " + apiError.error + ", " + apiError.errorDescription);
+                        binding.loadPlaybackMetadataStatus.setText("Fehler beim Laden der Metadaten (" + response.code() + "): " + apiError.error + ", " + apiError.errorDescription);
                         binding.coverImage.setImageResource(R.drawable.ic_nfc);
                     });
                     return;

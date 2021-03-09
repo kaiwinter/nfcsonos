@@ -68,7 +68,7 @@ public class DiscoverActivity extends AppCompatActivity {
         household.enqueue(new Callback<Households>() {
             @Override
             public void onResponse(Call<Households> call, Response<Households> response) {
-                if (response.code() == 200) {
+                if (response.isSuccessful()) {
                     Households body = response.body();
                     binding.household.setItems(body.households);
                     loadGroups(body.households.get(0).id);
@@ -99,7 +99,7 @@ public class DiscoverActivity extends AppCompatActivity {
         group.enqueue(new Callback<Groups>() {
             @Override
             public void onResponse(Call<Groups> call, Response<Groups> response) {
-                if (response.code() == 200) {
+                if (response.isSuccessful()) {
                     binding.group.setItems(response.body().groups);
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);

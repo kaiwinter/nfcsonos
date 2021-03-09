@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBar;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityPairBinding;
+import com.github.kaiwinter.nfcsonos.rest.APIError;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.favorite.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.favorite.model.Favorites;
@@ -20,7 +21,6 @@ import com.github.kaiwinter.nfcsonos.rest.favorite.model.Item;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 import com.google.android.material.snackbar.Snackbar;
-import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import be.appfoundry.nfclibrary.activities.NfcActivity;
 import be.appfoundry.nfclibrary.exceptions.InsufficientCapacityException;
@@ -32,8 +32,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PairActivity extends NfcActivity {
-
-    private static final String TAG = PairActivity.class.getSimpleName();
 
     private ActivityPairBinding binding;
 
@@ -51,15 +49,6 @@ public class PairActivity extends NfcActivity {
 
         binding = ActivityPairBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        MaterialSpinner spinner = binding.spinner;
-        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<Item>() {
-
-            @Override
-            public void onItemSelected(MaterialSpinner view, int position, long id, Item item) {
-                Snackbar.make(view, "Clicked " + item.toString(), Snackbar.LENGTH_LONG).show();
-            }
-        });
 
         ActionBar supportActionBar = getSupportActionBar();
         supportActionBar.setDisplayHomeAsUpEnabled(true);
@@ -88,20 +77,18 @@ public class PairActivity extends NfcActivity {
         service.loadFavorites(tokenstore.getGroupId()).enqueue(new Callback<Favorites>() {
             @Override
             public void onResponse(Call<Favorites> call, Response<Favorites> response) {
-                int status = response.code();
-                if (status != 200) {
-                    // FIXME KW: response.message() durch fehler body ersetzen
-                    Snackbar.make(binding.coordinator, "Error: " + response.message(), Snackbar.LENGTH_LONG).show();
-                    hideLoading("Bereit");
-                    return;
+                if (response.isSuccessful()) {
+                    Favorites favorites = response.body();
+
+                    runOnUiThread(() -> {
+                        binding.spinner.setItems(favorites.items);
+                        hideLoading("Bereit");
+                    });
+                } else {
+                    APIError apiError = ServiceFactory.parseError(response);
+                    String message = getString(R.string.login_error, apiError.error + " (" + response.code() + ", " + apiError.errorDescription + ")");
+                    hideLoading(message);
                 }
-
-                Favorites favorites = response.body();
-
-                runOnUiThread(() -> {
-                    binding.spinner.setItems(favorites.items);
-                    hideLoading("Bereit");
-                });
             }
 
             @Override
@@ -128,10 +115,8 @@ public class PairActivity extends NfcActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d(TAG, "onNewIntent");
 
         if (dialog == null || !dialog.isShowing()) {
-            Log.d(TAG, "onNewIntent - cancel - dialog not showing");
             return;
         }
 

@@ -44,29 +44,29 @@ public final class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.e(TAG, "Creating CustomTabsServiceConnection");
+        Log.i(TAG, "Creating CustomTabsServiceConnection");
         CustomTabsServiceConnection customTabsServiceConnection = new CustomTabsServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName componentName) {
-                Log.e(TAG, "CustomTabsServiceConnection.onServiceDisconnected");
+                Log.i(TAG, "CustomTabsServiceConnection.onServiceDisconnected");
                 customTabsClient = null;
             }
 
             @Override
             public void onCustomTabsServiceConnected(ComponentName componentName, CustomTabsClient customTabsClient) {
-                Log.e(TAG, "CustomTabsServiceConnection.onCustomTabsServiceConnected");
+                Log.i(TAG, "CustomTabsServiceConnection.onCustomTabsServiceConnected");
                 customTabsClient.warmup(0);
                 LoginActivity.this.customTabsClient = customTabsClient;
             }
         };
 
-        Log.e(TAG, "CustomTabsClient.bindCustomTabsService");
+        Log.i(TAG, "CustomTabsClient.bindCustomTabsService");
         CustomTabsClient.bindCustomTabsService(
                 this,
                 "com.android.chrome",
                 customTabsServiceConnection);
 
-        Log.e(TAG, "CustomTabsClient.done");
+        Log.i(TAG, "CustomTabsClient.done");
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -104,7 +104,7 @@ public final class LoginActivity extends AppCompatActivity {
         try {
             customTabsIntent.launchUrl(this, Uri.parse(url));
         } catch (ActivityNotFoundException e) {
-            hideLoadingState("The login process expects Chrome to be installed. Please install (or activate) Chrome.");
+            hideLoadingState("Couldn't start browser");
         }
     }
 
@@ -151,7 +151,7 @@ public final class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
 
-                    if (response.code() == 200) {
+                    if (response.isSuccessful()) {
                         SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(LoginActivity.this);
                         AccessToken body = response.body();
                         long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
