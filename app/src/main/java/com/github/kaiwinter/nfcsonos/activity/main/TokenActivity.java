@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -56,6 +57,16 @@ public class TokenActivity extends NfcActivity {
         setContentView(binding.getRoot());
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
+            startLoginActivity();
+            return;
+        }
+
+    }
     private void signOut() {
         tokenstore.setTokens(null, null, -1);
 
@@ -109,10 +120,11 @@ public class TokenActivity extends NfcActivity {
     }
 
     public void loadAndStartFavorite(String favoriteId) {
+        displayLoading("Starte Favorit");
+
         if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
             return;
         }
-        displayLoading("Starte Favorit");
 
         runOnUiThread(() -> {
             binding.loadFavoriteStatus.setText("");
@@ -239,6 +251,12 @@ public class TokenActivity extends NfcActivity {
         });
     }
 
+    private void startLoginActivity() {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        // Make the app exit if back is pressed on login activity. Else the user returns to the Login
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
     public void startPairActivity(View view) {
         Intent intent = new Intent(getApplicationContext(), PairActivity.class);
         startActivity(intent);
