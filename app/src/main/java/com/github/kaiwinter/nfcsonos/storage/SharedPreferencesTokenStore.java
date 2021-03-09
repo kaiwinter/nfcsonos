@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import java.util.Optional;
-
 public class SharedPreferencesTokenStore {
 
     private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
