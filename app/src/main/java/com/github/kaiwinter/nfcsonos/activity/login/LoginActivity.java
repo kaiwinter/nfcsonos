@@ -161,9 +161,7 @@ public final class LoginActivity extends AppCompatActivity {
                         APIError apiError = ServiceFactory.parseError(response);
                         String message = getString(R.string.login_error, apiError.error + " (" + response.code() + ", " + apiError.errorDescription + ")");
                         hideLoadingState(message);
-
                     }
-                    hideLoadingState(null);
                 }
 
                 @Override

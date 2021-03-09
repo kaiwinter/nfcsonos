@@ -1,7 +1,8 @@
 package com.github.kaiwinter.nfcsonos.rest;
 
-import com.github.kaiwinter.nfcsonos.rest.login.LoginService;
+import com.github.kaiwinter.nfcsonos.rest.discover.DiscoverService;
 import com.github.kaiwinter.nfcsonos.rest.favorite.FavoriteService;
+import com.github.kaiwinter.nfcsonos.rest.login.LoginService;
 import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.PlaybackMetadataService;
 import com.google.gson.Gson;
 
@@ -28,26 +29,30 @@ public class ServiceFactory {
         return createRestAdapter(API_ENDPOINT, token).create(PlaybackMetadataService.class);
     }
 
+    public static DiscoverService createDiscoverService(String token) {
+        return createRestAdapter(API_ENDPOINT, token).create(DiscoverService.class);
+    }
+
     private static Retrofit createRestAdapter(String endpoint, String token) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.level(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder defaultHttpClientBuilder = new OkHttpClient.Builder()
-            .addInterceptor(interceptor);
+                .addInterceptor(interceptor);
 
         if (token != null) {
-              defaultHttpClientBuilder.addInterceptor(chain -> {
+            defaultHttpClientBuilder.addInterceptor(chain -> {
                 Request authorisedRequest = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer " + token).build();
+                        .addHeader("Authorization", "Bearer " + token).build();
                 return chain.proceed(authorisedRequest);
             });
         }
 
         return new Retrofit.Builder()
-            .baseUrl(endpoint)
-            .client(defaultHttpClientBuilder.build())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
+                .baseUrl(endpoint)
+                .client(defaultHttpClientBuilder.build())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     public static APIError parseError(retrofit2.Response<?> response) {

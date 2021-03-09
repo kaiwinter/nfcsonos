@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.kaiwinter.nfcsonos.R;
+import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.pair.PairActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityTokenBinding;
@@ -55,20 +56,22 @@ public class TokenActivity extends NfcActivity {
 
         binding = ActivityTokenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
             startLoginActivity();
             return;
         }
 
+        if (!isHouseholdAndGroupAvailable()) {
+            startDiscoverActivity();
+            return;
+        }
+        //signOut();
     }
+
     private void signOut() {
         tokenstore.setTokens(null, null, -1);
+        tokenstore.setHouseholdAndGroup(null, null);
 
         Intent loginIntent = new Intent(this, LoginActivity.class);
         loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -138,7 +141,7 @@ public class TokenActivity extends NfcActivity {
 
         LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId);
 
-        service.loadFavorite(getString(R.string.group), request).enqueue(new Callback<Void>() {
+        service.loadFavorite(tokenstore.getGroupId(), request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 int status = response.code();
@@ -179,7 +182,7 @@ public class TokenActivity extends NfcActivity {
         String accessToken = tokenstore.getAccessToken();
         PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
 
-        service.loadPlaybackMetadata(getString(R.string.group)).enqueue(new Callback<PlaybackMetadata>() {
+        service.loadPlaybackMetadata(tokenstore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
             @Override
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
                 int status = response.code();
@@ -257,6 +260,19 @@ public class TokenActivity extends NfcActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+    private void startDiscoverActivity() {
+        Intent intent = new Intent(getApplicationContext(), DiscoverActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    private boolean isHouseholdAndGroupAvailable() {
+        boolean householdSelected = !TextUtils.isEmpty(tokenstore.getHouseholdId());
+        boolean groupSelected = !TextUtils.isEmpty(tokenstore.getGroupId());
+        return householdSelected && groupSelected;
+    }
+
     public void startPairActivity(View view) {
         Intent intent = new Intent(getApplicationContext(), PairActivity.class);
         startActivity(intent);

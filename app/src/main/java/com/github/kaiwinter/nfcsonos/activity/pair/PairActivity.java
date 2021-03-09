@@ -62,7 +62,6 @@ public class PairActivity extends NfcActivity {
         });
 
         ActionBar supportActionBar = getSupportActionBar();
-        //supportActionBar.setTitle("moduleName");
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
         loadFavorites();
@@ -76,11 +75,6 @@ public class PairActivity extends NfcActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     private void loadFavorites() {
         if (refreshTokenIfNeeded(this::loadFavorites)) {
             return;
@@ -91,7 +85,7 @@ public class PairActivity extends NfcActivity {
         String accessToken = tokenstore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
 
-        service.loadFavorites(getString(R.string.household)).enqueue(new Callback<Favorites>() {
+        service.loadFavorites(tokenstore.getGroupId()).enqueue(new Callback<Favorites>() {
             @Override
             public void onResponse(Call<Favorites> call, Response<Favorites> response) {
                 int status = response.code();
