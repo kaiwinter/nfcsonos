@@ -40,7 +40,7 @@ public class AccessTokenManager {
     }
 
     /**
-     * Call this method to refresh the access token.
+     * Refreshes the access token asynchronously.
      *
      * @param context   the context to load string resources
      * @param onSuccess called if the token refresh was successful
@@ -62,18 +62,24 @@ public class AccessTokenManager {
                     AccessToken body = response.body();
                     long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
                     tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
-                    onSuccess.run();
+                    if (onSuccess != null) {
+                        onSuccess.run();
+                    }
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);
                     String message = context.getString(R.string.login_error, apiError.error + " (" + response.code() + ", " + apiError.errorDescription + ")");
-                    onError.accept(message);
+                    if (onError != null) {
+                        onError.accept(message);
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<AccessToken> call, Throwable t) {
                 String errormessage = context.getString(R.string.error, t.getMessage());
-                onError.accept(errormessage);
+                if (onError != null) {
+                    onError.accept(errormessage);
+                }
             }
         });
     }
