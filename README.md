@@ -34,6 +34,15 @@ The Sonos Cloud API doesn't allow to play a album from e.g. Spotify in a direct 
 
 - Allow the tag to be scanned when the app is in the background
 
+## Screenshots
+![1](https://user-images.githubusercontent.com/110982/110695721-7dedd100-81ea-11eb-9d4c-3b1ee0762495.png)
+![2](https://user-images.githubusercontent.com/110982/110695741-85ad7580-81ea-11eb-8ec7-3123c8e2ba00.png)
+![3](https://user-images.githubusercontent.com/110982/110695751-87773900-81ea-11eb-9ef8-142b92446ef0.png)
+
+
+
+
+
 ## Credits
 
 Sounds from https://mixkit.co/
