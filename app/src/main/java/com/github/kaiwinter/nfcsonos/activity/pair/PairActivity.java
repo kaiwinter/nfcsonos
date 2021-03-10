@@ -74,7 +74,7 @@ public class PairActivity extends NfcActivity {
         String accessToken = tokenstore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
 
-        service.loadFavorites(tokenstore.getGroupId()).enqueue(new Callback<Favorites>() {
+        service.loadFavorites(tokenstore.getHouseholdId()).enqueue(new Callback<Favorites>() {
             @Override
             public void onResponse(Call<Favorites> call, Response<Favorites> response) {
                 if (response.isSuccessful()) {
