@@ -8,7 +8,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.activity.main.TokenActivity;
+import com.github.kaiwinter.nfcsonos.activity.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityDiscoverBinding;
 import com.github.kaiwinter.nfcsonos.rest.APIError;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
@@ -141,7 +141,7 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     private void switchToMainActivity() {
-        startActivity(new Intent(this, TokenActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 

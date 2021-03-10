@@ -17,7 +17,7 @@ import androidx.browser.customtabs.CustomTabsServiceConnection;
 import androidx.browser.customtabs.CustomTabsSession;
 
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.activity.main.TokenActivity;
+import com.github.kaiwinter.nfcsonos.activity.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityLoginBinding;
 import com.github.kaiwinter.nfcsonos.rest.APIError;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
@@ -178,7 +178,7 @@ public final class LoginActivity extends AppCompatActivity {
 
     private void switchToMainActivity() {
         Log.i(TAG, "User is already authenticated, proceeding to token activity");
-        startActivity(new Intent(this, TokenActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 

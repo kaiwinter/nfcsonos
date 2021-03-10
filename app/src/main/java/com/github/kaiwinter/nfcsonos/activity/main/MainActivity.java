@@ -20,7 +20,7 @@ import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.pair.PairActivity;
-import com.github.kaiwinter.nfcsonos.databinding.ActivityTokenBinding;
+import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
 import com.github.kaiwinter.nfcsonos.rest.APIError;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.favorite.FavoriteService;
@@ -39,10 +39,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TokenActivity extends NfcActivity {
-    private static final String TAG = TokenActivity.class.getSimpleName();
+public class MainActivity extends NfcActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
-    private ActivityTokenBinding binding;
+    private ActivityMainBinding binding;
 
     private SharedPreferencesTokenStore tokenstore;
     private AccessTokenManager accessTokenManager;
@@ -54,7 +54,7 @@ public class TokenActivity extends NfcActivity {
         tokenstore = new SharedPreferencesTokenStore(this);
         accessTokenManager = new AccessTokenManager(this);
 
-        binding = ActivityTokenBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
@@ -110,7 +110,7 @@ public class TokenActivity extends NfcActivity {
 
     private void playSound(int sound) {
         //setVolume();
-        try (AssetFileDescriptor afd = TokenActivity.this.getResources().openRawResourceFd(sound)) {
+        try (AssetFileDescriptor afd = MainActivity.this.getResources().openRawResourceFd(sound)) {
             FileDescriptor fileDescriptor = afd.getFileDescriptor();
             MediaPlayer player = new MediaPlayer();
             player.setDataSource(fileDescriptor, afd.getStartOffset(), afd.getLength());
@@ -229,7 +229,7 @@ public class TokenActivity extends NfcActivity {
                             return false;
                         }
                     };
-                    Glide.with(TokenActivity.this)
+                    Glide.with(MainActivity.this)
                             .load(Uri.parse(imageUrl))
                             .timeout(10000)
                             .placeholder(R.drawable.ic_nfc_green)
