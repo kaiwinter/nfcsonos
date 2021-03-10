@@ -130,8 +130,6 @@ public class MainActivity extends NfcActivity {
         }
 
         runOnUiThread(() -> {
-            binding.loadFavoriteStatus.setText("");
-            binding.loadPlaybackMetadataStatus.setText("");
             binding.trackName.setText("");
             binding.coverImage.setImageResource(R.drawable.ic_nfc_green);
         });
@@ -145,15 +143,14 @@ public class MainActivity extends NfcActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    runOnUiThread(() -> binding.loadFavoriteStatus.setText("Favorit gestartet"));
                     loadPlaybackMetadata();
                 } else {
                     playSound(R.raw.negative);
-                    hideLoading("Bereit zum Scannen");
+                    hideLoadingState(null);
 
                     runOnUiThread(() -> {
                         APIError apiError = ServiceFactory.parseError(response);
-                        binding.loadFavoriteStatus.setText("Fehler beim Starten (" + response.code() + "): " + apiError.error + ", " + apiError.errorDescription);
+                        hideLoadingState("Fehler beim Starten (" + response.code() + "): " + apiError.error + ", " + apiError.errorDescription);
                         binding.coverImage.setImageResource(R.drawable.ic_nfc);
                     });
                 }
@@ -162,10 +159,10 @@ public class MainActivity extends NfcActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 playSound(R.raw.negative);
-                hideLoading("Fehler beim Starten: " + t.getMessage());
+                hideLoadingState("Fehler beim Starten: " + t.getMessage());
                 runOnUiThread(() -> {
                     binding.coverImage.setImageResource(R.drawable.ic_nfc);
-                    binding.status.setText("Bereit zum Scannen");
+                    //binding.status.setText("Bereit zum Scannen");
                 });
             }
         });
@@ -177,21 +174,18 @@ public class MainActivity extends NfcActivity {
             return;
         }
 
-        runOnUiThread(() -> binding.status.setText(R.string.loading_metadata));
+        runOnUiThread(() -> displayLoading(getString(R.string.loading_metadata)));
         String accessToken = tokenstore.getAccessToken();
         PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
 
         service.loadPlaybackMetadata(tokenstore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
             @Override
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
-                if (response.isSuccessful()) {
-                    runOnUiThread(() -> binding.loadPlaybackMetadataStatus.setText("Metadaten geladen"));
-                } else {
+                if (!response.isSuccessful()) {
                     playSound(R.raw.negative);
-                    hideLoading("Bereit zum Scannen");
                     APIError apiError = ServiceFactory.parseError(response);
+                    hideLoadingState(getString(R.string.error_loading_metadata_long, response.code(), apiError.error, apiError.errorDescription));
                     runOnUiThread(() -> {
-                        binding.loadPlaybackMetadataStatus.setText(getString(R.string.error_loading_metadata_long, response.code(), apiError.error, apiError.errorDescription));
                         binding.coverImage.setImageResource(R.drawable.ic_nfc);
                     });
                     return;
@@ -202,7 +196,6 @@ public class MainActivity extends NfcActivity {
                 runOnUiThread(() -> binding.trackName.setText(playbackMetadata.container.name));
 
                 if (playbackMetadata.currentItem == null) {
-                    hideLoading("Bereit zum Scannen");
                     runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
                     return;
                 }
@@ -210,7 +203,7 @@ public class MainActivity extends NfcActivity {
                 String imageUrl = playbackMetadata.currentItem.track.imageUrl;
 
                 if (imageUrl != null) {
-                    runOnUiThread(() -> binding.status.setText(R.string.loading_cover));
+                    runOnUiThread(() -> displayLoading(getString(R.string.loading_cover)));
 //                    Picasso.get()
 //                        .load(Uri.parse(action.getResponse().currentItem.track.imageUrl))
 //                        .into(binding.coverImage;
@@ -219,13 +212,13 @@ public class MainActivity extends NfcActivity {
 
                         @Override
                         public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
-                            hideLoading("Bereit zum Scannen");
+                            hideLoadingState(e.getMessage());
                             return false;
                         }
 
                         @Override
                         public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                            hideLoading("Bereit zum Scannen");
+                            hideLoadingState(null);
                             return false;
                         }
                     };
@@ -244,10 +237,9 @@ public class MainActivity extends NfcActivity {
             public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
                 playSound(R.raw.negative);
                 runOnUiThread(() -> {
-                    binding.loadPlaybackMetadataStatus.setText(getString(R.string.error_loading_metadata, t.getMessage()));
+                    hideLoadingState(getString(R.string.error_loading_metadata, t.getMessage()));
                     binding.coverImage.setImageResource(R.drawable.ic_nfc);
                 });
-                hideLoading("Bereit zum Scannen");
             }
         });
     }
@@ -281,26 +273,30 @@ public class MainActivity extends NfcActivity {
         loadAndStartFavorite("63");
     }
 
-    private void displayLoading(String statusMessage) {
-        runOnUiThread(() -> {
-            binding.loadingContainer.setVisibility(View.VISIBLE);
-            binding.status.setText(statusMessage);
-        });
-    }
-
-    private void hideLoading(String statusMessage) {
-        runOnUiThread(() -> {
-            binding.loadingContainer.setVisibility(View.INVISIBLE);
-            binding.status.setText(statusMessage);
-        });
-    }
-
     private boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             displayLoading(getString(R.string.refresh_access_token));
-            accessTokenManager.refreshAccessToken(this, runnable, this::hideLoading);
+            accessTokenManager.refreshAccessToken(this, runnable, this::hideLoadingState);
             return true;
         }
         return false;
+    }
+
+    private void displayLoading(String loadingMessage) {
+        runOnUiThread(() -> {
+            binding.loadingContainer.setVisibility(View.VISIBLE);
+            binding.loadingDescription.setText(loadingMessage);
+            binding.errorContainer.setVisibility(View.GONE);
+        });
+    }
+
+    private void hideLoadingState(String errormessage) {
+        runOnUiThread(() -> {
+            if (!TextUtils.isEmpty(errormessage)) {
+                binding.errorContainer.setVisibility(View.VISIBLE);
+                binding.errorDescription.setText(errormessage);
+            }
+            binding.loadingContainer.setVisibility(View.GONE);
+        });
     }
 }
