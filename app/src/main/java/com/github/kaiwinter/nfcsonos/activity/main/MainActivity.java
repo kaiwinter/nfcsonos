@@ -2,6 +2,7 @@ package com.github.kaiwinter.nfcsonos.activity.main;
 
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -160,9 +161,7 @@ public class MainActivity extends NfcActivity {
             public void onFailure(Call<Void> call, Throwable t) {
                 playSound(R.raw.negative);
                 hideLoadingState(getString(R.string.error_starting_favorite, t.getMessage()));
-                runOnUiThread(() -> {
-                    binding.coverImage.setImageResource(R.drawable.ic_nfc);
-                });
+                runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
             }
         });
 
@@ -184,9 +183,7 @@ public class MainActivity extends NfcActivity {
                     playSound(R.raw.negative);
                     APIError apiError = ServiceFactory.parseError(response);
                     hideLoadingState(getString(R.string.error_loading_metadata_long, response.code(), apiError.error, apiError.errorDescription));
-                    runOnUiThread(() -> {
-                        binding.coverImage.setImageResource(R.drawable.ic_nfc);
-                    });
+                    runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
                     return;
                 }
 
@@ -207,7 +204,7 @@ public class MainActivity extends NfcActivity {
 //                        .load(Uri.parse(action.getResponse().currentItem.track.imageUrl))
 //                        .into(binding.coverImage;
 
-                    RequestListener requestListener = new RequestListener() {
+                    RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
 
                         @Override
                         public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
@@ -216,7 +213,7 @@ public class MainActivity extends NfcActivity {
                         }
 
                         @Override
-                        public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                        public boolean onResourceReady(Drawable resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
                             hideLoadingState(null);
                             return false;
                         }
