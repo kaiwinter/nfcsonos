@@ -123,7 +123,7 @@ public class MainActivity extends NfcActivity {
     }
 
     public void loadAndStartFavorite(String favoriteId) {
-        displayLoading("Starte Favorit");
+        displayLoading(getString(R.string.starting_favorite));
 
         if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
             return;
@@ -150,7 +150,7 @@ public class MainActivity extends NfcActivity {
 
                     runOnUiThread(() -> {
                         APIError apiError = ServiceFactory.parseError(response);
-                        hideLoadingState("Fehler beim Starten (" + response.code() + "): " + apiError.error + ", " + apiError.errorDescription);
+                        hideLoadingState(getString(R.string.error_starting_favorite_long, response.code(), apiError.error, apiError.errorDescription));
                         binding.coverImage.setImageResource(R.drawable.ic_nfc);
                     });
                 }
@@ -159,10 +159,9 @@ public class MainActivity extends NfcActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 playSound(R.raw.negative);
-                hideLoadingState("Fehler beim Starten: " + t.getMessage());
+                hideLoadingState(getString(R.string.error_starting_favorite, t.getMessage()));
                 runOnUiThread(() -> {
                     binding.coverImage.setImageResource(R.drawable.ic_nfc);
-                    //binding.status.setText("Bereit zum Scannen");
                 });
             }
         });
