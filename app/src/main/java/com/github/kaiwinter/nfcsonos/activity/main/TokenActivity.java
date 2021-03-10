@@ -177,7 +177,7 @@ public class TokenActivity extends NfcActivity {
             return;
         }
 
-        runOnUiThread(() -> binding.status.setText("Lade Metadaten"));
+        runOnUiThread(() -> binding.status.setText(R.string.loading_metadata));
         String accessToken = tokenstore.getAccessToken();
         PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
 
@@ -191,7 +191,7 @@ public class TokenActivity extends NfcActivity {
                     hideLoading("Bereit zum Scannen");
                     APIError apiError = ServiceFactory.parseError(response);
                     runOnUiThread(() -> {
-                        binding.loadPlaybackMetadataStatus.setText("Fehler beim Laden der Metadaten (" + response.code() + "): " + apiError.error + ", " + apiError.errorDescription);
+                        binding.loadPlaybackMetadataStatus.setText(getString(R.string.error_loading_metadata_long, response.code(), apiError.error, apiError.errorDescription));
                         binding.coverImage.setImageResource(R.drawable.ic_nfc);
                     });
                     return;
@@ -210,7 +210,7 @@ public class TokenActivity extends NfcActivity {
                 String imageUrl = playbackMetadata.currentItem.track.imageUrl;
 
                 if (imageUrl != null) {
-                    runOnUiThread(() -> binding.status.setText("Lade Cover"));
+                    runOnUiThread(() -> binding.status.setText(R.string.loading_cover));
 //                    Picasso.get()
 //                        .load(Uri.parse(action.getResponse().currentItem.track.imageUrl))
 //                        .into(binding.coverImage;
@@ -244,7 +244,7 @@ public class TokenActivity extends NfcActivity {
             public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
                 playSound(R.raw.negative);
                 runOnUiThread(() -> {
-                    binding.loadPlaybackMetadataStatus.setText("Fehler beim Laden der Metadaten: " + t.getMessage());
+                    binding.loadPlaybackMetadataStatus.setText(getString(R.string.error_loading_metadata, t.getMessage()));
                     binding.coverImage.setImageResource(R.drawable.ic_nfc);
                 });
                 hideLoading("Bereit zum Scannen");
@@ -297,7 +297,7 @@ public class TokenActivity extends NfcActivity {
 
     private boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            displayLoading("Refresh Access Token");
+            displayLoading(getString(R.string.refresh_access_token));
             accessTokenManager.refreshAccessToken(this, runnable, this::hideLoading);
             return true;
         }

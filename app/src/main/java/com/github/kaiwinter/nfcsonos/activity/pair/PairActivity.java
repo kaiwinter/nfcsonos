@@ -69,7 +69,7 @@ public class PairActivity extends NfcActivity {
             return;
         }
         binding.pairLoadingContainer.setVisibility(View.VISIBLE);
-        binding.pairLoadingStatus.setText("Lade Favoriten");
+        binding.pairLoadingStatus.setText(R.string.loading_favorites);
 
         String accessToken = tokenstore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
@@ -145,7 +145,7 @@ public class PairActivity extends NfcActivity {
 
     private boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            binding.pairLoadingStatus.setText("Refresh Access Token");
+            binding.pairLoadingStatus.setText(R.string.refresh_access_token);
             accessTokenManager.refreshAccessToken(this, runnable, this::hideLoading);
             return true;
         }

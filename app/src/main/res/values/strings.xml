@@ -8,5 +8,10 @@
     <string name="ready_to_scan">Ready to scan</string>
     <string name="cover_image">Cover image</string>
     <string name="pair_button_description">Button to pair a NFC tag with a favorite</string>
-
+    <string name="loading_favorites">Loading favorites</string>
+    <string name="refresh_access_token">Refreshing Access Token</string>
+    <string name="loading_cover">Loading cover</string>
+    <string name="loading_metadata">Loading metadata</string>
+    <string name="error_loading_metadata">Error loading metadata: %1$s</string>
+    <string name="error_loading_metadata_long">Error loading metadata (%1$d): %2$s, %3$s</string>
 </resources>
