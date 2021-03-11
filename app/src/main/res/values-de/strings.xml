@@ -2,8 +2,9 @@
     <string name="login_error">Login error: %1$s</string>
     <string name="start_authorization">Starte Login</string>
     <string name="error">Fehler: %1$s</string>
+    <string name="error_long">Fehler (%1$d): %2$s, %3$s</string>
     <string name="login_introduction">Um der App zu erlauben dein Sonos System zu steuern musst du dich zuerst mit deinem Sonos-Account anmelden. Dies geschieht in einem Browserfenster auf der Webseite von Sonos. Die App bekommt dadurch deine Zugangsdaten nicht zu Gesicht, sondern lediglich ein Berechtigungstoken von Sonos.</string>
-    <string name="ready_to_scan">Bereit zum Scannen</string>
+    <string name="ready_to_scan">Warte auf NFC tag</string>
     <string name="cover_image">Cover Bild</string>
     <string name="pair_button_description">Verknüpfen eines NFC-Tags mit einem Sonos Favoriten</string>
     <string name="loading_favorites">Lade Favoriten</string>
@@ -15,4 +16,20 @@
     <string name="starting_favorite">Starte Favorit</string>
     <string name="error_starting_favorite">Fehler beim Starten: %1$s</string>
     <string name="error_starting_favorite_long">Fehler beim Starten (%1$d): %2$s, %3$s</string>
+    <string name="link_favorite_to_nfc_tag">Sonos-Favorit mit NFC-Tag verknüpfen</string>
+    <string name="favorite">Favorit</string>
+    <string name="link">Verknüpfen</string>
+    <string name="link_tag_message">Hiermit wird eine Verknüpfung zu \'%1$s\' auf das NFC-Tag geschrieben.\n\nBitte das Tag jetzt an das Gerät halten.</string>
+    <string name="scan_tag">Tag scannen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="no_selection">Keine Auswahl</string>
+    <string name="tag_written">Tag erfolgreich beschrieben</string>
+    <string name="tag_written_error">Fehler beim Beschreiben des Tags: %1$s</string>
+    <string name="household_and_group_selection">Auswahl Haushalt und Gruppe</string>
+    <string name="household_and_group_selection_description">Bevor du loslegen kannst, musst du einen Haushalt und eine Gruppe deines Sonos-Accounts auswählen. Die Bezeichnung des Haushalts ist ziemlich kryptisch. Wähl einfach einen aus und sieh dir die dazugehörigen Gruppen an.</string>
+    <string name="household">Haushalt</string>
+    <string name="group">Gruppe</string>
+    <string name="use_selection">Auswahl verwenden</string>
+    <string name="link_tag">NFC-Tag verknüpfen</string>
+    <string name="link_tag_description">Wähle einen Favoriten und Starte das Verknüpfen mit dem \'VERKNÜPFEN\' Button.</string>
 </resources>

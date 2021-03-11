@@ -23,7 +23,7 @@
                 android:layout_height="100dp"
                 android:background="@color/colorPrimary"
                 android:orientation="vertical"
-                android:paddingTop="24dp"></LinearLayout>
+                android:paddingTop="24dp" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -48,10 +48,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="36dp"
                         android:layout_marginBottom="24dp"
-                        android:text="Link favorite to NFC tag"
-                        android:textAlignment="center"
+                        android:text="@string/link_tag_description"
                         android:textColor="#000000"
-                        android:textSize="24sp" />
+                        android:textSize="16sp" />
 
                     <LinearLayout
                         android:id="@+id/loading_container"
@@ -77,7 +76,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Favorite"
+                        android:text="@string/favorite"
                         android:textColor="#000000" />
 
                     <com.jaredrummler.materialspinner.MaterialSpinner
@@ -91,15 +90,15 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:onClick="writeTag"
-                        android:text="Link" />
+                        android:text="@string/link" />
 
                     <LinearLayout
                         android:id="@+id/error_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:visibility="gone"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/error_description"

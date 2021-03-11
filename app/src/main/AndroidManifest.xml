@@ -42,7 +42,7 @@
 
         <activity
             android:name=".activity.pair.PairActivity"
-            android:label="Tag verknüpfen"
+            android:label="@string/link_favorite_to_nfc_tag"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait">

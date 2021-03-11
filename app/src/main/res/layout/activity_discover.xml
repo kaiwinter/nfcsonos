@@ -49,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="36dp"
                         android:layout_marginBottom="24dp"
-                        android:text="Household and Group selection"
+                        android:text="@string/household_and_group_selection"
                         android:textAlignment="center"
                         android:textColor="#000000"
                         android:textSize="24sp" />
@@ -58,7 +58,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Before you can start you have to select a Sonos Group which the app should use. The Household is pretty unreadable, please select one and see which Group belongs to it."
+                        android:text="@string/household_and_group_selection_description"
                         android:textColor="#000000"
                         android:textSize="16sp" />
 
@@ -94,7 +94,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Household"
+                            android:text="@string/household"
                             android:textColor="#000000" />
 
                         <com.jaredrummler.materialspinner.MaterialSpinner
@@ -115,7 +115,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Group"
+                            android:text="@string/group"
                             android:textColor="#000000" />
 
                         <com.jaredrummler.materialspinner.MaterialSpinner
@@ -139,7 +139,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:onClick="selectHouseholdAndGroup"
-                            android:text="Use selection" />
+                            android:text="@string/use_selection" />
 
                     </LinearLayout>
 

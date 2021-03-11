@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.nfc.FormatException;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -86,14 +85,14 @@ public class PairActivity extends NfcActivity {
                     });
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);
-                    String message = getString(R.string.login_error, apiError.error + " (" + response.code() + ", " + apiError.errorDescription + ")");
+                    String message = getString(R.string.error_long, response.code(), apiError.error, apiError.errorDescription);
                     hideLoadingState(message);
                 }
             }
 
             @Override
             public void onFailure(Call<Favorites> call, Throwable t) {
-                hideLoadingState("Fehler: " + t.getMessage());
+                hideLoadingState(getString(R.string.error, t.getMessage()));
             }
         });
     }
@@ -101,9 +100,9 @@ public class PairActivity extends NfcActivity {
     public void writeTag(View view) {
 
         dialog = new MaterialDialog(this, MaterialDialog.getDEFAULT_BEHAVIOR())
-                .title(null, "Scan tag")
-                .message(null, "This will write a link to '" + getSelectedFavorite().name + "' on the tag. Scanning the tag later on will start this favorite.", null)
-                .negativeButton(null, "Cancel", null);
+                .title(null, getString(R.string.scan_tag))
+                .message(null, getString(R.string.link_tag_message, getSelectedFavorite().name), null)
+                .negativeButton(null, getString(R.string.cancel), null);
 
         dialog.show();
     }
@@ -121,16 +120,15 @@ public class PairActivity extends NfcActivity {
         }
 
         if (binding.spinner.getSelectedIndex() < 0) {
-            Snackbar.make(binding.coordinator, "No selection", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(binding.coordinator, R.string.no_selection, Snackbar.LENGTH_LONG).show();
             return;
         }
 
         try {
             new NfcWriteUtilityImpl().writeTextToTagFromIntent(getSelectedFavorite().id, getIntent());
-            Snackbar.make(binding.coordinator, "Tag successfully written", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(binding.coordinator, R.string.tag_written, Snackbar.LENGTH_LONG).show();
         } catch (FormatException | ReadOnlyTagException | InsufficientCapacityException | TagNotPresentException e) {
-            Log.e("PairActivity", Log.getStackTraceString(e));
-            Snackbar.make(binding.coordinator, "Error writing tag", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(binding.coordinator, getString(R.string.tag_written_error, e.getMessage()), Snackbar.LENGTH_LONG).show();
         } finally {
             dialog.dismiss();
         }

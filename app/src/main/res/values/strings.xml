@@ -4,8 +4,9 @@
     <string name="login_error">Login error: %1$s</string>
     <string name="start_authorization">Start Login</string>
     <string name="error">Error: %1$s</string>
+    <string name="error_long">Error (%1$d): %2$s, %3$s</string>
     <string name="login_introduction">To allow the app to control your Sonos you first have to login with your Sonos account. This happens in a browser window on the website of Sonos. That way the app doesn´t see your login details it just gets an access token from Sonos.</string>
-    <string name="ready_to_scan">Ready to scan</string>
+    <string name="ready_to_scan">Waiting for NFC tag</string>
     <string name="cover_image">Cover image</string>
     <string name="pair_button_description">Button to pair a NFC tag with a favorite</string>
     <string name="loading_favorites">Loading favorites</string>
@@ -17,4 +18,20 @@
     <string name="starting_favorite">Starting favorite</string>
     <string name="error_starting_favorite">Error starting: %1$s</string>
     <string name="error_starting_favorite_long">Error starting (%1$d): %2$s, %3$s</string>
+    <string name="link_favorite_to_nfc_tag">Link Sonos favorite to NFC tag</string>
+    <string name="favorite">Favorite</string>
+    <string name="link">Link</string>
+    <string name="link_tag_message">This will write a link to \'%1$s\' on the tag. Scanning the tag later on will start this favorite.\n\nPlease hold the tag on the phone now.</string>
+    <string name="scan_tag">Scan tag</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_selection">No selection</string>
+    <string name="tag_written">Tag successfully written</string>
+    <string name="tag_written_error">Error writing tag: %1$s</string>
+    <string name="household_and_group_selection">Household and Group selection</string>
+    <string name="household_and_group_selection_description">Before you can start you have to select a Sonos Group which the app should use. The Household is pretty unreadable, please select one and see which Group belongs to it.</string>
+    <string name="household">Household</string>
+    <string name="group">Group</string>
+    <string name="use_selection">Use selection</string>
+    <string name="link_tag">Link NFC tag</string>
+    <string name="link_tag_description">Choose a favorite and press the \'LINK\' Button.</string>
 </resources>
