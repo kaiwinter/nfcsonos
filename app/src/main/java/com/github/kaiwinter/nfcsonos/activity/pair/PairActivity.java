@@ -3,6 +3,7 @@ package com.github.kaiwinter.nfcsonos.activity.pair;
 import android.content.Intent;
 import android.nfc.FormatException;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,8 +69,7 @@ public class PairActivity extends NfcActivity {
         if (refreshTokenIfNeeded(this::loadFavorites)) {
             return;
         }
-        binding.pairLoadingContainer.setVisibility(View.VISIBLE);
-        binding.pairLoadingStatus.setText(R.string.loading_favorites);
+        displayLoading(getString(R.string.loading_favorites));
 
         String accessToken = tokenstore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
@@ -82,18 +82,18 @@ public class PairActivity extends NfcActivity {
 
                     runOnUiThread(() -> {
                         binding.spinner.setItems(favorites.items);
-                        hideLoading("Bereit");
+                        hideLoadingState(null);
                     });
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);
                     String message = getString(R.string.login_error, apiError.error + " (" + response.code() + ", " + apiError.errorDescription + ")");
-                    hideLoading(message);
+                    hideLoadingState(message);
                 }
             }
 
             @Override
             public void onFailure(Call<Favorites> call, Throwable t) {
-                hideLoading("Fehler: " + t.getMessage());
+                hideLoadingState("Fehler: " + t.getMessage());
             }
         });
     }
@@ -136,17 +136,28 @@ public class PairActivity extends NfcActivity {
         }
     }
 
-    private void hideLoading(String statusMessage) {
+    private void displayLoading(String loadingMessage) {
         runOnUiThread(() -> {
-            binding.pairLoadingContainer.setVisibility(View.INVISIBLE);
-            binding.pairLoadingStatus.setText(statusMessage);
+            binding.loadingContainer.setVisibility(View.VISIBLE);
+            binding.loadingDescription.setText(loadingMessage);
+            binding.errorContainer.setVisibility(View.GONE);
+        });
+    }
+
+    private void hideLoadingState(String errormessage) {
+        runOnUiThread(() -> {
+            if (!TextUtils.isEmpty(errormessage)) {
+                binding.errorContainer.setVisibility(View.VISIBLE);
+                binding.errorDescription.setText(errormessage);
+            }
+            binding.loadingContainer.setVisibility(View.GONE);
         });
     }
 
     private boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            binding.pairLoadingStatus.setText(R.string.refresh_access_token);
-            accessTokenManager.refreshAccessToken(this, runnable, this::hideLoading);
+            displayLoading(getString(R.string.refresh_access_token));
+            accessTokenManager.refreshAccessToken(this, runnable, this::hideLoadingState);
             return true;
         }
         return false;
