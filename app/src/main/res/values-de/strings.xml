@@ -30,6 +30,5 @@
     <string name="household">Haushalt</string>
     <string name="group">Gruppe</string>
     <string name="use_selection">Auswahl verwenden</string>
-    <string name="link_tag">NFC-Tag verknüpfen</string>
     <string name="link_tag_description">Wähle einen Favoriten und Starte das Verknüpfen mit dem \'VERKNÜPFEN\' Button.</string>
 </resources>
