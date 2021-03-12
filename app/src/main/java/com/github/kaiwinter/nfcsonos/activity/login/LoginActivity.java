@@ -90,7 +90,7 @@ public final class LoginActivity extends AppCompatActivity {
      * Called from the login button defined in the XML.
      */
     public void loginClicked(View view) {
-        displayLoading("Starting browser for login");
+        displayLoading(getString(R.string.starting_browser_for_login));
 
         String url = getString(R.string.authorization_endpoint_uri)
                 + "?client_id=" + getString(R.string.client_id)
@@ -139,7 +139,7 @@ public final class LoginActivity extends AppCompatActivity {
             return;
         }
         if (data.getQueryParameterNames().contains("code")) {
-            displayLoading("Lade Access Token");
+            displayLoading(getString(R.string.loading_access_token));
 
             String code = data.getQueryParameter("code");
             LoginService service = ServiceFactory.createLoginService();

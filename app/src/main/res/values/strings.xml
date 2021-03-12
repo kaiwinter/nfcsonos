@@ -33,4 +33,6 @@
     <string name="group">Group</string>
     <string name="use_selection">Use selection</string>
     <string name="link_tag_description">Choose a favorite and press the \'LINK\' Button.</string>
+    <string name="loading_access_token">Loading access token</string>
+    <string name="starting_browser_for_login">Starting browser for login</string>
 </resources>
