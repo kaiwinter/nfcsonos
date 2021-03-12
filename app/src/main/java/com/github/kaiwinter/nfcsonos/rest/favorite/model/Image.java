@@ -2,10 +2,16 @@
 package com.github.kaiwinter.nfcsonos.rest.favorite.model;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class Image {
 
+    @SerializedName("url")
     public String url;
-    public Integer height;
-    public Integer width;
 
+    @SerializedName("height")
+    public Integer height;
+
+    @SerializedName("width")
+    public Integer width;
 }

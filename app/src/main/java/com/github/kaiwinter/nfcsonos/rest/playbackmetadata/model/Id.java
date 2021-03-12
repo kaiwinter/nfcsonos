@@ -2,10 +2,16 @@
 package com.github.kaiwinter.nfcsonos.rest.playbackmetadata.model;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class Id {
 
+    @SerializedName("serviceId")
     public String serviceId;
-    public String objectId;
-    public String accountId;
 
+    @SerializedName("objectId")
+    public String objectId;
+
+    @SerializedName("accountId")
+    public String accountId;
 }
