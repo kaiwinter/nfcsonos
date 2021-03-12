@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.rest;
+package com.github.kaiwinter.nfcsonos.rest.model;
 
 public class APIError {
 

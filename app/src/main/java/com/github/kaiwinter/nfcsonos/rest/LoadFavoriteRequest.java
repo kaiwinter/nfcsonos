@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.rest.favorite;
+package com.github.kaiwinter.nfcsonos.rest;
 
 public class LoadFavoriteRequest {
     private final String favoriteId;

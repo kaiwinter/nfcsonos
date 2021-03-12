@@ -1,6 +1,6 @@
-package com.github.kaiwinter.nfcsonos.rest.login;
+package com.github.kaiwinter.nfcsonos.rest;
 
-import com.github.kaiwinter.nfcsonos.rest.login.model.AccessToken;
+import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
 
 import retrofit2.Call;
 import retrofit2.http.Field;

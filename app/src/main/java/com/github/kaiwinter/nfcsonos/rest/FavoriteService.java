@@ -1,6 +1,6 @@
-package com.github.kaiwinter.nfcsonos.rest.favorite;
+package com.github.kaiwinter.nfcsonos.rest;
 
-import com.github.kaiwinter.nfcsonos.rest.favorite.model.Favorites;
+import com.github.kaiwinter.nfcsonos.rest.model.Favorites;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

@@ -22,12 +22,12 @@ import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.pair.PairActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
-import com.github.kaiwinter.nfcsonos.rest.APIError;
+import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
-import com.github.kaiwinter.nfcsonos.rest.favorite.FavoriteService;
-import com.github.kaiwinter.nfcsonos.rest.favorite.LoadFavoriteRequest;
-import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.PlaybackMetadataService;
-import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.model.PlaybackMetadata;
+import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
+import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
+import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
+import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 

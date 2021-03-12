@@ -1,9 +1,6 @@
 package com.github.kaiwinter.nfcsonos.rest;
 
-import com.github.kaiwinter.nfcsonos.rest.discover.DiscoverService;
-import com.github.kaiwinter.nfcsonos.rest.favorite.FavoriteService;
-import com.github.kaiwinter.nfcsonos.rest.login.LoginService;
-import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.PlaybackMetadataService;
+import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.google.gson.Gson;
 
 import okhttp3.OkHttpClient;

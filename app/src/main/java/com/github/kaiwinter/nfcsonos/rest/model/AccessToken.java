@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.rest.login.model;
+package com.github.kaiwinter.nfcsonos.rest.model;
 
 import com.google.gson.annotations.SerializedName;
 

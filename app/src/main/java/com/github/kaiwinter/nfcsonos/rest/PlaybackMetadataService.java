@@ -1,6 +1,6 @@
-package com.github.kaiwinter.nfcsonos.rest.playbackmetadata;
+package com.github.kaiwinter.nfcsonos.rest;
 
-import com.github.kaiwinter.nfcsonos.rest.playbackmetadata.model.PlaybackMetadata;
+import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

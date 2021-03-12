@@ -1,9 +1,7 @@
 
-package com.github.kaiwinter.nfcsonos.rest.playbackmetadata.model;
+package com.github.kaiwinter.nfcsonos.rest.model;
 
 
-import com.github.kaiwinter.nfcsonos.rest.favorite.model.Image;
-import com.github.kaiwinter.nfcsonos.rest.favorite.model.Service;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

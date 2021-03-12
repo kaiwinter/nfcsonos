@@ -1,10 +1,10 @@
 
-package com.github.kaiwinter.nfcsonos.rest.playbackmetadata.model;
+package com.github.kaiwinter.nfcsonos.rest.model;
 
 
 import com.google.gson.annotations.SerializedName;
 
-public class Artist {
+public class Album {
 
     @SerializedName("name")
     public String name;

@@ -1,5 +1,5 @@
 
-package com.github.kaiwinter.nfcsonos.rest.favorite.model;
+package com.github.kaiwinter.nfcsonos.rest.model;
 
 
 import com.google.gson.annotations.SerializedName;

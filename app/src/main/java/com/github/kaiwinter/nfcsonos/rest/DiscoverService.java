@@ -1,7 +1,7 @@
-package com.github.kaiwinter.nfcsonos.rest.discover;
+package com.github.kaiwinter.nfcsonos.rest;
 
-import com.github.kaiwinter.nfcsonos.rest.discover.model.Groups;
-import com.github.kaiwinter.nfcsonos.rest.discover.model.Households;
+import com.github.kaiwinter.nfcsonos.rest.model.Groups;
+import com.github.kaiwinter.nfcsonos.rest.model.Households;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

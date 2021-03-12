@@ -19,10 +19,10 @@ import androidx.browser.customtabs.CustomTabsSession;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.activity.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityLoginBinding;
-import com.github.kaiwinter.nfcsonos.rest.APIError;
+import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
-import com.github.kaiwinter.nfcsonos.rest.login.LoginService;
-import com.github.kaiwinter.nfcsonos.rest.login.model.AccessToken;
+import com.github.kaiwinter.nfcsonos.rest.LoginService;
+import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
 
