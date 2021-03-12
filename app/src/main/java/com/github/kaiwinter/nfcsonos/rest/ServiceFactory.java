@@ -1,11 +1,19 @@
 package com.github.kaiwinter.nfcsonos.rest;
 
+import android.content.Context;
+
+import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -52,8 +60,39 @@ public class ServiceFactory {
                 .build();
     }
 
-    public static APIError parseError(retrofit2.Response<?> response) {
+    private static APIError parseError(retrofit2.Response<?> response) {
         Gson gson = new Gson();
         return gson.fromJson(response.errorBody().charStream(), APIError.class);
+    }
+
+    /**
+     * Parses the response of a unsuccessful REST service call and tries to figure out an error message which will be returned.
+     *
+     * @param context  Activity context
+     * @param response unsuccessful REST call response
+     * @return the error message which should be shown to tbe user.
+     */
+    public static String handleError(Context context, Response<?> response) {
+        ResponseBody errorBody = response.errorBody();
+        if (errorBody == null) {
+            return context.getString(R.string.failed_response_error, 1);
+        }
+        MediaType mediaType = errorBody.contentType();
+        if ("text".equals(mediaType.type()) && "plain".equals(mediaType.subtype())) {
+            try {
+                return errorBody.string();
+            } catch (IOException e) {
+                return context.getString(R.string.failed_response_error, 2);
+            }
+        } else if ("application".equals(mediaType.type()) && "json".equals(mediaType.subtype())) {
+            APIError apiError = ServiceFactory.parseError(response);
+            return context.getString(R.string.error_long, response.code(), apiError.errorCode, apiError.reason);
+        } else {
+            try {
+                return errorBody.string();
+            } catch (IOException e) {
+                return context.getString(R.string.failed_response_error, 3);
+            }
+        }
     }
 }

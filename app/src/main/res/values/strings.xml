@@ -35,4 +35,5 @@
     <string name="link_tag_description">Choose a favorite and press the \'LINK\' Button.</string>
     <string name="loading_access_token">Loading access token</string>
     <string name="starting_browser_for_login">Starting browser for login</string>
+    <string name="failed_response_error">Couldn\'t load data (%1$d)</string>
 </resources>

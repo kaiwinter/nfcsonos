@@ -6,9 +6,8 @@ import android.util.Base64;
 import androidx.core.util.Consumer;
 
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.rest.model.APIError;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.LoginService;
+import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
 
 import java.util.Date;
@@ -66,8 +65,7 @@ public class AccessTokenManager {
                         onSuccess.run();
                     }
                 } else {
-                    APIError apiError = ServiceFactory.parseError(response);
-                    String message = context.getString(R.string.login_error, apiError.error + " (" + response.code() + ", " + apiError.errorDescription + ")");
+                    String message = ServiceFactory.handleError(context, response);
                     if (onError != null) {
                         onError.accept(message);
                     }

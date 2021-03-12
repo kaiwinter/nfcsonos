@@ -7,12 +7,10 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.activity.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityDiscoverBinding;
-import com.github.kaiwinter.nfcsonos.rest.model.APIError;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
+import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.Group;
 import com.github.kaiwinter.nfcsonos.rest.model.Groups;
 import com.github.kaiwinter.nfcsonos.rest.model.Household;
@@ -73,8 +71,7 @@ public class DiscoverActivity extends AppCompatActivity {
                     binding.household.setItems(body.households);
                     loadGroups(body.households.get(0).id);
                 } else {
-                    APIError apiError = ServiceFactory.parseError(response);
-                    String message = getString(R.string.login_error, apiError.error + " (" + response.code() + ", " + apiError.errorDescription + ")");
+                    String message = ServiceFactory.handleError(DiscoverActivity.this, response);
                     hideLoadingState(message);
                 }
             }
@@ -102,8 +99,7 @@ public class DiscoverActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     binding.group.setItems(response.body().groups);
                 } else {
-                    APIError apiError = ServiceFactory.parseError(response);
-                    String message = getString(R.string.login_error, apiError.error + " (" + response.code() + ", " + apiError.errorDescription + ")");
+                    String message = ServiceFactory.handleError(DiscoverActivity.this, response);
                     hideLoadingState(message);
                 }
                 hideLoadingState(null);

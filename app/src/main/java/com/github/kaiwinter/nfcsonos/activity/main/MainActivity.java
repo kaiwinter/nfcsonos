@@ -22,11 +22,10 @@ import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.pair.PairActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
-import com.github.kaiwinter.nfcsonos.rest.model.APIError;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
+import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
@@ -150,8 +149,8 @@ public class MainActivity extends NfcActivity {
                     hideLoadingState(null);
 
                     runOnUiThread(() -> {
-                        APIError apiError = ServiceFactory.parseError(response);
-                        hideLoadingState(getString(R.string.error_starting_favorite_long, response.code(), apiError.error, apiError.errorDescription));
+                        String message = ServiceFactory.handleError(MainActivity.this, response);
+                        hideLoadingState(message);
                         binding.coverImage.setImageResource(R.drawable.ic_nfc);
                     });
                 }
@@ -181,8 +180,8 @@ public class MainActivity extends NfcActivity {
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
                 if (!response.isSuccessful()) {
                     playSound(R.raw.negative);
-                    APIError apiError = ServiceFactory.parseError(response);
-                    hideLoadingState(getString(R.string.error_loading_metadata_long, response.code(), apiError.error, apiError.errorDescription));
+                    String message = ServiceFactory.handleError(MainActivity.this, response);
+                    hideLoadingState(message);
                     runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
                     return;
                 }

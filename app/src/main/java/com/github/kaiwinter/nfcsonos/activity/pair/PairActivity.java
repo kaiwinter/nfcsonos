@@ -13,9 +13,8 @@ import androidx.appcompat.app.ActionBar;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityPairBinding;
-import com.github.kaiwinter.nfcsonos.rest.model.APIError;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
+import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.Favorites;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
@@ -84,8 +83,7 @@ public class PairActivity extends NfcActivity {
                         hideLoadingState(null);
                     });
                 } else {
-                    APIError apiError = ServiceFactory.parseError(response);
-                    String message = getString(R.string.error_long, response.code(), apiError.error, apiError.errorDescription);
+                    String message = ServiceFactory.handleError(PairActivity.this, response);
                     hideLoadingState(message);
                 }
             }
