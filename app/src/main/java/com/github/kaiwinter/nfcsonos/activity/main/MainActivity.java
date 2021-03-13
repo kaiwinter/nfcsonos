@@ -28,7 +28,7 @@ import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
+import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -44,20 +44,20 @@ public class MainActivity extends NfcActivity {
 
     private ActivityMainBinding binding;
 
-    private SharedPreferencesTokenStore tokenstore;
+    private SharedPreferencesStore sharedPreferencesStore;
     private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        tokenstore = new SharedPreferencesTokenStore(this);
+        sharedPreferencesStore = new SharedPreferencesStore(this);
         accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
+        if (TextUtils.isEmpty(sharedPreferencesStore.getAccessToken())) {
             startLoginActivity();
             return;
         }
@@ -70,8 +70,8 @@ public class MainActivity extends NfcActivity {
     }
 
     private void signOut() {
-        tokenstore.setTokens(null, null, -1);
-        tokenstore.setHouseholdAndGroup(null, null);
+        sharedPreferencesStore.setTokens(null, null, -1);
+        sharedPreferencesStore.setHouseholdAndGroup(null, null);
 
         Intent loginIntent = new Intent(this, LoginActivity.class);
         loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -134,12 +134,12 @@ public class MainActivity extends NfcActivity {
             binding.coverImage.setImageResource(R.drawable.ic_nfc_green);
         });
 
-        String accessToken = tokenstore.getAccessToken();
+        String accessToken = sharedPreferencesStore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
 
         LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId);
 
-        service.loadFavorite(tokenstore.getGroupId(), request).enqueue(new Callback<Void>() {
+        service.loadFavorite(sharedPreferencesStore.getGroupId(), request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -172,10 +172,10 @@ public class MainActivity extends NfcActivity {
         }
 
         runOnUiThread(() -> displayLoading(getString(R.string.loading_metadata)));
-        String accessToken = tokenstore.getAccessToken();
+        String accessToken = sharedPreferencesStore.getAccessToken();
         PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
 
-        service.loadPlaybackMetadata(tokenstore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
+        service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
             @Override
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
                 if (!response.isSuccessful()) {
@@ -253,8 +253,8 @@ public class MainActivity extends NfcActivity {
     }
 
     private boolean isHouseholdAndGroupAvailable() {
-        boolean householdSelected = !TextUtils.isEmpty(tokenstore.getHouseholdId());
-        boolean groupSelected = !TextUtils.isEmpty(tokenstore.getGroupId());
+        boolean householdSelected = !TextUtils.isEmpty(sharedPreferencesStore.getHouseholdId());
+        boolean groupSelected = !TextUtils.isEmpty(sharedPreferencesStore.getGroupId());
         return householdSelected && groupSelected;
     }
 

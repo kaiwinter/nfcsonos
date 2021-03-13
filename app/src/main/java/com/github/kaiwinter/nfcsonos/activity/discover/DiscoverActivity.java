@@ -16,7 +16,7 @@ import com.github.kaiwinter.nfcsonos.rest.model.Groups;
 import com.github.kaiwinter.nfcsonos.rest.model.Household;
 import com.github.kaiwinter.nfcsonos.rest.model.Households;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
+import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.util.Collections;
@@ -29,14 +29,14 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private ActivityDiscoverBinding binding;
 
-    private SharedPreferencesTokenStore tokenstore;
+    private SharedPreferencesStore sharedPreferencesStore;
     private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        tokenstore = new SharedPreferencesTokenStore(this);
+        sharedPreferencesStore = new SharedPreferencesStore(this);
         accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityDiscoverBinding.inflate(getLayoutInflater());
@@ -61,7 +61,7 @@ public class DiscoverActivity extends AppCompatActivity {
             return;
         }
 
-        DiscoverService service = ServiceFactory.createDiscoverService(tokenstore.getAccessToken());
+        DiscoverService service = ServiceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
         Call<Households> household = service.getHouseholds();
         household.enqueue(new Callback<Households>() {
             @Override
@@ -91,7 +91,7 @@ public class DiscoverActivity extends AppCompatActivity {
             return;
         }
 
-        DiscoverService service = ServiceFactory.createDiscoverService(tokenstore.getAccessToken());
+        DiscoverService service = ServiceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
         Call<Groups> group = service.getGroups(householdId);
         group.enqueue(new Callback<Groups>() {
             @Override
@@ -123,7 +123,7 @@ public class DiscoverActivity extends AppCompatActivity {
             return;
         }
 
-        tokenstore.setHouseholdAndGroup(selectedHousehold.id, selectedGroup.id);
+        sharedPreferencesStore.setHouseholdAndGroup(selectedHousehold.id, selectedGroup.id);
         switchToMainActivity();
     }
 

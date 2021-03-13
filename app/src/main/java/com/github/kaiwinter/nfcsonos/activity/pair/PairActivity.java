@@ -18,7 +18,7 @@ import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.Favorites;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
+import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.google.android.material.snackbar.Snackbar;
 
 import be.appfoundry.nfclibrary.activities.NfcActivity;
@@ -36,14 +36,14 @@ public class PairActivity extends NfcActivity {
 
     private MaterialDialog dialog;
 
-    private SharedPreferencesTokenStore tokenstore;
+    private SharedPreferencesStore sharedPreferencesStore;
     private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        tokenstore = new SharedPreferencesTokenStore(this);
+        sharedPreferencesStore = new SharedPreferencesStore(this);
         accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityPairBinding.inflate(getLayoutInflater());
@@ -69,10 +69,10 @@ public class PairActivity extends NfcActivity {
         }
         displayLoading(getString(R.string.loading_favorites));
 
-        String accessToken = tokenstore.getAccessToken();
+        String accessToken = sharedPreferencesStore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
 
-        service.loadFavorites(tokenstore.getHouseholdId()).enqueue(new Callback<Favorites>() {
+        service.loadFavorites(sharedPreferencesStore.getHouseholdId()).enqueue(new Callback<Favorites>() {
             @Override
             public void onResponse(Call<Favorites> call, Response<Favorites> response) {
                 if (response.isSuccessful()) {

@@ -23,7 +23,7 @@ import com.github.kaiwinter.nfcsonos.rest.LoginService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesTokenStore;
+import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,9 +39,13 @@ public final class LoginActivity extends AppCompatActivity {
 
     private CustomTabsClient customTabsClient;
 
+    private SharedPreferencesStore sharedPreferencesStore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedPreferencesStore = new SharedPreferencesStore(this);
 
         Log.i(TAG, "Creating CustomTabsServiceConnection");
         CustomTabsServiceConnection customTabsServiceConnection = new CustomTabsServiceConnection() {
@@ -70,9 +74,8 @@ public final class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(this);
         // tokenstore.setTokens(null, null, 0);
-        if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
+        if (TextUtils.isEmpty(sharedPreferencesStore.getAccessToken())) {
             return;
         }
 
@@ -151,10 +154,9 @@ public final class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
 
                     if (response.isSuccessful()) {
-                        SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(LoginActivity.this);
                         AccessToken body = response.body();
                         long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
-                        tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
+                        sharedPreferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                         switchToMainActivity();
                     } else {
                         String message = ServiceFactory.handleError(LoginActivity.this, response);

@@ -20,10 +20,10 @@ public class AccessTokenManager {
 
     private static final long EXPIRE_TOLERANCE_SECONDS = 60;
 
-    private final SharedPreferencesTokenStore tokenstore;
+    private final SharedPreferencesStore sharedPreferencesStore;
 
     public AccessTokenManager(Context context) {
-        tokenstore = new SharedPreferencesTokenStore(context);
+        sharedPreferencesStore = new SharedPreferencesStore(context);
     }
 
     /**
@@ -32,7 +32,7 @@ public class AccessTokenManager {
      * @return true if a refresh is necessary, false otherwise
      */
     public boolean accessTokenRefreshNeeded() {
-        long expiresAt = tokenstore.getExpiresAt();
+        long expiresAt = sharedPreferencesStore.getExpiresAt();
         long currentTimestamp = new Date().getTime();
 
         return currentTimestamp + EXPIRE_TOLERANCE_SECONDS >= expiresAt;
@@ -48,7 +48,7 @@ public class AccessTokenManager {
     public void refreshAccessToken(Context context, Runnable onSuccess, Consumer<String> onError) {
         LoginService loginService = ServiceFactory.createLoginService();
 
-        String refreshToken = tokenstore.getRefreshToken();
+        String refreshToken = sharedPreferencesStore.getRefreshToken();
 
         String basic = context.getString(R.string.client_id) + ":" + context.getString(R.string.client_secret);
         String authHeader = "Basic " + Base64.encodeToString(basic.getBytes(), Base64.NO_WRAP);
@@ -60,7 +60,7 @@ public class AccessTokenManager {
                 if (response.code() == 200) {
                     AccessToken body = response.body();
                     long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
-                    tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
+                    sharedPreferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                     if (onSuccess != null) {
                         onSuccess.run();
                     }

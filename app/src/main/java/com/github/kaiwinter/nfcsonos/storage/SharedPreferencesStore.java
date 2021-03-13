@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-public class SharedPreferencesTokenStore {
+public class SharedPreferencesStore {
 
     private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
     private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
@@ -15,7 +15,7 @@ public class SharedPreferencesTokenStore {
 
     private final SharedPreferences sharedPreferences;
 
-    public SharedPreferencesTokenStore(Context context) {
+    public SharedPreferencesStore(Context context) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
