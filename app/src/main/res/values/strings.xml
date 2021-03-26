@@ -36,4 +36,5 @@
     <string name="loading_access_token">Loading access token</string>
     <string name="starting_browser_for_login">Starting browser for login</string>
     <string name="failed_response_error">Couldn\'t load data (%1$d)</string>
+    <string name="group_id_changed">Group name changed. This happens if the speaker was unplugged.</string>
 </resources>

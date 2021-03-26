@@ -60,8 +60,20 @@ public class ServiceFactory {
                 .build();
     }
 
-    private static APIError parseError(retrofit2.Response<?> response) {
+    /**
+     * Parses the errorBody of a {@link Response} into an {@link APIError}.
+     *
+     * @param response the Retrofit response
+     * @return an {@link APIError} object
+     */
+    public static APIError parseError(retrofit2.Response<?> response) {
         Gson gson = new Gson();
+        if (response.errorBody() == null) {
+            APIError apiError = new APIError();
+            apiError.errorCode = "";
+            apiError.reason = "Error body was empty";
+            return apiError;
+        }
         return gson.fromJson(response.errorBody().charStream(), APIError.class);
     }
 

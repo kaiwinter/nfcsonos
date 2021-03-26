@@ -26,9 +26,11 @@ import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
+import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -146,10 +148,16 @@ public class MainActivity extends NfcActivity {
                     loadPlaybackMetadata();
                 } else {
                     playSound(R.raw.negative);
-                    hideLoadingState(null);
 
+                    APIError apiError = ServiceFactory.parseError(response);
+                    if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
+                        startDiscoverActivity();
+                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    String message = ServiceFactory.handleError(MainActivity.this, response);
                     runOnUiThread(() -> {
-                        String message = ServiceFactory.handleError(MainActivity.this, response);
                         hideLoadingState(message);
                         binding.coverImage.setImageResource(R.drawable.ic_nfc);
                     });

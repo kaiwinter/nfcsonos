@@ -10,8 +10,8 @@ import retrofit2.http.Path;
 
 public interface FavoriteService {
 
-    @POST("/control/api/v1/groups/{group}/favorites")
-    Call<Void> loadFavorite(@Path("group") String group, @Body LoadFavoriteRequest request);
+    @POST("/control/api/v1/groups/{groupId}/favorites")
+    Call<Void> loadFavorite(@Path("groupId") String groupId, @Body LoadFavoriteRequest request);
 
     @GET("/control/api/v1/households/{household}/favorites")
     Call<Favorites> loadFavorites(@Path("household") String household);

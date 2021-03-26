@@ -34,4 +34,5 @@
     <string name="loading_access_token">Lade Access Token</string>
     <string name="starting_browser_for_login">Starte Browser für den Login</string>
     <string name="failed_response_error">Fehler beim Datenabruf (%1$d)</string>
+    <string name="group_id_changed">Name der Gruppe hat sich geändert. Dies passiert z.B. wenn der Lautsprecher vom Strom getrennt wurde.</string>
 </resources>
