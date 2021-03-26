@@ -35,6 +35,9 @@ public final class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
+    private static final String AUTHORIZATION_ENDPOINT_URI = "https://api.sonos.com/login/v3/oauth";
+    private static final String REDIRECT_URI = "http://localhost/com.github.kaiwinter.nfcsonos";
+
     private ActivityLoginBinding binding;
 
     private CustomTabsClient customTabsClient;
@@ -94,12 +97,12 @@ public final class LoginActivity extends AppCompatActivity {
     public void loginClicked(View view) {
         displayLoading(getString(R.string.starting_browser_for_login));
 
-        String url = getString(R.string.authorization_endpoint_uri)
+        String url = AUTHORIZATION_ENDPOINT_URI
                 + "?client_id=" + getString(R.string.client_id)
                 + "&response_type=code"
                 + "&state=random"
-                + "&scope=" + getString(R.string.authorization_scope)
-                + "&redirect_uri=" + getString(R.string.redirect_uri);
+                + "&scope=playback-control-all"
+                + "&redirect_uri=" + REDIRECT_URI;
 
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder(createSession(Uri.parse(url))).build();
         customTabsIntent.intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
@@ -148,7 +151,7 @@ public final class LoginActivity extends AppCompatActivity {
 
             String basic = getString(R.string.client_id) + ":" + getString(R.string.client_secret);
             String authHeader = "Basic " + Base64.encodeToString(basic.getBytes(), Base64.NO_WRAP);
-            Call<AccessToken> call = service.getAccessToken(authHeader, "authorization_code", code, getString(R.string.redirect_uri));
+            Call<AccessToken> call = service.getAccessToken(authHeader, "authorization_code", code, REDIRECT_URI);
             call.enqueue(new Callback<AccessToken>() {
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
