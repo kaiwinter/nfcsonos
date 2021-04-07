@@ -70,6 +70,10 @@ public class DiscoverActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Households body = response.body();
                     binding.household.setItems(body.households);
+                    if (body.households == null || body.households.isEmpty()) {
+                        hideLoadingState(getString(R.string.no_household_found));
+                        return;
+                    }
                     loadGroups(body.households.get(0).id);
                 } else {
                     String message = ServiceFactory.handleError(DiscoverActivity.this, response);
@@ -98,7 +102,13 @@ public class DiscoverActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Groups> call, Response<Groups> response) {
                 if (response.isSuccessful()) {
-                    binding.group.setItems(response.body().groups);
+                    Groups body = response.body();
+                    if (body.groups == null || body.groups.isEmpty()) {
+                        hideLoadingState(getString(R.string.no_group_found));
+                        return;
+                    }
+                    binding.group.setItems(body.groups);
+                    binding.selectButton.setEnabled(true);
                 } else {
                     String message = ServiceFactory.handleError(DiscoverActivity.this, response);
                     hideLoadingState(message);
@@ -114,6 +124,9 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     public void selectHouseholdAndGroup(View view) {
+        if (binding.household.getItems() == null || binding.group.getItems() == null) {
+            return;
+        }
         Household selectedHousehold = (Household) binding.household.getItems().get(binding.household.getSelectedIndex());
         Group selectedGroup = (Group) binding.group.getItems().get(binding.group.getSelectedIndex());
         if (selectedHousehold == null) {
