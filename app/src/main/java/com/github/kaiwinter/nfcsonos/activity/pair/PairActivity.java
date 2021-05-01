@@ -19,14 +19,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityPairBinding;
+import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
+import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.Favorites;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
-import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -93,7 +93,7 @@ public class PairActivity extends AppCompatActivity {
         String accessToken = sharedPreferencesStore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
 
-        service.loadFavorites(sharedPreferencesStore.getHouseholdId()).enqueue(new Callback<Favorites>() {
+        service.getFavorites(sharedPreferencesStore.getHouseholdId()).enqueue(new Callback<Favorites>() {
             @Override
             public void onResponse(Call<Favorites> call, Response<Favorites> response) {
                 if (response.isSuccessful()) {
