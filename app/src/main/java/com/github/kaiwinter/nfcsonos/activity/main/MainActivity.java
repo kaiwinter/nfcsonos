@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -279,8 +280,9 @@ public class MainActivity extends AppCompatActivity {
                             return false;
                         }
                     };
-                    Glide.with(MainActivity.this)
+                    Glide.with(getApplicationContext())
                             .load(Uri.parse(imageUrl))
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .timeout(10000)
                             .placeholder(R.drawable.ic_nfc_green)
                             .fitCenter()
