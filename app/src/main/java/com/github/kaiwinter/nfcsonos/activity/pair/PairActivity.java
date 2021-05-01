@@ -1,7 +1,12 @@
 package com.github.kaiwinter.nfcsonos.activity.pair;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.nfc.FormatException;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -9,6 +14,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
@@ -19,18 +25,17 @@ import com.github.kaiwinter.nfcsonos.rest.model.Favorites;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
+import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
+import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.google.android.material.snackbar.Snackbar;
 
-import be.appfoundry.nfclibrary.activities.NfcActivity;
-import be.appfoundry.nfclibrary.exceptions.InsufficientCapacityException;
-import be.appfoundry.nfclibrary.exceptions.ReadOnlyTagException;
-import be.appfoundry.nfclibrary.exceptions.TagNotPresentException;
-import be.appfoundry.nfclibrary.utilities.sync.NfcWriteUtilityImpl;
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PairActivity extends NfcActivity {
+public class PairActivity extends AppCompatActivity {
 
     private ActivityPairBinding binding;
 
@@ -53,6 +58,22 @@ public class PairActivity extends NfcActivity {
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
         loadFavorites();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.disableForegroundDispatch(this);
     }
 
     @Override
@@ -122,10 +143,21 @@ public class PairActivity extends NfcActivity {
             return;
         }
 
-        try {
-            new NfcWriteUtilityImpl().writeTextToTagFromIntent(getSelectedFavorite().id, getIntent());
+        Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+        if (tagFromIntent == null) {
+            return;
+        }
+
+        try (Ndef ndef = Ndef.get(tagFromIntent)) {
+            ndef.connect();
+            NfcPayload nfcPayload = new NfcPayload(getSelectedFavorite().id);
+            NdefMessage ndefMessage = NfcPayloadUtil.createMessage(nfcPayload);
+
+            ndef.writeNdefMessage(ndefMessage);
             Snackbar.make(binding.coordinator, R.string.tag_written, Snackbar.LENGTH_LONG).show();
-        } catch (FormatException | ReadOnlyTagException | InsufficientCapacityException | TagNotPresentException e) {
+
+        } catch (FormatException | IOException e) {
             Snackbar.make(binding.coordinator, getString(R.string.tag_written_error, e.getMessage()), Snackbar.LENGTH_LONG).show();
         } finally {
             dialog.dismiss();

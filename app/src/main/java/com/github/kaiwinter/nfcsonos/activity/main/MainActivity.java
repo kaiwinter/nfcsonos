@@ -1,16 +1,24 @@
 package com.github.kaiwinter.nfcsonos.activity.main;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.nfc.FormatException;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -30,18 +38,18 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
+import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
+import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
-import java.util.List;
 
-import be.appfoundry.nfclibrary.activities.NfcActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends NfcActivity {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private ActivityMainBinding binding;
@@ -82,20 +90,51 @@ public class MainActivity extends NfcActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        List<String> nfcMessages = getNfcMessages();
-        if (nfcMessages.isEmpty()) {
-            playSound(R.raw.negative);
-            Toast.makeText(this, "Tag is empty", Toast.LENGTH_SHORT).show();
-        } else if (nfcMessages.size() > 1) {
-            playSound(R.raw.negative);
-            Toast.makeText(this, "Tag contains " + nfcMessages.size() + " messages", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Tag ok", Toast.LENGTH_SHORT).show();
-            playSound(R.raw.positive);
-            loadAndStartFavorite(nfcMessages.get(0));
+        if (!NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            return;
+        }
+        Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+        if (tagFromIntent == null) {
+            return;
+        }
+
+        try (Ndef ndef = Ndef.get(tagFromIntent)) {
+            ndef.connect();
+            NdefMessage ndefMessage = ndef.getNdefMessage();
+            NfcPayload nfcPayload = NfcPayloadUtil.parseMessage(ndefMessage);
+
+            if (nfcPayload == null) {
+                playSound(R.raw.negative);
+                Toast.makeText(this, R.string.tag_read_empty, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, R.string.tag_read_ok, Toast.LENGTH_SHORT).show();
+                playSound(R.raw.positive);
+                loadAndStartFavorite(nfcPayload.getFavoriteId());
+            }
+
+        } catch (FormatException | IOException e) {
+            Snackbar.make(binding.coordinator, getString(R.string.tag_read_error, e.getMessage()), Snackbar.LENGTH_LONG).show();
         }
     }
 

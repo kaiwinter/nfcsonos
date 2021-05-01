@@ -34,4 +34,7 @@
     <string name="starting_browser_for_login">Starting browser for login</string>
     <string name="failed_response_error">Couldn\'t load data (%1$d)</string>
     <string name="group_id_changed">Group name changed. This happens if the speaker was unplugged.</string>
+    <string name="tag_read_empty">Empty or unreadable tag</string>
+    <string name="tag_read_ok">Tag ok</string>
+    <string name="tag_read_error">Error reading tag: %1$s</string>
 </resources>

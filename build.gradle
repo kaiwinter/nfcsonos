@@ -16,7 +16,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "http://maven.appfoundry.be" }
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
 }
 
