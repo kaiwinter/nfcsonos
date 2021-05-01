@@ -4,6 +4,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.util.Log;
 
+import com.github.kaiwinter.nfcsonos.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -26,9 +27,9 @@ public class NfcPayloadUtil {
 
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[]{
-                        /*NdefRecord.createUri("https://github.com/kaiwinter/nfcsonos/tagScanned"),*/
+                        NdefRecord.createUri("https://github.com/kaiwinter/nfcsonos/scanned"),
                         NdefRecord.createTextRecord("de", jsonPayload),
-                        NdefRecord.createApplicationRecord("com.github.kaiwinter.nfcsonos")}
+                        /*NdefRecord.createApplicationRecord(BuildConfig.APPLICATION_ID)*/}
         );
         return msg;
     }
@@ -40,6 +41,9 @@ public class NfcPayloadUtil {
      * @return A {@link NfcPayload} or <code>null</code>
      */
     public static NfcPayload parseMessage(NdefMessage ndefMessage) {
+        if (ndefMessage == null) {
+            return null;
+        }
         NdefRecord[] records = ndefMessage.getRecords();
         for (NdefRecord record : records) {
             if (record.getTnf() != NdefRecord.TNF_WELL_KNOWN) {

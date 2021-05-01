@@ -30,6 +30,8 @@ import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.pair.PairActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
+import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
+import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
@@ -38,8 +40,6 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
-import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.FileDescriptor;
@@ -76,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
             startDiscoverActivity();
             return;
         }
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            handleIntent(intent);
+        }
+
         //signOut();
     }
 
@@ -110,6 +116,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
+        handleIntent(intent);
+    }
+
+    /**
+     * Checks if the intent is of type ACTION_NDEF_DISCOVERED and handles it accordingly. If intent is of a different type nothing is done.
+     *
+     * @param intent the {@link Intent}
+     */
+    private void handleIntent(Intent intent) {
         if (!NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             return;
         }
