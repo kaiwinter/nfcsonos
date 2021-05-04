@@ -4,7 +4,6 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.util.Log;
 
-import com.github.kaiwinter.nfcsonos.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 

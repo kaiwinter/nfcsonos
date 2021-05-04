@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -31,14 +32,15 @@ import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.pair.PairActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
+import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
+import com.github.kaiwinter.nfcsonos.model.StoredFavorite;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
-import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
-import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
+import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.google.android.material.snackbar.Snackbar;
@@ -57,13 +59,15 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferencesStore sharedPreferencesStore;
     private AccessTokenManager accessTokenManager;
+    private FavoriteCache favoriteCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPreferencesStore = new SharedPreferencesStore(this);
-        accessTokenManager = new AccessTokenManager(this);
+        sharedPreferencesStore = new SharedPreferencesStore(getApplicationContext());
+        accessTokenManager = new AccessTokenManager(getApplicationContext());
+        favoriteCache = new FavoriteCache(getApplicationContext());
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -190,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
             binding.trackName.setText("");
             binding.coverImage.setImageResource(R.drawable.ic_nfc_green);
         });
+        showCoverImage(favoriteId);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
@@ -200,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    loadPlaybackMetadata();
+                    hideLoadingState(null);
                 } else {
                     playSound(R.raw.negative);
 
@@ -212,10 +217,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     String message = ServiceFactory.handleError(MainActivity.this, response);
-                    runOnUiThread(() -> {
-                        hideLoadingState(message);
-                        binding.coverImage.setImageResource(R.drawable.ic_nfc);
-                    });
+                    hideLoadingState(message);
+                    runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
                 }
             }
 
@@ -226,81 +229,41 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
             }
         });
-
     }
 
-    public void loadPlaybackMetadata() {
-        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
-            return;
+    private void showCoverImage(String favoriteId) {
+        favoriteCache.getFavorite(favoriteId, this::showCoverImage, this::hideLoadingState);
+    }
+
+    private void showCoverImage(@NonNull StoredFavorite storedFavorite) {
+        runOnUiThread(() -> binding.trackName.setText(storedFavorite.name));
+
+        String imageUrl = storedFavorite.imageUrl;
+
+        if (imageUrl != null) {
+            RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
+
+                @Override
+                public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
+                    hideLoadingState(e.getMessage());
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                    return false;
+                }
+            };
+            Glide.with(getApplicationContext())
+                    .load(Uri.parse(imageUrl))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .timeout(10000)
+                    .placeholder(R.drawable.ic_nfc_green)
+                    .fitCenter()
+                    .error(R.drawable.error)
+                    .listener(requestListener)
+                    .into(binding.coverImage);
         }
-
-        runOnUiThread(() -> displayLoading(getString(R.string.loading_metadata)));
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
-
-        service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
-            @Override
-            public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
-                if (!response.isSuccessful()) {
-                    playSound(R.raw.negative);
-                    String message = ServiceFactory.handleError(MainActivity.this, response);
-                    hideLoadingState(message);
-                    runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
-                    return;
-                }
-
-                PlaybackMetadata playbackMetadata = response.body();
-
-                runOnUiThread(() -> binding.trackName.setText(playbackMetadata.container.name));
-
-                if (playbackMetadata.currentItem == null) {
-                    runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
-                    return;
-                }
-
-                String imageUrl = playbackMetadata.currentItem.track.imageUrl;
-
-                if (imageUrl != null) {
-                    runOnUiThread(() -> displayLoading(getString(R.string.loading_cover)));
-//                    Picasso.get()
-//                        .load(Uri.parse(action.getResponse().currentItem.track.imageUrl))
-//                        .into(binding.coverImage;
-
-                    RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
-
-                        @Override
-                        public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
-                            hideLoadingState(e.getMessage());
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                            hideLoadingState(null);
-                            return false;
-                        }
-                    };
-                    Glide.with(getApplicationContext())
-                            .load(Uri.parse(imageUrl))
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .timeout(10000)
-                            .placeholder(R.drawable.ic_nfc_green)
-                            .fitCenter()
-                            .error(R.drawable.error)
-                            .listener(requestListener)
-                            .into(binding.coverImage);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
-                playSound(R.raw.negative);
-                runOnUiThread(() -> {
-                    hideLoadingState(getString(R.string.error_loading_metadata, t.getMessage()));
-                    binding.coverImage.setImageResource(R.drawable.ic_nfc);
-                });
-            }
-        });
     }
 
     private void startLoginActivity() {

@@ -18,38 +18,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
+import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityPairBinding;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
-import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
-import com.github.kaiwinter.nfcsonos.rest.model.Favorites;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
-import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class PairActivity extends AppCompatActivity {
 
     private ActivityPairBinding binding;
-
     private MaterialDialog dialog;
-
-    private SharedPreferencesStore sharedPreferencesStore;
-    private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sharedPreferencesStore = new SharedPreferencesStore(this);
-        accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityPairBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -57,7 +42,13 @@ public class PairActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
-        loadFavorites();
+        FavoriteCache favoriteCache = new FavoriteCache(getApplicationContext());
+
+        displayLoading(getString(R.string.loading_favorites));
+        favoriteCache.loadFavorites(favorites -> runOnUiThread(() -> {
+            binding.spinner.setItems(favorites.items);
+            hideLoadingState(null);
+        }), this::hideLoadingState);
     }
 
     @Override
@@ -82,38 +73,6 @@ public class PairActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void loadFavorites() {
-        if (refreshTokenIfNeeded(this::loadFavorites)) {
-            return;
-        }
-        displayLoading(getString(R.string.loading_favorites));
-
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
-
-        service.getFavorites(sharedPreferencesStore.getHouseholdId()).enqueue(new Callback<Favorites>() {
-            @Override
-            public void onResponse(Call<Favorites> call, Response<Favorites> response) {
-                if (response.isSuccessful()) {
-                    Favorites favorites = response.body();
-
-                    runOnUiThread(() -> {
-                        binding.spinner.setItems(favorites.items);
-                        hideLoadingState(null);
-                    });
-                } else {
-                    String message = ServiceFactory.handleError(PairActivity.this, response);
-                    hideLoadingState(message);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Favorites> call, Throwable t) {
-                hideLoadingState(getString(R.string.error, t.getMessage()));
-            }
-        });
     }
 
     public void writeTag(View view) {
@@ -180,14 +139,5 @@ public class PairActivity extends AppCompatActivity {
             }
             binding.loadingContainer.setVisibility(View.GONE);
         });
-    }
-
-    private boolean refreshTokenIfNeeded(Runnable runnable) {
-        if (accessTokenManager.accessTokenRefreshNeeded()) {
-            displayLoading(getString(R.string.refresh_access_token));
-            accessTokenManager.refreshAccessToken(this, runnable, this::hideLoadingState);
-            return true;
-        }
-        return false;
     }
 }
