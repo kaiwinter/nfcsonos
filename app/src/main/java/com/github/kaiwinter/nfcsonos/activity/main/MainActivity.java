@@ -213,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
                     if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
                         startDiscoverActivity();
                         Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
+                        hideLoadingState(null);
                         return;
                     }
 
