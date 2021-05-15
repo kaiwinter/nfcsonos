@@ -291,11 +291,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void runTestTag(View view) {
-        playSound(R.raw.positive);
-        loadAndStartFavorite("63");
-    }
-
     private boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             displayLoading(getString(R.string.refresh_access_token));

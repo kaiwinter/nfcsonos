@@ -115,7 +115,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="300dp"
                             android:contentDescription="@string/cover_image"
-                            android:onClick="runTestTag"
                             app:srcCompat="@drawable/ic_nfc" />
 
                     </LinearLayout>
