@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.activity.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityDiscoverBinding;
 import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
@@ -55,7 +56,7 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     private void loadHouseholds() {
-        displayLoading("Loading Households");
+        displayLoading(getString(R.string.loading_households));
 
         if (refreshTokenIfNeeded(this::loadHouseholds)) {
             return;
@@ -84,7 +85,7 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     private void loadGroups(String householdId) {
-        displayLoading("Loading Groups");
+        displayLoading(getString(R.string.loading_groups));
         binding.group.setItems(Collections.emptyList());
 
         if (refreshTokenIfNeeded(this::loadHouseholds)) {
@@ -116,10 +117,10 @@ public class DiscoverActivity extends AppCompatActivity {
         Household selectedHousehold = (Household) binding.household.getItems().get(binding.household.getSelectedIndex());
         Group selectedGroup = (Group) binding.group.getItems().get(binding.group.getSelectedIndex());
         if (selectedHousehold == null) {
-            hideLoadingState("No Household selected");
+            hideLoadingState(getString(R.string.no_household_selected));
             return;
         } else if (selectedGroup == null) {
-            hideLoadingState("No Group selected");
+            hideLoadingState(getString(R.string.no_group_selected));
             return;
         }
 
@@ -129,7 +130,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            displayLoading("Refreshing access token");
+            displayLoading(getString(R.string.refresh_access_token));
             accessTokenManager.refreshAccessToken(this, runnable, this::hideLoadingState);
             return true;
         }
