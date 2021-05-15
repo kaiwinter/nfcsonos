@@ -35,7 +35,7 @@ public class AccessTokenManager {
         long expiresAt = sharedPreferencesStore.getExpiresAt();
         long currentTimestamp = new Date().getTime();
 
-        return currentTimestamp + EXPIRE_TOLERANCE_SECONDS >= expiresAt;
+        return currentTimestamp + (EXPIRE_TOLERANCE_SECONDS * 1000) >= expiresAt;
     }
 
     /**
