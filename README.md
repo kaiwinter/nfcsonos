@@ -43,5 +43,6 @@ The Sonos Cloud API doesn't allow to play a album from e.g. Spotify in a direct 
 
 ## Credits
 
-Sounds from https://mixkit.co/  
-CD cover placeholder image: [Designed by rawpixel.com / Freepik](http://www.freepik.com)
+Sounds: https://mixkit.co/  
+CD cover placeholder image: [Designed by rawpixel.com / Freepik](http://www.freepik.com)  
+App icon made by <a href="https://www.flaticon.com/authors/flat-icons" title="Flat Icons">Flat Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
