@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name_short" translatable="false">NFC Sonos</string>
+    <string name="app_name_short" translatable="false">NFC Player</string>
     <string name="sonos_login" translatable="false">Sonos Login</string>
     <string name="start_authorization">Start Login</string>
     <string name="error">Error: %1$s</string>

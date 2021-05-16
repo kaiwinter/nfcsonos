@@ -1,4 +1,4 @@
-# NFC Sonos
+# NFC Player
 
 This app starts a Sonos favorite by scanning a NFC tag. 
 
