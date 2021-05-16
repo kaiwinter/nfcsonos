@@ -115,7 +115,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="300dp"
                             android:contentDescription="@string/cover_image"
-                            app:srcCompat="@drawable/ic_nfc" />
+                            app:srcCompat="@drawable/cover_placeholder" />
 
                     </LinearLayout>
                 </LinearLayout>

@@ -192,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
 
         runOnUiThread(() -> {
             binding.trackName.setText("");
-            binding.coverImage.setImageResource(R.drawable.ic_nfc_green);
         });
         showCoverImage(favoriteId);
 
@@ -219,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
 
                     String message = ServiceFactory.handleError(MainActivity.this, response);
                     hideLoadingState(message);
-                    runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
                 }
             }
 
@@ -227,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<Void> call, Throwable t) {
                 playSound(R.raw.negative);
                 hideLoadingState(getString(R.string.error_starting_favorite, t.getMessage()));
-                runOnUiThread(() -> binding.coverImage.setImageResource(R.drawable.ic_nfc));
             }
         });
     }
@@ -259,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                     .load(Uri.parse(imageUrl))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .timeout(10000)
-                    .placeholder(R.drawable.ic_nfc_green)
+                    .placeholder(R.drawable.cover_placeholder)
                     .fitCenter()
                     .error(R.drawable.error)
                     .listener(requestListener)
