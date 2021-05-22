@@ -109,7 +109,7 @@ public final class LoginActivity extends AppCompatActivity {
         try {
             customTabsIntent.launchUrl(this, Uri.parse(url));
         } catch (ActivityNotFoundException e) {
-            hideLoadingState("Couldn't start browser");
+            hideLoadingState(getString(R.string.couldnt_start_browser));
         }
     }
 
@@ -139,7 +139,7 @@ public final class LoginActivity extends AppCompatActivity {
         Uri data = intent.getData();
         if (data == null) {
             if (binding.loadingContainer.getVisibility() == View.VISIBLE) {
-                hideLoadingState("Authorization cancelled");
+                hideLoadingState(getString(R.string.authorization_cancelled));
             }
             return;
         }

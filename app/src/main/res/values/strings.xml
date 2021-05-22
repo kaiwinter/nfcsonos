@@ -43,4 +43,6 @@
     <string name="loading_groups">Loading Groups</string>
     <string name="no_household_selected">No Household selected</string>
     <string name="no_group_selected">No Group selected</string>
+    <string name="authorization_cancelled">Authorization cancelled</string>
+    <string name="couldnt_start_browser">Couldn\'t start browser</string>
 </resources>

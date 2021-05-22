@@ -41,4 +41,6 @@
     <string name="loading_groups">Lade Gruppen</string>
     <string name="no_household_selected">Kein Haushalt gewählt</string>
     <string name="no_group_selected">Keine Gruppe gewählt</string>
+    <string name="authorization_cancelled">Autorisierung abgebrochen</string>
+    <string name="couldnt_start_browser">Browser konnte nicht gestartet werden</string>
 </resources>
