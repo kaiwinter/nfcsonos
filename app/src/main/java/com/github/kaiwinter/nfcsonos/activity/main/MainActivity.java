@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -33,14 +32,14 @@ import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.pair.PairActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
 import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
-import com.github.kaiwinter.nfcsonos.model.StoredFavorite;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
+import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
-import com.github.kaiwinter.nfcsonos.rest.model.Item;
+import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.google.android.material.snackbar.Snackbar;
@@ -230,14 +229,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showCoverImage(String favoriteId) {
-        favoriteCache.getFavorite(favoriteId, this::showCoverImage, this::hideLoadingState);
-    }
-
-    private void showCoverImage(@NonNull StoredFavorite storedFavorite) {
+        favoriteCache.getFavorite(favoriteId, storedFavorite -> {
         runOnUiThread(() -> binding.trackName.setText(storedFavorite.name));
 
         String imageUrl = storedFavorite.imageUrl;
+            loadAndShowCoverImage(imageUrl);
+        }, this::hideLoadingState);
+    }
 
+    private void loadAndShowCoverImage(String imageUrl) {
         if (imageUrl != null) {
             RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
 
@@ -286,6 +286,48 @@ public class MainActivity extends AppCompatActivity {
     public void startPairActivity(View view) {
         Intent intent = new Intent(getApplicationContext(), PairActivity.class);
         startActivity(intent);
+    }
+
+
+    public void coverImageClicked(View view) {
+        loadPlaybackMetadata();
+    }
+
+    private void loadPlaybackMetadata() {
+        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
+            return;
+        }
+
+        displayLoading(getString(R.string.loading_metadata));
+        String accessToken = sharedPreferencesStore.getAccessToken();
+        PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
+
+        service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
+            @Override
+            public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
+                if (!response.isSuccessful()) {
+                    String message = ServiceFactory.handleError(MainActivity.this, response);
+                    hideLoadingState(message);
+                    return;
+                }
+
+                hideLoadingState(null);
+                PlaybackMetadata playbackMetadata = response.body();
+                if (playbackMetadata == null || playbackMetadata.container == null) {
+                    return;
+                }
+
+                runOnUiThread(() -> binding.trackName.setText(playbackMetadata.container.name));
+
+                String imageUrl = playbackMetadata.currentItem.track.imageUrl;
+                loadAndShowCoverImage(imageUrl);
+            }
+
+            @Override
+            public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
+                hideLoadingState(t.getMessage());
+            }
+        });
     }
 
     private boolean refreshTokenIfNeeded(Runnable runnable) {
