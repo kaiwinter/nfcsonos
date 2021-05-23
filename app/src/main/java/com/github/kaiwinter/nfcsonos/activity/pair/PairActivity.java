@@ -48,6 +48,7 @@ public class PairActivity extends AppCompatActivity {
         favoriteCache.loadFavorites(favorites -> runOnUiThread(() -> {
             binding.spinner.setItems(favorites.items);
             hideLoadingState(null);
+            binding.linkButton.setEnabled(true);
         }), this::hideLoadingState);
     }
 

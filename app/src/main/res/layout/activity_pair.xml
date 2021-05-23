@@ -85,11 +85,13 @@
                         android:layout_height="wrap_content" />
 
                     <Button
+                        android:id="@+id/link_button"
                         style="@style/Widget.AppCompat.Button.Colored"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:onClick="writeTag"
+                        android:enabled="false"
                         android:text="@string/link" />
 
                     <LinearLayout
