@@ -15,6 +15,7 @@ import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
+import com.github.kaiwinter.nfcsonos.rest.GroupVolumeService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
@@ -189,9 +191,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        runOnUiThread(() -> {
-            binding.trackName.setText("");
-        });
+        runOnUiThread(() -> binding.trackName.setText(""));
         showCoverImage(favoriteId);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
@@ -326,6 +326,36 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
                 hideLoadingState(t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP: {
+                setVolumeOnSonosGroup(5);
+                return true;
+            }
+            case KeyEvent.KEYCODE_VOLUME_DOWN: {
+                setVolumeOnSonosGroup(-5);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    private void setVolumeOnSonosGroup(int volumeDelta) {
+        String accessToken = sharedPreferencesStore.getAccessToken();
+        String groupId = sharedPreferencesStore.getGroupId();
+        GroupVolumeService service = ServiceFactory.createGroupVolumeService(accessToken);
+        Call<Void> call = service.setRelativeVolume(groupId, new GroupVolumeService.VolumeDeltaRequest(volumeDelta));
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
             }
         });
     }
