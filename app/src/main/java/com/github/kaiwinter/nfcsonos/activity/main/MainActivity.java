@@ -344,10 +344,12 @@ public class MainActivity extends AppCompatActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP: {
                 setVolumeOnSonosGroup(5);
+                Toast.makeText(this, getString(R.string.volume_changed, "+5"), Toast.LENGTH_SHORT).show();
                 return true;
             }
             case KeyEvent.KEYCODE_VOLUME_DOWN: {
                 setVolumeOnSonosGroup(-5);
+                Toast.makeText(this, getString(R.string.volume_changed, "-5"), Toast.LENGTH_SHORT).show();
                 return true;
             }
         }
