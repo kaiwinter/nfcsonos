@@ -57,8 +57,7 @@ public class FavoriteCache {
                 Map<String, StoredFavorite> storedFavorites = (Map<String, StoredFavorite>) inputStream.readObject();
                 StoredFavorite storedFavorite = storedFavorites.get(favoriteId);
                 if (storedFavorite == null) {
-                    onError.accept(context.getString(R.string.favorite_not_found_in_cache, favoriteId));
-                    return;
+                    updateFavorites(favoriteId, onSuccess, onError);
                 }
                 onSuccess.accept(storedFavorite);
                 return;
@@ -66,14 +65,19 @@ public class FavoriteCache {
                 onError.accept(context.getString(R.string.error, e.getMessage()));
             }
         }
+        updateFavorites(favoriteId, onSuccess, onError);
+    }
 
+    void updateFavorites(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<String> onError) {
         loadFavorites(favorites -> {
             for (Item item : favorites.items) {
                 if (favoriteId.equals(item.id)) {
                     StoredFavorite foundFavorite = StoredFavorite.fromItem(item);
                     onSuccess.accept(foundFavorite);
+                    return;
                 }
             }
+            onError.accept(context.getString(R.string.favorite_not_found_in_cache, favoriteId));
         }, onError);
     }
 
