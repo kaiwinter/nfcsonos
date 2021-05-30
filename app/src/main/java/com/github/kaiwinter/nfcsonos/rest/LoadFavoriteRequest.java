@@ -18,6 +18,10 @@ public class LoadFavoriteRequest {
         this.favoriteId = favoriteId;
     }
 
+    public String getFavoriteId() {
+        return favoriteId;
+    }
+
     static class PlayModes {
         boolean shuffle = false;
         boolean repeat = false;

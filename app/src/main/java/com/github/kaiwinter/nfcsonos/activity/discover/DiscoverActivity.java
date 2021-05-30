@@ -33,9 +33,16 @@ public class DiscoverActivity extends AppCompatActivity {
     private SharedPreferencesStore sharedPreferencesStore;
     private AccessTokenManager accessTokenManager;
 
+    private String retryLoadFavoriteId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            retryLoadFavoriteId = intent.getStringExtra(MainActivity.RETRY_LOAD_FAVORITE);
+        }
 
         sharedPreferencesStore = new SharedPreferencesStore(this);
         accessTokenManager = new AccessTokenManager(this);
@@ -151,7 +158,9 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     private void switchToMainActivity() {
-        startActivity(new Intent(this, MainActivity.class));
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(MainActivity.RETRY_LOAD_FAVORITE, retryLoadFavoriteId);
+        startActivity(intent);
         finish();
     }
 

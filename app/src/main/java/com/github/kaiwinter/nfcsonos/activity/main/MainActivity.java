@@ -56,6 +56,8 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    public static final String RETRY_LOAD_FAVORITE = "RETRY_LOAD_FAVORITE";
+
     private ActivityMainBinding binding;
 
     private SharedPreferencesStore sharedPreferencesStore;
@@ -79,12 +81,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (!isHouseholdAndGroupAvailable()) {
-            startDiscoverActivity();
+            startDiscoverActivity(null);
             return;
         }
 
         Intent intent = getIntent();
         if (intent != null) {
+            String retryLoadFavoriteId = intent.getStringExtra(RETRY_LOAD_FAVORITE);
+            if (retryLoadFavoriteId != null) {
+                loadAndStartFavorite(retryLoadFavoriteId);
+            }
             handleIntent(intent);
         }
 
@@ -209,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
                     APIError apiError = ServiceFactory.parseError(response);
                     if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        startDiscoverActivity();
+                        startDiscoverActivity(request);
                         Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
                         hideLoadingState(null);
                         return;
@@ -271,8 +277,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void startDiscoverActivity() {
+    private void startDiscoverActivity(LoadFavoriteRequest retryRequest) {
         Intent intent = new Intent(getApplicationContext(), DiscoverActivity.class);
+        if (retryRequest != null) {
+            intent.putExtra(RETRY_LOAD_FAVORITE, retryRequest.getFavoriteId());
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
