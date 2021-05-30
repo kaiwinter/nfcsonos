@@ -1,5 +1,8 @@
 package com.github.kaiwinter.nfcsonos.rest.model;
 
+import android.content.Context;
+
+import com.github.kaiwinter.nfcsonos.R;
 import com.google.gson.annotations.SerializedName;
 
 import retrofit2.Response;
@@ -21,9 +24,21 @@ public class APIError {
      */
     public static final String ERROR_RESOURCE_GONE = "ERROR_RESOURCE_GONE";
 
+    public int httpCode;
+
     @SerializedName("errorCode")
     public String errorCode;
 
     @SerializedName("reason")
     public String reason;
+
+    public APIError(int httpCode, String errorCode, String reason) {
+        this.httpCode = httpCode;
+        this.errorCode = errorCode;
+        this.reason = reason;
+    }
+
+    public String toMessage(Context context) {
+        return context.getString(R.string.error_long, httpCode, errorCode, reason);
+    }
 }

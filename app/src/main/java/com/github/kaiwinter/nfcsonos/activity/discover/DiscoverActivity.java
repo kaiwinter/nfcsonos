@@ -83,7 +83,7 @@ public class DiscoverActivity extends AppCompatActivity {
                     }
                     loadGroups(body.households.get(0).id);
                 } else {
-                    String message = ServiceFactory.handleError(DiscoverActivity.this, response);
+                    String message = ServiceFactory.parseError(response).toMessage(DiscoverActivity.this);
                     hideLoadingState(message);
                 }
             }
@@ -117,7 +117,7 @@ public class DiscoverActivity extends AppCompatActivity {
                     binding.group.setItems(body.groups);
                     binding.selectButton.setEnabled(true);
                 } else {
-                    String message = ServiceFactory.handleError(DiscoverActivity.this, response);
+                    String message = ServiceFactory.parseError(response).toMessage(DiscoverActivity.this);
                     hideLoadingState(message);
                 }
                 hideLoadingState(null);

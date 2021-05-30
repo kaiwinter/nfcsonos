@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    String message = ServiceFactory.handleError(MainActivity.this, response);
+                    String message = apiError.toMessage(MainActivity.this);
                     hideLoadingState(message);
                 }
             }
@@ -236,9 +236,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void showCoverImage(String favoriteId) {
         favoriteCache.getFavorite(favoriteId, storedFavorite -> {
-        runOnUiThread(() -> binding.trackName.setText(storedFavorite.name));
+            runOnUiThread(() -> binding.trackName.setText(storedFavorite.name));
 
-        String imageUrl = storedFavorite.imageUrl;
+            String imageUrl = storedFavorite.imageUrl;
             loadAndShowCoverImage(imageUrl);
         }, this::hideLoadingState);
     }
@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
                 if (!response.isSuccessful()) {
-                    String message = ServiceFactory.handleError(MainActivity.this, response);
+                    String message = ServiceFactory.parseError(response).toMessage(MainActivity.this);
                     hideLoadingState(message);
                     return;
                 }
@@ -353,6 +353,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
     private void setVolumeOnSonosGroup(int volumeDelta) {
         String accessToken = sharedPreferencesStore.getAccessToken();
         String groupId = sharedPreferencesStore.getGroupId();

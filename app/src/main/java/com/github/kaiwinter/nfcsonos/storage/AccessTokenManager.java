@@ -65,7 +65,7 @@ public class AccessTokenManager {
                         onSuccess.run();
                     }
                 } else {
-                    String message = ServiceFactory.handleError(context, response);
+                    String message = ServiceFactory.parseError(response).toMessage(context);
                     if (onError != null) {
                         onError.accept(message);
                     }

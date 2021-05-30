@@ -10,7 +10,6 @@
     <string name="pair_button_description">Button to pair a NFC tag with a favorite</string>
     <string name="loading_favorites">Loading favorites</string>
     <string name="refresh_access_token">Refreshing Access Token</string>
-    <string name="loading_cover">Loading cover</string>
     <string name="loading_metadata">Loading metadata</string>
     <string name="error_loading_metadata">Error loading metadata: %1$s</string>
     <string name="starting_favorite">Starting favorite</string>
@@ -32,7 +31,6 @@
     <string name="link_tag_description">Choose a favorite and press the \'LINK\' Button.</string>
     <string name="loading_access_token">Loading access token</string>
     <string name="starting_browser_for_login">Starting browser for login</string>
-    <string name="failed_response_error">Couldn\'t load data (%1$d)</string>
     <string name="group_id_changed">Group name changed. This happens if the speaker was unplugged.</string>
     <string name="no_household_found">No household available</string>
     <string name="no_group_found">No group available</string>
@@ -45,4 +43,5 @@
     <string name="no_group_selected">No Group selected</string>
     <string name="authorization_cancelled">Authorization cancelled</string>
     <string name="couldnt_start_browser">Couldn\'t start browser</string>
+    <string name="favorite_not_found_in_cache">Favourite \'%1$s\' not in cache</string>
 </resources>

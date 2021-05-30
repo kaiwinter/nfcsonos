@@ -162,7 +162,7 @@ public final class LoginActivity extends AppCompatActivity {
                         sharedPreferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                         switchToMainActivity();
                     } else {
-                        String message = ServiceFactory.handleError(LoginActivity.this, response);
+                        String message = ServiceFactory.parseError(response).toMessage(LoginActivity.this);
                         hideLoadingState(message);
                     }
                 }

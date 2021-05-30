@@ -56,6 +56,10 @@ public class FavoriteCache {
             try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
                 Map<String, StoredFavorite> storedFavorites = (Map<String, StoredFavorite>) inputStream.readObject();
                 StoredFavorite storedFavorite = storedFavorites.get(favoriteId);
+                if (storedFavorite == null) {
+                    onError.accept(context.getString(R.string.favorite_not_found_in_cache, favoriteId));
+                    return;
+                }
                 onSuccess.accept(storedFavorite);
                 return;
             } catch (IOException | ClassNotFoundException e) {
@@ -99,7 +103,7 @@ public class FavoriteCache {
                         onError.accept(context.getString(R.string.error, e.getMessage()));
                     }
                 } else {
-                    String message = ServiceFactory.handleError(context, response);
+                    String message = ServiceFactory.parseError(response).toMessage(context);
                     onError.accept(message);
                 }
             }
