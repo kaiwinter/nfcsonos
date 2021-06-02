@@ -13,7 +13,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:label="@string/app_name_short"
             android:theme="@style/AppTheme"
-            android:usesCleartextTraffic="true">
+            android:usesCleartextTraffic="true"
+            android:name=".activity.discover.NfcPlayerApplication">
 
         <!-- Login activity -->
         <activity

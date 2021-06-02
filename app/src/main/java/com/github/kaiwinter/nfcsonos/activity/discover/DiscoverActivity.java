@@ -22,6 +22,8 @@ import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,15 +32,15 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private ActivityDiscoverBinding binding;
 
-    private SharedPreferencesStore sharedPreferencesStore;
-    private AccessTokenManager accessTokenManager;
+    @Inject
+    SharedPreferencesStore sharedPreferencesStore;
+
+    @Inject
+    AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sharedPreferencesStore = new SharedPreferencesStore(this);
-        accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityDiscoverBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

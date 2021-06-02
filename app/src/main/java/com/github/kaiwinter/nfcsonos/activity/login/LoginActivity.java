@@ -25,6 +25,8 @@ import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,13 +44,15 @@ public final class LoginActivity extends AppCompatActivity {
 
     private CustomTabsClient customTabsClient;
 
-    private SharedPreferencesStore sharedPreferencesStore;
+    @Inject
+    SharedPreferencesStore sharedPreferencesStore;
+
+    @Inject
+    AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sharedPreferencesStore = new SharedPreferencesStore(this);
 
         Log.i(TAG, "Creating CustomTabsServiceConnection");
         CustomTabsServiceConnection customTabsServiceConnection = new CustomTabsServiceConnection() {
@@ -82,7 +86,7 @@ public final class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        AccessTokenManager accessTokenManager = new AccessTokenManager(this);
+//        AccessTokenManager accessTokenManager = new AccessTokenManager(this);
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             accessTokenManager.refreshAccessToken(this, this::switchToMainActivity, this::hideLoadingState);
             return;

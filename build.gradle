@@ -3,8 +3,10 @@ buildscript {
         google()
         mavenCentral()
     }
+    ext.hilt_version = '2.35.1'
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
     }
 }
 

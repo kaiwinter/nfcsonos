@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,13 +37,16 @@ public class FavoriteCache {
     private static final String CACHE_FILENAME = "favorites";
 
     private final Context context;
-    private final SharedPreferencesStore sharedPreferencesStore;
-    private final AccessTokenManager accessTokenManager;
 
-    public FavoriteCache(Context context) {
+    @Inject
+    SharedPreferencesStore sharedPreferencesStore;
+
+    @Inject
+    AccessTokenManager accessTokenManager;
+
+    @Inject
+    public FavoriteCache(@ApplicationContext Context context) {
         this.context = context;
-        this.sharedPreferencesStore = new SharedPreferencesStore(context);
-        this.accessTokenManager = new AccessTokenManager(context);
     }
 
     /**

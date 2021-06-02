@@ -3,7 +3,16 @@ package com.github.kaiwinter.nfcsonos.storage;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.Provides;
+import dagger.hilt.android.AndroidEntryPoint;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
+@Singleton
 public class SharedPreferencesStore {
 
     private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
@@ -13,9 +22,11 @@ public class SharedPreferencesStore {
     private static final String HOUSEHOLD_ID = "HOUSEHOLD_ID";
     private static final String GROUP_ID = "GROUP_ID";
 
-    private final SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
 
-    public SharedPreferencesStore(Context context) {
+    @Inject
+    public SharedPreferencesStore(@ApplicationContext Context context) {
+        Log.e("TAG", "SharedPreferencesStore(@ApplicationContext Context context)");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 

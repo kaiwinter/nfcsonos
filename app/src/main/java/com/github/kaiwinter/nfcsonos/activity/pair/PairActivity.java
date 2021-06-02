@@ -7,6 +7,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -27,10 +28,19 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
+import dagger.hilt.EntryPoint;
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class PairActivity extends AppCompatActivity {
 
     private ActivityPairBinding binding;
     private MaterialDialog dialog;
+
+    @Inject
+    FavoriteCache favoriteCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +52,8 @@ public class PairActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
-        FavoriteCache favoriteCache = new FavoriteCache(getApplicationContext());
-
+//        FavoriteCache favoriteCache = new FavoriteCache(getApplicationContext());
+//
         displayLoading(getString(R.string.loading_favorites));
         favoriteCache.loadFavorites(favorites -> runOnUiThread(() -> {
             binding.spinner.setItems(favorites.items);
@@ -56,6 +66,9 @@ public class PairActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
+        if (Build.FINGERPRINT.contains("generic")) {
+            return;
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);

@@ -1,6 +1,7 @@
 package com.github.kaiwinter.nfcsonos.storage;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 
 import androidx.core.util.Consumer;
@@ -12,6 +13,9 @@ import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,10 +24,11 @@ public class AccessTokenManager {
 
     private static final long EXPIRE_TOLERANCE_SECONDS = 60;
 
-    private final SharedPreferencesStore sharedPreferencesStore;
+    private SharedPreferencesStore sharedPreferencesStore;
 
-    public AccessTokenManager(Context context) {
-        sharedPreferencesStore = new SharedPreferencesStore(context);
+    @Inject
+    public AccessTokenManager(SharedPreferencesStore sharedPreferencesStore) {
+        this.sharedPreferencesStore = sharedPreferencesStore;
     }
 
     /**

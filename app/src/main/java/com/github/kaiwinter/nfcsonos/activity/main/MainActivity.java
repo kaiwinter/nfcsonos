@@ -12,6 +12,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -49,26 +50,34 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.FileDescriptor;
 import java.io.IOException;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private ActivityMainBinding binding;
 
-    private SharedPreferencesStore sharedPreferencesStore;
-    private AccessTokenManager accessTokenManager;
-    private FavoriteCache favoriteCache;
+    @Inject
+    SharedPreferencesStore sharedPreferencesStore;
+
+    @Inject
+    AccessTokenManager accessTokenManager;
+
+    @Inject
+    FavoriteCache favoriteCache;
+
+    @Inject
+    FavoriteService favoriteService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sharedPreferencesStore = new SharedPreferencesStore(getApplicationContext());
-        accessTokenManager = new AccessTokenManager(getApplicationContext());
-        favoriteCache = new FavoriteCache(getApplicationContext());
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -104,7 +113,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        if (Build.FINGERPRINT.contains("generic")) {
+            return;
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
@@ -113,6 +124,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
+        if (Build.FINGERPRINT.contains("generic")) {
+            return;
+        }
 
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcAdapter.disableForegroundDispatch(this);
@@ -195,11 +209,11 @@ public class MainActivity extends AppCompatActivity {
         showCoverImage(favoriteId);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
-        FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
+//        FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
 
         LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId);
 
-        service.loadFavorite(sharedPreferencesStore.getGroupId(), request).enqueue(new Callback<Void>() {
+        favoriteService.loadFavorite(sharedPreferencesStore.getGroupId(), request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -230,9 +244,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void showCoverImage(String favoriteId) {
         favoriteCache.getFavorite(favoriteId, storedFavorite -> {
-        runOnUiThread(() -> binding.trackName.setText(storedFavorite.name));
+            runOnUiThread(() -> binding.trackName.setText(storedFavorite.name));
 
-        String imageUrl = storedFavorite.imageUrl;
+            String imageUrl = storedFavorite.imageUrl;
             loadAndShowCoverImage(imageUrl);
         }, this::hideLoadingState);
     }
