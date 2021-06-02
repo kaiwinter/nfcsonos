@@ -56,8 +56,6 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public static final String RETRY_LOAD_FAVORITE = "RETRY_LOAD_FAVORITE";
-
     private ActivityMainBinding binding;
 
     private SharedPreferencesStore sharedPreferencesStore;
@@ -71,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferencesStore = new SharedPreferencesStore(getApplicationContext());
         accessTokenManager = new AccessTokenManager(getApplicationContext());
         favoriteCache = new FavoriteCache(getApplicationContext());
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -81,15 +78,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (!isHouseholdAndGroupAvailable()) {
-            startDiscoverActivity(null);
+            startDiscoverActivity(null, null);
             return;
         }
 
         Intent intent = getIntent();
         if (intent != null) {
-            String retryLoadFavoriteId = intent.getStringExtra(RETRY_LOAD_FAVORITE);
-            if (retryLoadFavoriteId != null) {
-                loadAndStartFavorite(retryLoadFavoriteId);
+            String retryActionString = intent.getStringExtra(RetryAction.class.getSimpleName());
+            if (retryActionString != null) {
+                RetryAction retryAction = RetryAction.valueOf(retryActionString);
+                if (retryAction == RetryAction.RETRY_LOAD_FAVORITE) {
+                    String retryId = intent.getStringExtra(RetryAction.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
+                    loadAndStartFavorite(retryId);
+                } else if (retryAction == RetryAction.RETRY_LOAD_METADATA) {
+                    loadPlaybackMetadata();
+                }
             }
             handleIntent(intent);
         }
@@ -215,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
                     APIError apiError = ServiceFactory.parseError(response);
                     if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        startDiscoverActivity(request);
+                        startDiscoverActivity(RetryAction.RETRY_LOAD_FAVORITE, favoriteId);
                         Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
                         hideLoadingState(null);
                         return;
@@ -277,10 +280,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void startDiscoverActivity(LoadFavoriteRequest retryRequest) {
+    private void startDiscoverActivity(RetryAction retryAction, String id) {
         Intent intent = new Intent(getApplicationContext(), DiscoverActivity.class);
-        if (retryRequest != null) {
-            intent.putExtra(RETRY_LOAD_FAVORITE, retryRequest.getFavoriteId());
+        if (retryAction != null) {
+            intent.putExtra(RetryAction.class.getSimpleName(), retryAction.name());
+            intent.putExtra(RetryAction.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION, id);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
@@ -296,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), PairActivity.class);
         startActivity(intent);
     }
-
 
     public void coverImageClicked(View view) {
         loadPlaybackMetadata();
@@ -315,6 +318,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
                 if (!response.isSuccessful()) {
+                    APIError apiError = ServiceFactory.parseError(response);
+                    if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
+                        startDiscoverActivity(RetryAction.RETRY_LOAD_METADATA, null);
+                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
+                        hideLoadingState(null);
+                        return;
+                    }
+
                     String message = ServiceFactory.parseError(response).toMessage(MainActivity.this);
                     hideLoadingState(message);
                     return;
