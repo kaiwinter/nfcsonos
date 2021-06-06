@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/cover_placeholder"
+        android:title="Start" />
+
+    <item
+        android:id="@+id/pair"
+        android:icon="@drawable/cover_placeholder"
+        android:title="Pair" />
+
+    <item
+        android:id="@+id/about"
+        android:icon="@drawable/cover_placeholder"
+        android:title="About" />
+
+</menu>

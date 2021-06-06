@@ -45,4 +45,6 @@
     <string name="couldnt_start_browser">Couldn\'t start browser</string>
     <string name="favorite_not_found_in_cache">Favourite \'%1$s\' not in cache</string>
     <string name="volume_changed">Volume %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

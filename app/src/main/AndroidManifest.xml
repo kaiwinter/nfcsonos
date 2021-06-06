@@ -56,14 +56,6 @@
         </activity>
 
         <activity
-            android:name=".activity.pair.PairActivity"
-            android:label="@string/link_favorite_to_nfc_tag"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait">
-        </activity>
-
-        <activity
             android:name=".activity.discover.DiscoverActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
