@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -59,18 +60,22 @@ public class MainFragment extends Fragment {
     private AccessTokenManager accessTokenManager;
     private FavoriteCache favoriteCache;
 
-    public MainFragment(SharedPreferencesStore sharedPreferencesStore, AccessTokenManager accessTokenManager, FavoriteCache favoriteCache) {
-        this.sharedPreferencesStore = sharedPreferencesStore;
-        this.accessTokenManager = accessTokenManager;
-        this.favoriteCache = favoriteCache;
-    }
+//    private MainViewModel viewModel;
+
+//    public MainFragment(SharedPreferencesStore sharedPreferencesStore, AccessTokenManager accessTokenManager, FavoriteCache favoriteCache) {
+//        this.sharedPreferencesStore = sharedPreferencesStore;
+//        this.accessTokenManager = accessTokenManager;
+//        this.favoriteCache = favoriteCache;
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         binding = FragmentMainBinding.inflate(getLayoutInflater());
+
+        sharedPreferencesStore = new SharedPreferencesStore(getActivity());
+        accessTokenManager = new AccessTokenManager(getActivity());
+        favoriteCache = new FavoriteCache(getActivity());
 
         if (TextUtils.isEmpty(sharedPreferencesStore.getAccessToken())) {
             startLoginActivity();
@@ -104,18 +109,19 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+//        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         return binding.getRoot();
     }
 
-    private void signOut() {
-        sharedPreferencesStore.setTokens(null, null, -1);
-        sharedPreferencesStore.setHouseholdAndGroup(null, null);
-
-        Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
-        loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(loginIntent);
-        getActivity().finish();
-    }
+//    private void signOut() {
+//        sharedPreferencesStore.setTokens(null, null, -1);
+//        sharedPreferencesStore.setHouseholdAndGroup(null, null);
+//
+//        Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
+//        loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        startActivity(loginIntent);
+//        getActivity().finish();
+//    }
 
     /**
      * Checks if the intent is of type ACTION_NDEF_DISCOVERED and handles it accordingly. If intent is of a different type nothing is done.

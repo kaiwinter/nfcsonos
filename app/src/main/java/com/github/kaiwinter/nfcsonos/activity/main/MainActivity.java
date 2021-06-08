@@ -3,23 +3,23 @@ package com.github.kaiwinter.nfcsonos.activity.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
-import com.github.kaiwinter.nfcsonos.AboutFragment;
 import com.github.kaiwinter.nfcsonos.MainFragment;
 import com.github.kaiwinter.nfcsonos.PairFragment;
 import com.github.kaiwinter.nfcsonos.R;
+import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
 import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.rest.GroupVolumeService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,59 +33,18 @@ public class MainActivity extends AppCompatActivity {
 
     Fragment selectedFragment = null;
 
+    private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        sharedPreferencesStore = new SharedPreferencesStore(getApplicationContext());
-        accessTokenManager = new AccessTokenManager(getApplicationContext());
-        favoriteCache = new FavoriteCache(getApplicationContext());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
-
-        // as soon as the application opens the first
-        // fragment should be shown to the user
-        // in this case it is algorithm fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MainFragment(sharedPreferencesStore, accessTokenManager, favoriteCache)).commit();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupWithNavController(binding.navView, navController);
     }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            // By using switch we can easily get
-            // the selected fragment
-            // by using there id.
-            switch (item.getItemId()) {
-                case R.id.home:
-                    if (selectedFragment instanceof MainFragment) {
-                        return true;
-                    }
-                    selectedFragment = new MainFragment(sharedPreferencesStore, accessTokenManager, favoriteCache);
-                    break;
-                case R.id.pair:
-                    if (selectedFragment instanceof PairFragment) {
-                        return true;
-                    }
-                    selectedFragment = new PairFragment();
-                    break;
-                case R.id.about:
-                    if (selectedFragment instanceof AboutFragment) {
-                        return true;
-                    }
-                    selectedFragment = new AboutFragment();
-                    break;
-            }
-            // It will help to replace the
-            // one fragment to other.
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, selectedFragment)
-                    .commit();
-            return true;
-        }
-    };
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

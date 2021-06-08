@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/home"
-        android:icon="@drawable/cover_placeholder"
+        android:id="@+id/fragment_main"
+        android:icon="@drawable/ic_outline_home_24"
         android:title="Start" />
 
     <item
-        android:id="@+id/pair"
-        android:icon="@drawable/cover_placeholder"
+        android:id="@+id/fragment_pair"
+        android:icon="@drawable/ic_outline_add_circle_outline_24"
         android:title="Pair" />
 
     <item
-        android:id="@+id/about"
-        android:icon="@drawable/cover_placeholder"
+        android:id="@+id/fragment_about"
+        android:icon="@drawable/ic_outline_info_24"
         android:title="About" />
 
 </menu>

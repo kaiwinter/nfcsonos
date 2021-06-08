@@ -36,22 +36,26 @@ public class PairFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         binding = FragmentPairBinding.inflate(getLayoutInflater());
+
         FavoriteCache favoriteCache = new FavoriteCache(getActivity());
 
         displayLoading(getString(R.string.loading_favorites));
-        favoriteCache.loadFavorites(favorites -> getActivity().runOnUiThread(() -> {
-            binding.spinner.setItems(favorites.items);
-            hideLoadingState(null);
-            binding.linkButton.setEnabled(true);
-        }), this::hideLoadingState);
+        favoriteCache.loadFavorites(favorites -> {
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                            binding.spinner.setItems(favorites.items);
+                            hideLoadingState(null);
+                            binding.linkButton.setEnabled(true);
+                        }
+                );
+            }
+        }, this::hideLoadingState);
 
         binding.linkButton.setOnClickListener(__ -> writeTag());
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return binding.getRoot();
     }
 
@@ -69,14 +73,6 @@ public class PairFragment extends Fragment {
         super.onPause();
 //        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 //        nfcAdapter.disableForegroundDispatch(this);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            getActivity().finish();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public void writeTag() {
