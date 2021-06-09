@@ -2,16 +2,13 @@ package com.github.kaiwinter.nfcsonos;
 
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,68 +18,51 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.main.RetryAction;
 import com.github.kaiwinter.nfcsonos.databinding.FragmentMainBinding;
-import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
-import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
-import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
-import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
-import com.github.kaiwinter.nfcsonos.rest.model.APIError;
-import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
-import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getSimpleName();
 
     private FragmentMainBinding binding;
 
-    private SharedPreferencesStore sharedPreferencesStore;
-    private AccessTokenManager accessTokenManager;
-    private FavoriteCache favoriteCache;
-
-//    private MainViewModel viewModel;
-
-//    public MainFragment(SharedPreferencesStore sharedPreferencesStore, AccessTokenManager accessTokenManager, FavoriteCache favoriteCache) {
-//        this.sharedPreferencesStore = sharedPreferencesStore;
-//        this.accessTokenManager = accessTokenManager;
-//        this.favoriteCache = favoriteCache;
-//    }
+    private MainViewModel viewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = FragmentMainBinding.inflate(getLayoutInflater());
+        viewModel.errorContainerVisibility.observe(this, visibility -> binding.errorContainer.setVisibility(visibility));
+        viewModel.errorMessageMutableLiveData.observe(this, errorMessage -> {
+            String message = errorMessage.getMessage(getActivity());
+//            if (!TextUtils.isEmpty(message)) {
+            binding.errorContainer.setVisibility(View.VISIBLE);
+            binding.errorDescription.setText(message);
+//            }
+        });
+        viewModel.loadingContainerVisibility.observe(this, visibility -> binding.loadingContainer.setVisibility(visibility));
+        viewModel.loadingDescriptionResId.observe(this, resId -> binding.loadingDescription.setText(getString(resId)));
+//        viewModel.statusLabel.observe(this, text -> {
+//            loadingContainerVisibility.setValue(View.VISIBLE);
+//            loadingDescriptionText.setValue(loadingMessage);
+//            errorContainerVisibility.setValue(View.GONE);
+//        });
+        viewModel.soundToPlay.observe(this, this::playSound);
 
-        sharedPreferencesStore = new SharedPreferencesStore(getActivity());
-        accessTokenManager = new AccessTokenManager(getActivity());
-        favoriteCache = new FavoriteCache(getActivity());
-
-        if (TextUtils.isEmpty(sharedPreferencesStore.getAccessToken())) {
+        if (!viewModel.isUserLoggedIn()) {
             startLoginActivity();
             return;
         }
 
-        if (!isHouseholdAndGroupAvailable()) {
+        if (!viewModel.isHouseholdAndGroupAvailable()) {
             startDiscoverActivity(null, null);
             return;
         }
@@ -94,9 +74,9 @@ public class MainFragment extends Fragment {
                 RetryAction retryAction = RetryAction.valueOf(retryActionString);
                 if (retryAction == RetryAction.RETRY_LOAD_FAVORITE) {
                     String retryId = intent.getStringExtra(RetryAction.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
-                    loadAndStartFavorite(retryId);
+                    viewModel.loadAndStartFavorite(retryId);
                 } else if (retryAction == RetryAction.RETRY_LOAD_METADATA) {
-                    loadPlaybackMetadata();
+                    viewModel.loadPlaybackMetadata();
                 }
             }
             handleIntent(intent);
@@ -109,7 +89,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel = new ViewModelProvider(this, new MainViewModelFactory(getActivity().getApplication())).get(MainViewModel.class);
         return binding.getRoot();
     }
 
@@ -149,7 +129,7 @@ public class MainFragment extends Fragment {
             } else {
                 Toast.makeText(getActivity(), R.string.tag_read_ok, Toast.LENGTH_SHORT).show();
                 playSound(R.raw.positive);
-                loadAndStartFavorite(nfcPayload.getFavoriteId());
+                viewModel.loadAndStartFavorite(nfcPayload.getFavoriteId());
             }
 
         } catch (FormatException | IOException e) {
@@ -181,90 +161,6 @@ public class MainFragment extends Fragment {
         }
     }
 
-    public void loadAndStartFavorite(String favoriteId) {
-        displayLoading(getString(R.string.starting_favorite));
-
-        if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
-            return;
-        }
-
-        runOnUiThread(() -> binding.trackName.setText(""));
-        showCoverImage(favoriteId);
-
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
-
-        LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId);
-
-        service.loadFavorite(sharedPreferencesStore.getGroupId(), request).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    hideLoadingState(null);
-                } else {
-                    playSound(R.raw.negative);
-
-                    APIError apiError = ServiceFactory.parseError(response);
-                    if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        startDiscoverActivity(RetryAction.RETRY_LOAD_FAVORITE, favoriteId);
-                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
-                        hideLoadingState(null);
-                        return;
-                    }
-
-                    String message = apiError.toMessage(getActivity());
-                    hideLoadingState(message);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                playSound(R.raw.negative);
-                hideLoadingState(getString(R.string.error_starting_favorite, t.getMessage()));
-            }
-        });
-    }
-
-    private void runOnUiThread(Runnable o) {
-        getActivity().runOnUiThread(o);
-    }
-
-    private void showCoverImage(String favoriteId) {
-        favoriteCache.getFavorite(favoriteId, storedFavorite -> {
-            runOnUiThread(() -> binding.trackName.setText(storedFavorite.name));
-
-            String imageUrl = storedFavorite.imageUrl;
-            loadAndShowCoverImage(imageUrl);
-        }, this::hideLoadingState);
-    }
-
-    private void loadAndShowCoverImage(String imageUrl) {
-        if (imageUrl != null) {
-            RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
-
-                @Override
-                public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
-                    hideLoadingState(e.getMessage());
-                    return false;
-                }
-
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                    return false;
-                }
-            };
-            Glide.with(getActivity())
-                    .load(Uri.parse(imageUrl))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .timeout(10000)
-                    .placeholder(R.drawable.cover_placeholder)
-                    .fitCenter()
-                    .error(R.drawable.error)
-                    .listener(requestListener)
-                    .into(binding.coverImage);
-        }
-    }
-
     private void startLoginActivity() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         // Make the app exit if back is pressed on login activity. Else the user returns to the Login
@@ -282,85 +178,7 @@ public class MainFragment extends Fragment {
         startActivity(intent);
     }
 
-    private boolean isHouseholdAndGroupAvailable() {
-        boolean householdSelected = !TextUtils.isEmpty(sharedPreferencesStore.getHouseholdId());
-        boolean groupSelected = !TextUtils.isEmpty(sharedPreferencesStore.getGroupId());
-        return householdSelected && groupSelected;
-    }
-
     public void coverImageClicked() {
-        loadPlaybackMetadata();
-    }
-
-    private void loadPlaybackMetadata() {
-        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
-            return;
-        }
-
-        displayLoading(getString(R.string.loading_metadata));
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
-
-        service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
-            @Override
-            public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
-                if (!response.isSuccessful()) {
-                    APIError apiError = ServiceFactory.parseError(response);
-                    if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        startDiscoverActivity(RetryAction.RETRY_LOAD_METADATA, null);
-                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
-                        hideLoadingState(null);
-                        return;
-                    }
-
-                    String message = ServiceFactory.parseError(response).toMessage(getActivity());
-                    hideLoadingState(message);
-                    return;
-                }
-
-                hideLoadingState(null);
-                PlaybackMetadata playbackMetadata = response.body();
-                if (playbackMetadata == null || playbackMetadata.container == null) {
-                    return;
-                }
-
-                runOnUiThread(() -> binding.trackName.setText(playbackMetadata.container.name));
-
-                String imageUrl = playbackMetadata.currentItem.track.imageUrl;
-                loadAndShowCoverImage(imageUrl);
-            }
-
-            @Override
-            public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
-                hideLoadingState(t.getMessage());
-            }
-        });
-    }
-
-    private boolean refreshTokenIfNeeded(Runnable runnable) {
-        if (accessTokenManager.accessTokenRefreshNeeded()) {
-            displayLoading(getString(R.string.refresh_access_token));
-            accessTokenManager.refreshAccessToken(getActivity(), runnable, this::hideLoadingState);
-            return true;
-        }
-        return false;
-    }
-
-    private void displayLoading(String loadingMessage) {
-        runOnUiThread(() -> {
-            binding.loadingContainer.setVisibility(View.VISIBLE);
-            binding.loadingDescription.setText(loadingMessage);
-            binding.errorContainer.setVisibility(View.GONE);
-        });
-    }
-
-    private void hideLoadingState(String errormessage) {
-        runOnUiThread(() -> {
-            if (!TextUtils.isEmpty(errormessage)) {
-                binding.errorContainer.setVisibility(View.VISIBLE);
-                binding.errorDescription.setText(errormessage);
-            }
-            binding.loadingContainer.setVisibility(View.GONE);
-        });
+        viewModel.loadPlaybackMetadata();
     }
 }
