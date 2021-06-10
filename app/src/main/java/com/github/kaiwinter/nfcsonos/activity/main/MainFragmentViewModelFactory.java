@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos;
+package com.github.kaiwinter.nfcsonos.activity.main;
 
 import android.app.Application;
 

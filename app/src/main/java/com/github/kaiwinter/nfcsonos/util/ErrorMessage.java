@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos;
+package com.github.kaiwinter.nfcsonos.util;
 
 import android.content.Context;
 
@@ -37,14 +37,14 @@ public class ErrorMessage {
 
     private APIError apiError;
 
-    static ErrorMessage createSimpleStringErrorMessage(String message) {
+    public static ErrorMessage createSimpleStringErrorMessage(String message) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.type = Type.SIMPLE_STRING;
         errorMessage.simpleStringMessage = message;
         return errorMessage;
     }
 
-    static ErrorMessage createResourceIdErrorMessage(int resId, String replacementString) {
+    public static ErrorMessage createResourceIdErrorMessage(int resId, String replacementString) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.type = Type.RESOURCE_ID_WITH_STRING;
         errorMessage.resId = resId;
@@ -52,7 +52,7 @@ public class ErrorMessage {
         return errorMessage;
     }
 
-    static ErrorMessage createAPIErrorErrorMessage(APIError apiError) {
+    public static ErrorMessage createAPIErrorErrorMessage(APIError apiError) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.type = Type.API_ERROR;
         errorMessage.apiError = apiError;

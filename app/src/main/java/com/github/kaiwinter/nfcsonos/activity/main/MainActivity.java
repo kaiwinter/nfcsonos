@@ -12,14 +12,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import com.github.kaiwinter.nfcsonos.MainFragment;
-import com.github.kaiwinter.nfcsonos.PairFragment;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
-import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.rest.GroupVolumeService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
-import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 
 import retrofit2.Call;

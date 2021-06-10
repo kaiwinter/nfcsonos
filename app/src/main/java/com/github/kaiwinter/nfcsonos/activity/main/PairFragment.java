@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos;
+package com.github.kaiwinter.nfcsonos.activity.main;
 
 import android.content.Intent;
 import android.nfc.FormatException;
@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.FragmentPairBinding;
 import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;

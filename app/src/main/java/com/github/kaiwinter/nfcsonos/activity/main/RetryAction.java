@@ -1,6 +1,4 @@
-package com.github.kaiwinter.nfcsonos;
-
-import com.github.kaiwinter.nfcsonos.activity.main.MainActivity;
+package com.github.kaiwinter.nfcsonos.activity.main;
 
 /**
  * Holds a {@link RetryActionType} and an optional ID.

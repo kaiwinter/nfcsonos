@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos;
+package com.github.kaiwinter.nfcsonos.activity.main;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -7,7 +7,8 @@ import android.view.View;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.github.kaiwinter.nfcsonos.RetryAction.RetryActionType;
+import com.github.kaiwinter.nfcsonos.R;
+import com.github.kaiwinter.nfcsonos.activity.main.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
@@ -17,6 +18,7 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
+import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
 import com.github.kaiwinter.nfcsonos.util.SingleLiveEvent;
 
 import retrofit2.Call;

@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos;
+package com.github.kaiwinter.nfcsonos.activity.main;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.github.kaiwinter.nfcsonos.R;
 
 /**
  * A simple {@link Fragment} subclass.
