@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -28,10 +29,6 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private SharedPreferencesStore sharedPreferencesStore;
-    private AccessTokenManager accessTokenManager;
-    private FavoriteCache favoriteCache;
-
-    Fragment selectedFragment = null;
 
     private ActivityMainBinding binding;
 
@@ -44,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        sharedPreferencesStore = new SharedPreferencesStore(getApplicationContext());
     }
 
     @Override
@@ -100,10 +99,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (selectedFragment instanceof MainFragment) {
-            ((MainFragment) selectedFragment).handleIntent(intent);
-        } else if (selectedFragment instanceof PairFragment) {
-            ((PairFragment) selectedFragment).handleIntent(intent);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
+        if (fragment == null) {
+            return;
+        }
+        FragmentManager childFragmentManager = fragment.getChildFragmentManager();
+        Fragment currentFragment = childFragmentManager.getPrimaryNavigationFragment();
+
+        if (currentFragment instanceof MainFragment) {
+            ((MainFragment) currentFragment).handleIntent(intent);
+        } else if (currentFragment instanceof PairFragment) {
+            ((PairFragment) currentFragment).handleIntent(intent);
         }
     }
 }
