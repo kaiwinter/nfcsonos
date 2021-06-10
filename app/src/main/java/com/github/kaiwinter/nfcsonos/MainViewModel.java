@@ -1,20 +1,12 @@
 package com.github.kaiwinter.nfcsonos;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.github.kaiwinter.nfcsonos.activity.main.RetryActionType;
 import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
@@ -25,8 +17,6 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-
-import java.net.Authenticator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -96,16 +86,7 @@ public class MainViewModel extends ViewModel {
                 } else {
                     soundToPlay.setValue(R.raw.negative);
 
-                    APIError apiError = ServiceFactory.parseError(response);
-                    if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        RetryAction retryAction = new RetryAction(RetryActionType.RETRY_LOAD_FAVORITE, favoriteId);
-                        navigateToDiscoverActivity.postValue(retryAction);
-                        hideLoadingState();
-                        return;
-                    }
-
-                    ErrorMessage errorMessage = ErrorMessage.createAPIErrorErrorMessage(apiError);
-                    hideLoadingState(errorMessage);
+                    handleError(response, new RetryAction(RetryActionType.RETRY_LOAD_FAVORITE, favoriteId));
                 }
             }
 
@@ -131,30 +112,20 @@ public class MainViewModel extends ViewModel {
         service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
             @Override
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
-                if (!response.isSuccessful()) {
-                    APIError apiError = ServiceFactory.parseError(response);
-                    if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        RetryAction retryAction = new RetryAction(RetryActionType.RETRY_LOAD_METADATA);
-                        navigateToDiscoverActivity.postValue(retryAction);
-                        hideLoadingState();
+                if (response.isSuccessful()) {
+                    hideLoadingState();
+                    PlaybackMetadata playbackMetadata = response.body();
+                    if (playbackMetadata == null || playbackMetadata.container == null) {
                         return;
                     }
 
-                    ErrorMessage errorMessage = ErrorMessage.createAPIErrorErrorMessage(apiError);
-                    hideLoadingState(errorMessage);
-                    return;
+                    trackName.setValue(playbackMetadata.container.name);
+
+                    String imageUrl = playbackMetadata.currentItem.track.imageUrl;
+                    coverImageToLoad.setValue(imageUrl);
+                } else {
+                    handleError(response, new RetryAction(RetryActionType.RETRY_LOAD_METADATA));
                 }
-
-                hideLoadingState();
-                PlaybackMetadata playbackMetadata = response.body();
-                if (playbackMetadata == null || playbackMetadata.container == null) {
-                    return;
-                }
-
-                trackName.setValue(playbackMetadata.container.name);
-
-                String imageUrl = playbackMetadata.currentItem.track.imageUrl;
-                coverImageToLoad.setValue(imageUrl);
             }
 
             @Override
@@ -162,6 +133,26 @@ public class MainViewModel extends ViewModel {
                 hideLoadingState(t.getMessage());
             }
         });
+    }
+
+    /**
+     * Handles the error of a service request. If Sonos returns "ERROR_RESOURCE_GONE", the user gets
+     * redirected to the {@link com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity}.
+     * Afterwards the retryAction is called.
+     *
+     * @param response    the response which contains the error
+     * @param retryAction the {@link RetryAction} which is called when the user returns from the
+     *                    {@link com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity}
+     */
+    private void handleError(Response<?> response, RetryAction retryAction) {
+        APIError apiError = ServiceFactory.parseError(response);
+        if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
+            navigateToDiscoverActivity.postValue(retryAction);
+            hideLoadingState();
+        } else {
+            ErrorMessage errorMessage = ErrorMessage.createAPIErrorErrorMessage(apiError);
+            hideLoadingState(errorMessage);
+        }
     }
 
     private void showCoverImage(String favoriteId) {
