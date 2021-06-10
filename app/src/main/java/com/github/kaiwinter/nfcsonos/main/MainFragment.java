@@ -102,21 +102,9 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return binding.getRoot();
     }
-
-//    private void signOut() {
-//        sharedPreferencesStore.setTokens(null, null, -1);
-//        sharedPreferencesStore.setHouseholdAndGroup(null, null);
-//
-//        Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
-//        loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(loginIntent);
-//        getActivity().finish();
-//    }
 
     /**
      * Checks if the intent is of type ACTION_NDEF_DISCOVERED and handles it accordingly. If intent is of a different type nothing is done.
