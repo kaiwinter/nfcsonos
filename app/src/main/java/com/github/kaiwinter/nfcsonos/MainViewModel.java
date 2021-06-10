@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.kaiwinter.nfcsonos.activity.main.RetryActionType;
 import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
@@ -24,6 +25,8 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
+
+import java.net.Authenticator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +42,8 @@ public class MainViewModel extends ViewModel {
 
     public final MutableLiveData<String> coverImageToLoad = new MutableLiveData<>();
     public final MutableLiveData<Integer> soundToPlay = new MutableLiveData<>();
+
+    public final SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
 
     private final SharedPreferencesStore sharedPreferencesStore;
     private final AccessTokenManager accessTokenManager;
@@ -70,12 +75,11 @@ public class MainViewModel extends ViewModel {
     }
 
     public void loadAndStartFavorite(Context context, String favoriteId) {
-        displayLoading(R.string.starting_favorite);
-
         if (refreshTokenIfNeeded(context, () -> loadAndStartFavorite(context, favoriteId))) {
             return;
         }
 
+        displayLoading(R.string.starting_favorite);
         trackName.setValue("");
         showCoverImage(favoriteId);
 
@@ -94,9 +98,8 @@ public class MainViewModel extends ViewModel {
 
                     APIError apiError = ServiceFactory.parseError(response);
                     if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        // FIXME
-//                        startDiscoverActivity(RetryAction.RETRY_LOAD_FAVORITE, favoriteId);
-//                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
+                        RetryAction retryAction = new RetryAction(RetryActionType.RETRY_LOAD_FAVORITE, favoriteId);
+                        navigateToDiscoverActivity.postValue(retryAction);
                         hideLoadingState();
                         return;
                     }
@@ -121,6 +124,7 @@ public class MainViewModel extends ViewModel {
         }
 
         displayLoading(R.string.loading_metadata);
+
         String accessToken = sharedPreferencesStore.getAccessToken();
         PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
 
@@ -130,9 +134,8 @@ public class MainViewModel extends ViewModel {
                 if (!response.isSuccessful()) {
                     APIError apiError = ServiceFactory.parseError(response);
                     if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        // FIXME
-//                        startDiscoverActivity(RetryAction.RETRY_LOAD_METADATA, null);
-//                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
+                        RetryAction retryAction = new RetryAction(RetryActionType.RETRY_LOAD_METADATA);
+                        navigateToDiscoverActivity.postValue(retryAction);
                         hideLoadingState();
                         return;
                     }

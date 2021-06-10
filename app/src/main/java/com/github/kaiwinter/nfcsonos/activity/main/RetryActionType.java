@@ -6,7 +6,7 @@ package com.github.kaiwinter.nfcsonos.activity.main;
  * a new one. Afterwards the {@link MainActivity} executes the previous action with the help of this
  * enum.
  */
-public enum RetryAction {
+public enum RetryActionType {
     /**
      * Retry loading a favorite.
      */

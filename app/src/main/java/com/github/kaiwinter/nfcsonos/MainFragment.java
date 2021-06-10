@@ -28,7 +28,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
-import com.github.kaiwinter.nfcsonos.activity.main.RetryAction;
+import com.github.kaiwinter.nfcsonos.activity.main.RetryActionType;
 import com.github.kaiwinter.nfcsonos.databinding.FragmentMainBinding;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
@@ -66,6 +66,11 @@ public class MainFragment extends Fragment {
         viewModel.coverImageToLoad.observe(this, this::loadAndShowCoverImage);
         viewModel.soundToPlay.observe(this, this::playSound);
 
+        viewModel.navigateToDiscoverActivity.observe(this, retryAction -> {
+            Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
+            startDiscoverActivity(retryAction.getRetryActionType(), retryAction.getAdditionalId());
+        });
+
         if (!viewModel.isUserLoggedIn()) {
             startLoginActivity();
             return;
@@ -78,13 +83,13 @@ public class MainFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
         if (intent != null) {
-            String retryActionString = intent.getStringExtra(RetryAction.class.getSimpleName());
+            String retryActionString = intent.getStringExtra(RetryActionType.class.getSimpleName());
             if (retryActionString != null) {
-                RetryAction retryAction = RetryAction.valueOf(retryActionString);
-                if (retryAction == RetryAction.RETRY_LOAD_FAVORITE) {
-                    String retryId = intent.getStringExtra(RetryAction.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
+                RetryActionType retryActionType = RetryActionType.valueOf(retryActionString);
+                if (retryActionType == RetryActionType.RETRY_LOAD_FAVORITE) {
+                    String retryId = intent.getStringExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
                     viewModel.loadAndStartFavorite(getActivity().getApplicationContext(), retryId);
-                } else if (retryAction == RetryAction.RETRY_LOAD_METADATA) {
+                } else if (retryActionType == RetryActionType.RETRY_LOAD_METADATA) {
                     viewModel.loadPlaybackMetadata(getActivity().getApplicationContext());
                 }
             }
@@ -177,11 +182,11 @@ public class MainFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void startDiscoverActivity(RetryAction retryAction, String id) {
+    private void startDiscoverActivity(RetryActionType retryActionType, String id) {
         Intent intent = new Intent(getActivity(), DiscoverActivity.class);
-        if (retryAction != null) {
-            intent.putExtra(RetryAction.class.getSimpleName(), retryAction.name());
-            intent.putExtra(RetryAction.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION, id);
+        if (retryActionType != null) {
+            intent.putExtra(RetryActionType.class.getSimpleName(), retryActionType.name());
+            intent.putExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION, id);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
