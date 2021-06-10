@@ -22,7 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainViewModel extends ViewModel {
+public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<String> trackName = new MutableLiveData<>();
 
     public final MutableLiveData<Integer> loadingContainerVisibility = new MutableLiveData<>(View.GONE);
@@ -39,7 +39,7 @@ public class MainViewModel extends ViewModel {
     private final AccessTokenManager accessTokenManager;
     private final FavoriteCache favoriteCache;
 
-    public MainViewModel(SharedPreferencesStore sharedPreferencesStore, AccessTokenManager accessTokenManager, FavoriteCache favoriteCache) {
+    public MainFragmentViewModel(SharedPreferencesStore sharedPreferencesStore, AccessTokenManager accessTokenManager, FavoriteCache favoriteCache) {
         this.sharedPreferencesStore = sharedPreferencesStore;
         this.accessTokenManager = accessTokenManager;
         this.favoriteCache = favoriteCache;

@@ -9,20 +9,20 @@ import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 
-public class MainViewModelFactory implements ViewModelProvider.Factory {
+public class MainFragmentViewModelFactory implements ViewModelProvider.Factory {
     private final Application application;
 
-    public MainViewModelFactory(Application application) {
+    public MainFragmentViewModelFactory(Application application) {
         this.application = application;
     }
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
-        if (modelClass.equals(MainViewModel.class)) {
+        if (modelClass.equals(MainFragmentViewModel.class)) {
             SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStore(application);
             AccessTokenManager accessTokenManager = new AccessTokenManager(application);
             FavoriteCache favoriteCache = new FavoriteCache(application);
-            return (T) new MainViewModel(sharedPreferencesStore, accessTokenManager, favoriteCache);
+            return (T) new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, favoriteCache);
         }
         return null;
     }

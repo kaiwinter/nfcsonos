@@ -42,13 +42,13 @@ public class MainFragment extends Fragment {
 
     private FragmentMainBinding binding;
 
-    private MainViewModel viewModel;
+    private MainFragmentViewModel viewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = FragmentMainBinding.inflate(getLayoutInflater());
-        viewModel = new ViewModelProvider(this, new MainViewModelFactory(getActivity().getApplication())).get(MainViewModel.class);
+        viewModel = new ViewModelProvider(this, new MainFragmentViewModelFactory(getActivity().getApplication())).get(MainFragmentViewModel.class);
 
         viewModel.trackName.observe(this, binding.trackName::setText);
 
