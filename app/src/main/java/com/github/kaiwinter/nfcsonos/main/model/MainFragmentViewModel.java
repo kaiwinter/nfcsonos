@@ -15,6 +15,7 @@ import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
+import com.github.kaiwinter.nfcsonos.rest.model.CurrentItem;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
@@ -124,8 +125,11 @@ public class MainFragmentViewModel extends ViewModel {
 
                     trackName.setValue(playbackMetadata.container.name);
 
-                    String imageUrl = playbackMetadata.currentItem.track.imageUrl;
-                    coverImageToLoad.setValue(imageUrl);
+                    CurrentItem currentItem = playbackMetadata.currentItem;
+                    if (currentItem != null) {
+                        String imageUrl = currentItem.track.imageUrl;
+                        coverImageToLoad.setValue(imageUrl);
+                    }
                 } else {
                     handleError(response, new RetryAction(RetryActionType.RETRY_LOAD_METADATA));
                 }
