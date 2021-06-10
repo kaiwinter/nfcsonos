@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.github.kaiwinter.nfcsonos;
+package com.github.kaiwinter.nfcsonos.util;
 
 import android.util.Log;
 

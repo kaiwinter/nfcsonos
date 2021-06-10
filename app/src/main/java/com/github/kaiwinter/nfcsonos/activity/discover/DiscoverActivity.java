@@ -8,8 +8,9 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.nfcsonos.R;
+import com.github.kaiwinter.nfcsonos.RetryAction;
+import com.github.kaiwinter.nfcsonos.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.activity.main.MainActivity;
-import com.github.kaiwinter.nfcsonos.activity.main.RetryActionType;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityDiscoverBinding;
 import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;

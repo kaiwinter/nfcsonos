@@ -7,7 +7,7 @@ import android.view.View;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.github.kaiwinter.nfcsonos.activity.main.RetryActionType;
+import com.github.kaiwinter.nfcsonos.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
@@ -17,6 +17,7 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
+import com.github.kaiwinter.nfcsonos.util.SingleLiveEvent;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -184,10 +185,28 @@ public class MainFragmentViewModel extends ViewModel {
         hideLoadingState();
     }
 
+    /**
+     * Transports different error types from a ViewModel to the Fragment. {@link #getMessage(Context)}
+     * is used to get the error message as a String.
+     */
     public static class ErrorMessage {
+        /**
+         * Defines different types of {@link ErrorMessage}s.
+         */
         enum Type {
+            /**
+             * A plain String.
+             */
             SIMPLE_STRING,
+
+            /**
+             * A resource ID (R.string) and a string which is used as formatArgs.
+             */
             RESOURCE_ID_WITH_STRING,
+
+            /**
+             * A {@link APIError}.
+             */
             API_ERROR;
         }
 
