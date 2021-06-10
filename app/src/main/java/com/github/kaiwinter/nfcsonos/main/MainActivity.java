@@ -1,6 +1,8 @@
 package com.github.kaiwinter.nfcsonos.main;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.Toast;
@@ -78,17 +80,18 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-//        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-//        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+        // This is not absolutely necessary. But without this another instance of the app gets started even if the app is on foreground
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-//        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-//        nfcAdapter.disableForegroundDispatch(this);
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.disableForegroundDispatch(this);
     }
 
     @Override

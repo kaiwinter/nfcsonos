@@ -58,22 +58,6 @@ public class PairFragment extends Fragment {
         return binding.getRoot();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-//        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-//        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-//        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-//        nfcAdapter.disableForegroundDispatch(this);
-    }
-
     public void writeTag() {
 
         dialog = new MaterialDialog(getActivity(), MaterialDialog.getDEFAULT_BEHAVIOR())
