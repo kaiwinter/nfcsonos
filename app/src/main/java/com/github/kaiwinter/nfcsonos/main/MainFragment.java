@@ -27,14 +27,15 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
+import com.github.kaiwinter.nfcsonos.databinding.FragmentMainBinding;
 import com.github.kaiwinter.nfcsonos.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.login.LoginActivity;
-import com.github.kaiwinter.nfcsonos.databinding.FragmentMainBinding;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModelFactory;
+import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
+import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.FileDescriptor;
@@ -147,7 +148,7 @@ public class MainFragment extends Fragment {
             }
 
         } catch (FormatException | IOException e) {
-            Snackbar.make(binding.coordinator, getString(R.string.tag_read_error, e.getMessage()), Snackbar.LENGTH_LONG).show();
+            SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, getString(R.string.tag_read_error, e.getMessage()), Snackbar.LENGTH_LONG);
         }
     }
 

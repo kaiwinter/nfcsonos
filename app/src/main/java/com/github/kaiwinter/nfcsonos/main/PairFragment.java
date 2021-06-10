@@ -21,6 +21,7 @@ import com.github.kaiwinter.nfcsonos.main.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
+import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class PairFragment extends Fragment {
         }
 
         if (binding.spinner.getSelectedIndex() < 0) {
-            Snackbar.make(binding.coordinator, R.string.no_selection, Snackbar.LENGTH_LONG).show();
+            SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.no_selection, Snackbar.LENGTH_LONG);
             return;
         }
 
@@ -95,10 +96,10 @@ public class PairFragment extends Fragment {
             NdefMessage ndefMessage = NfcPayloadUtil.createMessage(nfcPayload);
 
             ndef.writeNdefMessage(ndefMessage);
-            Snackbar.make(binding.coordinator, R.string.tag_written, Snackbar.LENGTH_LONG).show();
+            SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.tag_written, Snackbar.LENGTH_LONG);
 
         } catch (FormatException | IOException e) {
-            Snackbar.make(binding.coordinator, getString(R.string.tag_written_error, e.getMessage()), Snackbar.LENGTH_LONG).show();
+            SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, getString(R.string.tag_written_error, e.getMessage()), Snackbar.LENGTH_LONG);
         } finally {
             dialog.dismiss();
         }
