@@ -46,5 +46,5 @@
     <string name="volume_changed">Volume %1$s</string>
     <string name="start" translatable="false">Start</string>
     <string name="pair">Pair</string>
-    <string name="about">About</string>
+    <string name="settings">Settings</string>
 </resources>
