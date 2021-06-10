@@ -1,4 +1,8 @@
-package com.github.kaiwinter.nfcsonos.activity.main;
+package com.github.kaiwinter.nfcsonos.main.model;
+
+import com.github.kaiwinter.nfcsonos.discover.DiscoverActivity;
+import com.github.kaiwinter.nfcsonos.main.MainFragment;
+import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
 
 /**
  * Holds a {@link RetryActionType} and an optional ID.
@@ -26,7 +30,7 @@ public class RetryAction {
 
     /**
      * If an action which runs on the {@link MainFragmentViewModel} fails because of a changed household or group
-     * the {@link com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity} is started to choose
+     * the {@link DiscoverActivity} is started to choose
      * a new one. Afterwards the {@link MainFragment} executes the previous action with the help of this
      * enum.
      */

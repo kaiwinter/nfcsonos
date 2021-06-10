@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.activity.main;
+package com.github.kaiwinter.nfcsonos.main.model;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.activity.main.RetryAction.RetryActionType;
-import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
+import com.github.kaiwinter.nfcsonos.discover.DiscoverActivity;
+import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
@@ -140,12 +140,12 @@ public class MainFragmentViewModel extends ViewModel {
 
     /**
      * Handles the error of a service request. If Sonos returns "ERROR_RESOURCE_GONE", the user gets
-     * redirected to the {@link com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity}.
+     * redirected to the {@link DiscoverActivity}.
      * Afterwards the retryAction is called.
      *
      * @param response    the response which contains the error
      * @param retryAction the {@link RetryAction} which is called when the user returns from the
-     *                    {@link com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity}
+     *                    {@link DiscoverActivity}
      */
     private void handleError(Response<?> response, RetryAction retryAction) {
         APIError apiError = ServiceFactory.parseError(response);

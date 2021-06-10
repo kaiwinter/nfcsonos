@@ -7,16 +7,16 @@
 
     <fragment
         android:id="@+id/fragment_main"
-        android:name="com.github.kaiwinter.nfcsonos.activity.main.MainFragment"
+        android:name="com.github.kaiwinter.nfcsonos.main.MainFragment"
         tools:layout="@layout/fragment_main" />
 
     <fragment
         android:id="@+id/fragment_pair"
-        android:name="com.github.kaiwinter.nfcsonos.activity.main.PairFragment"
+        android:name="com.github.kaiwinter.nfcsonos.main.PairFragment"
         tools:layout="@layout/fragment_pair" />
 
     <fragment
         android:id="@+id/fragment_about"
-        android:name="com.github.kaiwinter.nfcsonos.activity.main.AboutFragment"
+        android:name="com.github.kaiwinter.nfcsonos.main.AboutFragment"
         tools:layout="@layout/fragment_about" />
 </navigation>

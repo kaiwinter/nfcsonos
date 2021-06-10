@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.activity.main;
+package com.github.kaiwinter.nfcsonos.main;
 
 import android.os.Bundle;
 

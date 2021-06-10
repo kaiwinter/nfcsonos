@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.activity.main;
+package com.github.kaiwinter.nfcsonos.main;
 
 import android.content.Intent;
 import android.nfc.FormatException;
@@ -9,19 +9,17 @@ import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.FragmentPairBinding;
-import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
-import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
-import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
+import com.github.kaiwinter.nfcsonos.main.model.FavoriteCache;
+import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
+import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.google.android.material.snackbar.Snackbar;
 

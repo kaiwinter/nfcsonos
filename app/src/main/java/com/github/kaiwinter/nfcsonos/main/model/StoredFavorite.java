@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.model;
+package com.github.kaiwinter.nfcsonos.main.model;
 
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 

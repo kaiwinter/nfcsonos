@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.model;
+package com.github.kaiwinter.nfcsonos.main.model;
 
 import android.content.Context;
 

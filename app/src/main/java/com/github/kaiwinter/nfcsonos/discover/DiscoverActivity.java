@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.activity.discover;
+package com.github.kaiwinter.nfcsonos.discover;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +8,8 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.activity.main.RetryAction.RetryActionType;
-import com.github.kaiwinter.nfcsonos.activity.main.MainActivity;
+import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
+import com.github.kaiwinter.nfcsonos.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityDiscoverBinding;
 import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;

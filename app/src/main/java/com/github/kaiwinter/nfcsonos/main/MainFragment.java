@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.activity.main;
+package com.github.kaiwinter.nfcsonos.main;
 
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -27,12 +27,14 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.activity.main.RetryAction.RetryActionType;
-import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
-import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
+import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
+import com.github.kaiwinter.nfcsonos.discover.DiscoverActivity;
+import com.github.kaiwinter.nfcsonos.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.databinding.FragmentMainBinding;
-import com.github.kaiwinter.nfcsonos.nfc.NfcPayload;
-import com.github.kaiwinter.nfcsonos.nfc.NfcPayloadUtil;
+import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
+import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModelFactory;
+import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
+import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.FileDescriptor;

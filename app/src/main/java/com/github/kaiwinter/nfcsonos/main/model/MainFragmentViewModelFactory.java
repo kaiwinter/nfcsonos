@@ -1,11 +1,10 @@
-package com.github.kaiwinter.nfcsonos.activity.main;
+package com.github.kaiwinter.nfcsonos.main.model;
 
 import android.app.Application;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 

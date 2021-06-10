@@ -1,4 +1,4 @@
-package com.github.kaiwinter.nfcsonos.nfc;
+package com.github.kaiwinter.nfcsonos.main.nfc;
 
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
