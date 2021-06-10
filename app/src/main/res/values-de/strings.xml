@@ -42,4 +42,6 @@
     <string name="couldnt_start_browser">Browser konnte nicht gestartet werden</string>
     <string name="favorite_not_found_in_cache">Favorit \'%1$s\' nicht im Cache</string>
     <string name="volume_changed">Lautstärke %1$s</string>
+    <string name="pair">Verknüpfen</string>
+    <string name="about">Über</string>
 </resources>

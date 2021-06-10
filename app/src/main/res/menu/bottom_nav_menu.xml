@@ -4,16 +4,16 @@
     <item
         android:id="@+id/fragment_main"
         android:icon="@drawable/ic_outline_home_24"
-        android:title="Start" />
+        android:title="@string/start" />
 
     <item
         android:id="@+id/fragment_pair"
         android:icon="@drawable/ic_outline_add_circle_outline_24"
-        android:title="Pair" />
+        android:title="@string/pair" />
 
     <item
         android:id="@+id/fragment_about"
         android:icon="@drawable/ic_outline_info_24"
-        android:title="About" />
+        android:title="@string/about" />
 
 </menu>
