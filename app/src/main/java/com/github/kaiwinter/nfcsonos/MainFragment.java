@@ -2,7 +2,9 @@ package com.github.kaiwinter.nfcsonos;
 
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -18,6 +20,12 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.kaiwinter.nfcsonos.activity.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.activity.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.activity.main.RetryAction;
@@ -40,7 +48,11 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = FragmentMainBinding.inflate(getLayoutInflater());
-        viewModel.errorContainerVisibility.observe(this, visibility -> binding.errorContainer.setVisibility(visibility));
+        viewModel = new ViewModelProvider(this, new MainViewModelFactory(getActivity().getApplication())).get(MainViewModel.class);
+
+        viewModel.trackName.observe(this, binding.trackName::setText);
+
+        viewModel.errorContainerVisibility.observe(this, binding.errorContainer::setVisibility);
         viewModel.errorMessageMutableLiveData.observe(this, errorMessage -> {
             String message = errorMessage.getMessage(getActivity());
 //            if (!TextUtils.isEmpty(message)) {
@@ -48,13 +60,10 @@ public class MainFragment extends Fragment {
             binding.errorDescription.setText(message);
 //            }
         });
-        viewModel.loadingContainerVisibility.observe(this, visibility -> binding.loadingContainer.setVisibility(visibility));
+        viewModel.loadingContainerVisibility.observe(this, binding.loadingContainer::setVisibility);
         viewModel.loadingDescriptionResId.observe(this, resId -> binding.loadingDescription.setText(getString(resId)));
-//        viewModel.statusLabel.observe(this, text -> {
-//            loadingContainerVisibility.setValue(View.VISIBLE);
-//            loadingDescriptionText.setValue(loadingMessage);
-//            errorContainerVisibility.setValue(View.GONE);
-//        });
+
+        viewModel.coverImageToLoad.observe(this, this::loadAndShowCoverImage);
         viewModel.soundToPlay.observe(this, this::playSound);
 
         if (!viewModel.isUserLoggedIn()) {
@@ -74,9 +83,9 @@ public class MainFragment extends Fragment {
                 RetryAction retryAction = RetryAction.valueOf(retryActionString);
                 if (retryAction == RetryAction.RETRY_LOAD_FAVORITE) {
                     String retryId = intent.getStringExtra(RetryAction.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
-                    viewModel.loadAndStartFavorite(retryId);
+                    viewModel.loadAndStartFavorite(getActivity().getApplicationContext(), retryId);
                 } else if (retryAction == RetryAction.RETRY_LOAD_METADATA) {
-                    viewModel.loadPlaybackMetadata();
+                    viewModel.loadPlaybackMetadata(getActivity().getApplicationContext());
                 }
             }
             handleIntent(intent);
@@ -89,7 +98,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(this, new MainViewModelFactory(getActivity().getApplication())).get(MainViewModel.class);
+
         return binding.getRoot();
     }
 
@@ -129,7 +138,7 @@ public class MainFragment extends Fragment {
             } else {
                 Toast.makeText(getActivity(), R.string.tag_read_ok, Toast.LENGTH_SHORT).show();
                 playSound(R.raw.positive);
-                viewModel.loadAndStartFavorite(nfcPayload.getFavoriteId());
+                viewModel.loadAndStartFavorite(getActivity().getApplicationContext(), nfcPayload.getFavoriteId());
             }
 
         } catch (FormatException | IOException e) {
@@ -179,6 +188,32 @@ public class MainFragment extends Fragment {
     }
 
     public void coverImageClicked() {
-        viewModel.loadPlaybackMetadata();
+        viewModel.loadPlaybackMetadata(getActivity().getApplicationContext());
+    }
+
+    private void loadAndShowCoverImage(String imageUrl) {
+        if (imageUrl != null) {
+            RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
+
+                @Override
+                public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                    return false;
+                }
+            };
+            Glide.with(getActivity())
+                    .load(Uri.parse(imageUrl))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .timeout(10000)
+                    .placeholder(R.drawable.cover_placeholder)
+                    .fitCenter()
+                    .error(R.drawable.error)
+                    .listener(requestListener)
+                    .into(binding.coverImage);
+        }
     }
 }

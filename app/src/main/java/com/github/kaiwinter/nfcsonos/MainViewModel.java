@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.core.util.Supplier;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -16,7 +15,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.github.kaiwinter.nfcsonos.activity.main.RetryAction;
 import com.github.kaiwinter.nfcsonos.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
@@ -26,7 +24,6 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-import com.google.android.material.snackbar.Snackbar;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,11 +32,12 @@ import retrofit2.Response;
 public class MainViewModel extends ViewModel {
     public final MutableLiveData<String> trackName = new MutableLiveData<>();
 
-    public final MutableLiveData<Integer> loadingContainerVisibility = new MutableLiveData<>();
+    public final MutableLiveData<Integer> loadingContainerVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<Integer> loadingDescriptionResId = new MutableLiveData<>();
-    public final MutableLiveData<Integer> errorContainerVisibility = new MutableLiveData<>();
+    public final MutableLiveData<Integer> errorContainerVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<ErrorMessage> errorMessageMutableLiveData = new MutableLiveData<>();
 
+    public final MutableLiveData<String> coverImageToLoad = new MutableLiveData<>();
     public final MutableLiveData<Integer> soundToPlay = new MutableLiveData<>();
 
     private final SharedPreferencesStore sharedPreferencesStore;
@@ -52,10 +50,6 @@ public class MainViewModel extends ViewModel {
         this.favoriteCache = favoriteCache;
     }
 
-    public String getAccessToken() {
-        return sharedPreferencesStore.getAccessToken();
-    }
-
     public boolean isUserLoggedIn() {
         return !TextUtils.isEmpty(sharedPreferencesStore.getAccessToken());
     }
@@ -66,19 +60,19 @@ public class MainViewModel extends ViewModel {
         return householdSelected && groupSelected;
     }
 
-    public boolean refreshTokenIfNeeded(Runnable runnable) {
+    public boolean refreshTokenIfNeeded(Context context, Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             displayLoading(R.string.refresh_access_token);
-            accessTokenManager.refreshAccessToken(getActivity(), runnable, this::hideLoadingState);
+            accessTokenManager.refreshAccessToken(context, runnable, this::hideLoadingState);
             return true;
         }
         return false;
     }
 
-    public void loadAndStartFavorite(String favoriteId) {
+    public void loadAndStartFavorite(Context context, String favoriteId) {
         displayLoading(R.string.starting_favorite);
 
-        if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
+        if (refreshTokenIfNeeded(context, () -> loadAndStartFavorite(context, favoriteId))) {
             return;
         }
 
@@ -100,8 +94,9 @@ public class MainViewModel extends ViewModel {
 
                     APIError apiError = ServiceFactory.parseError(response);
                     if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        startDiscoverActivity(RetryAction.RETRY_LOAD_FAVORITE, favoriteId);
-                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
+                        // FIXME
+//                        startDiscoverActivity(RetryAction.RETRY_LOAD_FAVORITE, favoriteId);
+//                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
                         hideLoadingState();
                         return;
                     }
@@ -120,8 +115,8 @@ public class MainViewModel extends ViewModel {
         });
     }
 
-    public void loadPlaybackMetadata() {
-        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
+    public void loadPlaybackMetadata(Context context) {
+        if (refreshTokenIfNeeded(context, () -> loadPlaybackMetadata(context))) {
             return;
         }
 
@@ -135,8 +130,9 @@ public class MainViewModel extends ViewModel {
                 if (!response.isSuccessful()) {
                     APIError apiError = ServiceFactory.parseError(response);
                     if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-                        startDiscoverActivity(RetryAction.RETRY_LOAD_METADATA, null);
-                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
+                        // FIXME
+//                        startDiscoverActivity(RetryAction.RETRY_LOAD_METADATA, null);
+//                        Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
                         hideLoadingState();
                         return;
                     }
@@ -155,7 +151,7 @@ public class MainViewModel extends ViewModel {
                 trackName.setValue(playbackMetadata.container.name);
 
                 String imageUrl = playbackMetadata.currentItem.track.imageUrl;
-                loadAndShowCoverImage(imageUrl);
+                coverImageToLoad.setValue(imageUrl);
             }
 
             @Override
@@ -170,35 +166,8 @@ public class MainViewModel extends ViewModel {
             trackName.setValue(storedFavorite.name);
 
             String imageUrl = storedFavorite.imageUrl;
-            loadAndShowCoverImage(imageUrl);
+            coverImageToLoad.setValue(imageUrl);
         }, this::hideLoadingState);
-    }
-
-    private void loadAndShowCoverImage(String imageUrl) {
-        if (imageUrl != null) {
-            RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
-
-                @Override
-                public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
-                    hideLoadingState(e.getMessage());
-                    return false;
-                }
-
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                    return false;
-                }
-            };
-            Glide.with(getActivity())
-                    .load(Uri.parse(imageUrl))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .timeout(10000)
-                    .placeholder(R.drawable.cover_placeholder)
-                    .fitCenter()
-                    .error(R.drawable.error)
-                    .listener(requestListener)
-                    .into(binding.coverImage);
-        }
     }
 
     private void displayLoading(Integer resId) {
