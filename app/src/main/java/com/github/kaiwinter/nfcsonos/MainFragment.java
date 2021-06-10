@@ -55,10 +55,8 @@ public class MainFragment extends Fragment {
         viewModel.errorContainerVisibility.observe(this, binding.errorContainer::setVisibility);
         viewModel.errorMessageMutableLiveData.observe(this, errorMessage -> {
             String message = errorMessage.getMessage(getActivity());
-//            if (!TextUtils.isEmpty(message)) {
             binding.errorContainer.setVisibility(View.VISIBLE);
             binding.errorDescription.setText(message);
-//            }
         });
         viewModel.loadingContainerVisibility.observe(this, binding.loadingContainer::setVisibility);
         viewModel.loadingDescriptionResId.observe(this, resId -> binding.loadingDescription.setText(getString(resId)));
@@ -67,7 +65,6 @@ public class MainFragment extends Fragment {
         viewModel.soundToPlay.observe(this, this::playSound);
 
         viewModel.navigateToDiscoverActivity.observe(this, retryAction -> {
-            Snackbar.make(binding.coordinator, getString(R.string.group_id_changed), Snackbar.LENGTH_LONG).show();
             startDiscoverActivity(retryAction.getRetryActionType(), retryAction.getAdditionalId());
         });
 

@@ -22,14 +22,13 @@
     <string name="tag_written">Tag erfolgreich beschrieben</string>
     <string name="tag_written_error">Fehler beim Beschreiben des Tags: %1$s</string>
     <string name="household_and_group_selection">Auswahl Haushalt und Gruppe</string>
-    <string name="household_and_group_selection_description">Bevor du loslegen kannst, musst du einen Haushalt und eine Gruppe deines Sonos-Accounts auswählen. Die Bezeichnung des Haushalts ist ziemlich kryptisch. Wähl einfach einen aus und sieh dir die dazugehörigen Gruppen an.</string>
+    <string name="household_and_group_selection_description">Bevor du loslegen kannst, musst du einen Haushalt und eine Gruppe deines Sonos-Accounts auswählen. Die Bezeichnung des Haushalts ist ziemlich kryptisch. Wähl einfach einen aus und sieh dir die dazugehörigen Gruppen an.\n\nDieser Schritt ist auch immer dann notwendig, nachdem der Lautsprecher vom Strom getrennt wurde.</string>
     <string name="household">Haushalt</string>
     <string name="group">Gruppe</string>
     <string name="use_selection">Auswahl verwenden</string>
     <string name="link_tag_description">Wähle einen Favoriten und Starte das Verknüpfen mit dem \'VERKNÜPFEN\' Button.</string>
     <string name="loading_access_token">Lade Access Token</string>
     <string name="starting_browser_for_login">Starte Browser für den Login</string>
-    <string name="group_id_changed">Name der Gruppe hat sich geändert. Dies passiert z.B. wenn der Lautsprecher vom Strom getrennt wurde.</string>
     <string name="no_household_found">Kein Haushalt gefunden</string>
     <string name="no_group_found">Keine Gruppe gefunden</string>
     <string name="tag_read_empty">Leeres oder fehlerhaftes Tag</string>
