@@ -45,7 +45,7 @@ public class PairFragment extends Fragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                             binding.spinner.setItems(favorites.items);
-                            hideLoadingState(null);
+                            hideLoadingState();
                             binding.linkButton.setEnabled(true);
                         }
                 );
@@ -111,6 +111,12 @@ public class PairFragment extends Fragment {
             binding.loadingContainer.setVisibility(View.VISIBLE);
             binding.loadingDescription.setText(loadingMessage);
             binding.errorContainer.setVisibility(View.GONE);
+        });
+    }
+
+    private void hideLoadingState() {
+        getActivity().runOnUiThread(() -> {
+            binding.loadingContainer.setVisibility(View.GONE);
         });
     }
 
