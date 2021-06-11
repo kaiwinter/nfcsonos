@@ -37,14 +37,14 @@ public class ErrorMessage {
 
     private APIError apiError;
 
-    public static ErrorMessage createSimpleStringErrorMessage(String message) {
+    public static ErrorMessage create(String message) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.type = Type.SIMPLE_STRING;
         errorMessage.simpleStringMessage = message;
         return errorMessage;
     }
 
-    public static ErrorMessage createResourceIdErrorMessage(int resId, String replacementString) {
+    public static ErrorMessage create(int resId, String replacementString) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.type = Type.RESOURCE_ID_WITH_STRING;
         errorMessage.resId = resId;
@@ -52,7 +52,7 @@ public class ErrorMessage {
         return errorMessage;
     }
 
-    public static ErrorMessage createAPIErrorErrorMessage(APIError apiError) {
+    public static ErrorMessage create(APIError apiError) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.type = Type.API_ERROR;
         errorMessage.apiError = apiError;

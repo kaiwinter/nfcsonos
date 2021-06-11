@@ -97,7 +97,7 @@ public class MainFragmentViewModel extends ViewModel {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 soundToPlay.setValue(R.raw.negative);
-                ErrorMessage errorMessage = ErrorMessage.createResourceIdErrorMessage(R.string.error_starting_favorite, t.getMessage());
+                ErrorMessage errorMessage = ErrorMessage.create(R.string.error_starting_favorite, t.getMessage());
                 hideLoadingState(errorMessage);
             }
         });
@@ -157,7 +157,7 @@ public class MainFragmentViewModel extends ViewModel {
             navigateToDiscoverActivity.postValue(retryAction);
             hideLoadingState();
         } else {
-            ErrorMessage errorMessage = ErrorMessage.createAPIErrorErrorMessage(apiError);
+            ErrorMessage errorMessage = ErrorMessage.create(apiError);
             hideLoadingState(errorMessage);
         }
     }
@@ -182,7 +182,7 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     private void hideLoadingState(String message) {
-        ErrorMessage errorMessage = ErrorMessage.createSimpleStringErrorMessage(message);
+        ErrorMessage errorMessage = ErrorMessage.create(message);
         hideLoadingState(errorMessage);
     }
 
