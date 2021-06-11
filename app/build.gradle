@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(rootProject.file("apikey.properties")))
+
 android {
     compileSdkVersion 30
     defaultConfig {
@@ -8,6 +11,9 @@ android {
         targetSdkVersion 30
         versionCode = 1
         versionName = "1.0.0"
+
+        buildConfigField("String", "CLIENT_ID", apikeyProperties['CLIENT_ID'])
+        buildConfigField("String", "CLIENT_SECRET", apikeyProperties['CLIENT_SECRET'])
     }
     buildTypes {
         release {

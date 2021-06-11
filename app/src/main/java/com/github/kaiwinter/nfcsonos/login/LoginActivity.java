@@ -16,14 +16,17 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.browser.customtabs.CustomTabsServiceConnection;
 import androidx.browser.customtabs.CustomTabsSession;
 
+import com.github.kaiwinter.nfcsonos.BuildConfig;
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityLoginBinding;
+import com.github.kaiwinter.nfcsonos.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.rest.LoginService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
+import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
+import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,14 +80,13 @@ public final class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // tokenstore.setTokens(null, null, 0);
         if (TextUtils.isEmpty(sharedPreferencesStore.getAccessToken())) {
             return;
         }
 
         AccessTokenManager accessTokenManager = new AccessTokenManager(this);
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(this, this::switchToMainActivity, this::hideLoadingState);
+            accessTokenManager.refreshAccessToken(this::switchToMainActivity, this::hideLoadingState);
             return;
         }
 
@@ -98,7 +100,7 @@ public final class LoginActivity extends AppCompatActivity {
         displayLoading(getString(R.string.starting_browser_for_login));
 
         String url = AUTHORIZATION_ENDPOINT_URI
-                + "?client_id=" + getString(R.string.client_id)
+                + "?client_id=" + BuildConfig.CLIENT_ID
                 + "&response_type=code"
                 + "&state=random"
                 + "&scope=playback-control-all"
@@ -109,7 +111,8 @@ public final class LoginActivity extends AppCompatActivity {
         try {
             customTabsIntent.launchUrl(this, Uri.parse(url));
         } catch (ActivityNotFoundException e) {
-            hideLoadingState(getString(R.string.couldnt_start_browser));
+            ErrorMessage errorMessage = ErrorMessage.create(R.string.couldnt_start_browser);
+            hideLoadingState(errorMessage);
         }
     }
 
@@ -139,7 +142,8 @@ public final class LoginActivity extends AppCompatActivity {
         Uri data = intent.getData();
         if (data == null) {
             if (binding.loadingContainer.getVisibility() == View.VISIBLE) {
-                hideLoadingState(getString(R.string.authorization_cancelled));
+                ErrorMessage errorMessage = ErrorMessage.create(R.string.authorization_cancelled);
+                hideLoadingState(errorMessage);
             }
             return;
         }
@@ -149,7 +153,7 @@ public final class LoginActivity extends AppCompatActivity {
             String code = data.getQueryParameter("code");
             LoginService service = ServiceFactory.createLoginService();
 
-            String basic = getString(R.string.client_id) + ":" + getString(R.string.client_secret);
+            String basic = BuildConfig.CLIENT_ID + ":" + BuildConfig.CLIENT_SECRET;
             String authHeader = "Basic " + Base64.encodeToString(basic.getBytes(), Base64.NO_WRAP);
             Call<AccessToken> call = service.getAccessToken(authHeader, "authorization_code", code, REDIRECT_URI);
             call.enqueue(new Callback<AccessToken>() {
@@ -162,20 +166,23 @@ public final class LoginActivity extends AppCompatActivity {
                         sharedPreferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                         switchToMainActivity();
                     } else {
-                        String message = ServiceFactory.parseError(response).toMessage(LoginActivity.this);
-                        hideLoadingState(message);
+                        APIError apiError = ServiceFactory.parseError(response);
+                        ErrorMessage errorMessage = ErrorMessage.create(apiError);
+                        hideLoadingState(errorMessage);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AccessToken> call, Throwable t) {
-                    hideLoadingState(t.getMessage());
+                    ErrorMessage errorMessage = ErrorMessage.create(t.getMessage());
+                    hideLoadingState(errorMessage);
                 }
             });
 
         } else if (data.getQueryParameterNames().contains("error")) {
             String error = data.getQueryParameter("error");
-            hideLoadingState(error);
+            ErrorMessage errorMessage = ErrorMessage.create(error);
+            hideLoadingState(errorMessage);
         }
     }
 
@@ -194,11 +201,12 @@ public final class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void hideLoadingState(String errormessage) {
+    private void hideLoadingState(ErrorMessage errorMessage) {
+        String message = errorMessage.getMessage(this);
         runOnUiThread(() -> {
-            if (!TextUtils.isEmpty(errormessage)) {
+            if (!TextUtils.isEmpty(message)) {
                 binding.errorContainer.setVisibility(View.VISIBLE);
-                binding.errorDescription.setText(errormessage);
+                binding.errorDescription.setText(message);
             }
             binding.loadingContainer.setVisibility(View.INVISIBLE);
             binding.authContainer.setVisibility(View.VISIBLE);

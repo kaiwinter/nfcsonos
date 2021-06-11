@@ -63,7 +63,7 @@ public class MainFragment extends Fragment {
             binding.errorDescription.setText(message);
         });
         viewModel.loadingContainerVisibility.observe(this, binding.loadingContainer::setVisibility);
-        viewModel.loadingDescriptionResId.observe(this, resId -> binding.loadingDescription.setText(getString(resId)));
+        viewModel.loadingDescriptionResId.observe(this, binding.loadingDescription::setText);
 
         viewModel.coverImageToLoad.observe(this, this::loadAndShowCoverImage);
         viewModel.soundToPlay.observe(this, this::playSound);
@@ -89,9 +89,9 @@ public class MainFragment extends Fragment {
                 RetryActionType retryActionType = RetryActionType.valueOf(retryActionString);
                 if (retryActionType == RetryActionType.RETRY_LOAD_FAVORITE) {
                     String retryId = intent.getStringExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
-                    viewModel.loadAndStartFavorite(getActivity().getApplicationContext(), retryId);
+                    viewModel.loadAndStartFavorite(retryId);
                 } else if (retryActionType == RetryActionType.RETRY_LOAD_METADATA) {
-                    viewModel.loadPlaybackMetadata(getActivity().getApplicationContext());
+                    viewModel.loadPlaybackMetadata();
                 }
             }
             handleIntent(intent);
@@ -132,7 +132,7 @@ public class MainFragment extends Fragment {
             } else {
                 Toast.makeText(getActivity(), R.string.tag_read_ok, Toast.LENGTH_SHORT).show();
                 playSound(R.raw.positive);
-                viewModel.loadAndStartFavorite(getActivity().getApplicationContext(), nfcPayload.getFavoriteId());
+                viewModel.loadAndStartFavorite(nfcPayload.getFavoriteId());
             }
 
         } catch (FormatException | IOException e) {
@@ -182,7 +182,7 @@ public class MainFragment extends Fragment {
     }
 
     public void coverImageClicked() {
-        viewModel.loadPlaybackMetadata(getActivity().getApplicationContext());
+        viewModel.loadPlaybackMetadata();
     }
 
     private void loadAndShowCoverImage(String imageUrl) {

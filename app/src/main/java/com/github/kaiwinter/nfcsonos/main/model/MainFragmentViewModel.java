@@ -1,6 +1,5 @@
 package com.github.kaiwinter.nfcsonos.main.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -59,17 +58,17 @@ public class MainFragmentViewModel extends ViewModel {
         return householdSelected && groupSelected;
     }
 
-    public boolean refreshTokenIfNeeded(Context context, Runnable runnable) {
+    public boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             displayLoading(R.string.refresh_access_token);
-            accessTokenManager.refreshAccessToken(context, runnable, this::hideLoadingState);
+            accessTokenManager.refreshAccessToken(runnable, this::hideLoadingState);
             return true;
         }
         return false;
     }
 
-    public void loadAndStartFavorite(Context context, String favoriteId) {
-        if (refreshTokenIfNeeded(context, () -> loadAndStartFavorite(context, favoriteId))) {
+    public void loadAndStartFavorite(String favoriteId) {
+        if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
             return;
         }
 
@@ -103,8 +102,8 @@ public class MainFragmentViewModel extends ViewModel {
         });
     }
 
-    public void loadPlaybackMetadata(Context context) {
-        if (refreshTokenIfNeeded(context, () -> loadPlaybackMetadata(context))) {
+    public void loadPlaybackMetadata() {
+        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
             return;
         }
 

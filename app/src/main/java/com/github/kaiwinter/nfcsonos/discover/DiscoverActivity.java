@@ -8,17 +8,19 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
-import com.github.kaiwinter.nfcsonos.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityDiscoverBinding;
+import com.github.kaiwinter.nfcsonos.main.MainActivity;
+import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
+import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.Group;
 import com.github.kaiwinter.nfcsonos.rest.model.Groups;
 import com.github.kaiwinter.nfcsonos.rest.model.Household;
 import com.github.kaiwinter.nfcsonos.rest.model.Households;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
+import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.util.Collections;
@@ -81,19 +83,22 @@ public class DiscoverActivity extends AppCompatActivity {
                     Households body = response.body();
                     binding.household.setItems(body.households);
                     if (body.households == null || body.households.isEmpty()) {
-                        hideLoadingState(getString(R.string.no_household_found));
+                        ErrorMessage errorMessage = ErrorMessage.create(R.string.no_household_found);
+                        hideLoadingState(errorMessage);
                         return;
                     }
                     loadGroups(body.households.get(0).id);
                 } else {
-                    String message = ServiceFactory.parseError(response).toMessage(DiscoverActivity.this);
-                    hideLoadingState(message);
+                    APIError apiError = ServiceFactory.parseError(response);
+                    ErrorMessage errorMessage = ErrorMessage.create(apiError);
+                    hideLoadingState(errorMessage);
                 }
             }
 
             @Override
             public void onFailure(Call<Households> call, Throwable t) {
-                hideLoadingState(t.getMessage());
+                ErrorMessage errorMessage = ErrorMessage.create(t.getMessage());
+                hideLoadingState(errorMessage);
             }
         });
     }
@@ -114,21 +119,24 @@ public class DiscoverActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Groups body = response.body();
                     if (body.groups == null || body.groups.isEmpty()) {
-                        hideLoadingState(getString(R.string.no_group_found));
+                        ErrorMessage errorMessage = ErrorMessage.create(R.string.no_group_found);
+                        hideLoadingState(errorMessage);
                         return;
                     }
                     binding.group.setItems(body.groups);
                     binding.selectButton.setEnabled(true);
                 } else {
-                    String message = ServiceFactory.parseError(response).toMessage(DiscoverActivity.this);
-                    hideLoadingState(message);
+                    APIError apiError = ServiceFactory.parseError(response);
+                    ErrorMessage errorMessage = ErrorMessage.create(apiError);
+                    hideLoadingState(errorMessage);
                 }
                 hideLoadingState(null);
             }
 
             @Override
             public void onFailure(Call<Groups> call, Throwable t) {
-                hideLoadingState(t.getMessage());
+                ErrorMessage errorMessage = ErrorMessage.create(t.getMessage());
+                hideLoadingState(errorMessage);
             }
         });
     }
@@ -140,10 +148,12 @@ public class DiscoverActivity extends AppCompatActivity {
         Household selectedHousehold = (Household) binding.household.getItems().get(binding.household.getSelectedIndex());
         Group selectedGroup = (Group) binding.group.getItems().get(binding.group.getSelectedIndex());
         if (selectedHousehold == null) {
-            hideLoadingState(getString(R.string.no_household_selected));
+            ErrorMessage errorMessage = ErrorMessage.create(R.string.no_household_selected);
+            hideLoadingState(errorMessage);
             return;
         } else if (selectedGroup == null) {
-            hideLoadingState(getString(R.string.no_group_selected));
+            ErrorMessage errorMessage = ErrorMessage.create(R.string.no_group_selected);
+            hideLoadingState(errorMessage);
             return;
         }
 
@@ -154,7 +164,7 @@ public class DiscoverActivity extends AppCompatActivity {
     private boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             displayLoading(getString(R.string.refresh_access_token));
-            accessTokenManager.refreshAccessToken(this, runnable, this::hideLoadingState);
+            accessTokenManager.refreshAccessToken(runnable, this::hideLoadingState);
             return true;
         }
         return false;
@@ -178,11 +188,12 @@ public class DiscoverActivity extends AppCompatActivity {
         });
     }
 
-    private void hideLoadingState(String errormessage) {
+    private void hideLoadingState(ErrorMessage errorMessage) {
+        String message = errorMessage.getMessage(this);
         runOnUiThread(() -> {
-            if (!TextUtils.isEmpty(errormessage)) {
+            if (!TextUtils.isEmpty(message)) {
                 binding.errorContainer.setVisibility(View.VISIBLE);
-                binding.errorDescription.setText(errormessage);
+                binding.errorDescription.setText(message);
             }
             binding.loadingContainer.setVisibility(View.INVISIBLE);
             binding.authContainer.setEnabled(true);

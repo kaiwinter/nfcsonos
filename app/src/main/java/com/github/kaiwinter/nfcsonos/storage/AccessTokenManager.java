@@ -5,10 +5,13 @@ import android.util.Base64;
 
 import androidx.core.util.Consumer;
 
+import com.github.kaiwinter.nfcsonos.BuildConfig;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.rest.LoginService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
+import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
+import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
 
 import java.util.Date;
 
@@ -41,16 +44,15 @@ public class AccessTokenManager {
     /**
      * Refreshes the access token asynchronously.
      *
-     * @param context   the context to load string resources
      * @param onSuccess called if the token refresh was successful
      * @param onError   called if the token refresh failed, an error message is passed
      */
-    public void refreshAccessToken(Context context, Runnable onSuccess, Consumer<String> onError) {
+    public void refreshAccessToken(Runnable onSuccess, Consumer<ErrorMessage> onError) {
         LoginService loginService = ServiceFactory.createLoginService();
 
         String refreshToken = sharedPreferencesStore.getRefreshToken();
 
-        String basic = context.getString(R.string.client_id) + ":" + context.getString(R.string.client_secret);
+        String basic = BuildConfig.CLIENT_ID + ":" + BuildConfig.CLIENT_SECRET;
         String authHeader = "Basic " + Base64.encodeToString(basic.getBytes(), Base64.NO_WRAP);
         Call<AccessToken> call = loginService.refreshToken(authHeader, refreshToken, "refresh_token");
         call.enqueue(new Callback<AccessToken>() {
@@ -65,18 +67,19 @@ public class AccessTokenManager {
                         onSuccess.run();
                     }
                 } else {
-                    String message = ServiceFactory.parseError(response).toMessage(context);
+                    APIError apiError = ServiceFactory.parseError(response);
+                    ErrorMessage errorMessage = ErrorMessage.create(apiError);
                     if (onError != null) {
-                        onError.accept(message);
+                        onError.accept(errorMessage);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<AccessToken> call, Throwable t) {
-                String errormessage = context.getString(R.string.error, t.getMessage());
+                ErrorMessage errorMessage = ErrorMessage.create(R.string.error, t.getMessage());
                 if (onError != null) {
-                    onError.accept(errormessage);
+                    onError.accept(errorMessage);
                 }
             }
         });

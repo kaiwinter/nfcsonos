@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="client_id" translatable="false">[CLIENT_ID]</string>
-    <string name="client_secret" translatable="false">[CLIENT_SECRET]</string>
-</resources>

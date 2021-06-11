@@ -21,6 +21,7 @@ import com.github.kaiwinter.nfcsonos.main.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
+import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -113,11 +114,12 @@ public class PairFragment extends Fragment {
         });
     }
 
-    private void hideLoadingState(String errormessage) {
+    private void hideLoadingState(ErrorMessage errorMessage) {
+        String message = errorMessage.getMessage(getActivity());
         getActivity().runOnUiThread(() -> {
-            if (!TextUtils.isEmpty(errormessage)) {
+            if (!TextUtils.isEmpty(message)) {
                 binding.errorContainer.setVisibility(View.VISIBLE);
-                binding.errorDescription.setText(errormessage);
+                binding.errorDescription.setText(message);
             }
             binding.loadingContainer.setVisibility(View.GONE);
         });
