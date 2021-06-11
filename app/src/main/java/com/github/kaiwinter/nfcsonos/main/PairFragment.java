@@ -74,7 +74,7 @@ public class PairFragment extends Fragment {
         return (Item) binding.spinner.getItems().get(binding.spinner.getSelectedIndex());
     }
 
-    public void handleIntent(Intent intent) {
+    public void handleNfcIntent(Intent intent) {
 
         if (dialog == null || !dialog.isShowing()) {
             return;

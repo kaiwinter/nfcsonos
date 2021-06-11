@@ -28,13 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferencesStore sharedPreferencesStore;
 
-    private ActivityMainBinding binding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
@@ -94,9 +92,15 @@ public class MainActivity extends AppCompatActivity {
         nfcAdapter.disableForegroundDispatch(this);
     }
 
+    // Called if a NFC tag is scanned while the app is on foreground
+    // If the app is on background MainFragment.onCreate is called
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+
+        if (!NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            return;
+        }
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         if (fragment == null) {
@@ -106,9 +110,9 @@ public class MainActivity extends AppCompatActivity {
         Fragment currentFragment = childFragmentManager.getPrimaryNavigationFragment();
 
         if (currentFragment instanceof MainFragment) {
-            ((MainFragment) currentFragment).handleIntent(intent);
+            ((MainFragment) currentFragment).handleNfcIntent(intent);
         } else if (currentFragment instanceof PairFragment) {
-            ((PairFragment) currentFragment).handleIntent(intent);
+            ((PairFragment) currentFragment).handleNfcIntent(intent);
         }
     }
 }

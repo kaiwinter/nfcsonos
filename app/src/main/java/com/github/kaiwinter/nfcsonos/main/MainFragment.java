@@ -83,22 +83,25 @@ public class MainFragment extends Fragment {
         }
 
         Intent intent = getActivity().getIntent();
-        if (intent != null) {
-            String retryActionString = intent.getStringExtra(RetryActionType.class.getSimpleName());
-            if (retryActionString != null) {
-                RetryActionType retryActionType = RetryActionType.valueOf(retryActionString);
-                if (retryActionType == RetryActionType.RETRY_LOAD_FAVORITE) {
-                    String retryId = intent.getStringExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
-                    viewModel.loadAndStartFavorite(retryId);
-                } else if (retryActionType == RetryActionType.RETRY_LOAD_METADATA) {
-                    viewModel.loadPlaybackMetadata();
-                }
+
+        String retryActionString = intent.getStringExtra(RetryActionType.class.getSimpleName());
+        if (retryActionString != null) {
+            RetryActionType retryActionType = RetryActionType.valueOf(retryActionString);
+            if (retryActionType == RetryActionType.RETRY_LOAD_FAVORITE) {
+                String retryId = intent.getStringExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
+                viewModel.loadAndStartFavorite(retryId);
+            } else if (retryActionType == RetryActionType.RETRY_LOAD_METADATA) {
+                viewModel.loadPlaybackMetadata();
             }
-            handleIntent(intent);
+            return;
         }
 
-        binding.coverImage.setOnClickListener(__ -> coverImageClicked());
-        //signOut();
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            // See MainActivity.onNewIntent
+            handleNfcIntent(intent);
+        } else {
+            viewModel.loadPlaybackMetadata();
+        }
     }
 
     @Override
@@ -111,10 +114,7 @@ public class MainFragment extends Fragment {
      *
      * @param intent the {@link Intent}
      */
-    public void handleIntent(Intent intent) {
-        if (!NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            return;
-        }
+    public void handleNfcIntent(Intent intent) {
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
         if (tagFromIntent == null) {
@@ -179,10 +179,6 @@ public class MainFragment extends Fragment {
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-    }
-
-    public void coverImageClicked() {
-        viewModel.loadPlaybackMetadata();
     }
 
     private void loadAndShowCoverImage(String imageUrl) {
