@@ -11,6 +11,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.github.kaiwinter.nfcsonos.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModelFactory;
+import com.github.kaiwinter.nfcsonos.main.model.RetryAction;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
@@ -83,7 +85,14 @@ public class MainFragment extends Fragment {
         }
 
         Intent intent = getActivity().getIntent();
-
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            // May be passed from the MainActivity when the MainFragment wasn't selected when a NFC tag was scanned.
+            Parcelable parcelable = arguments.getParcelable(MainActivity.NFC_SCANNED_INTENT);
+            if (parcelable instanceof Intent) {
+                intent = (Intent) parcelable;
+            }
+        }
         String retryActionString = intent.getStringExtra(RetryActionType.class.getSimpleName());
         if (retryActionString != null) {
             RetryActionType retryActionType = RetryActionType.valueOf(retryActionString);
@@ -97,7 +106,6 @@ public class MainFragment extends Fragment {
         }
 
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            // See MainActivity.onNewIntent
             handleNfcIntent(intent);
         } else {
             viewModel.loadPlaybackMetadata();

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
@@ -25,6 +26,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String NFC_SCANNED_INTENT = "NFC_SCANNED_INTENT";
 
     private SharedPreferencesStore sharedPreferencesStore;
 
@@ -78,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        // This is not absolutely necessary. But without this another instance of the app gets started even if the app is on foreground
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
@@ -112,7 +114,27 @@ public class MainActivity extends AppCompatActivity {
         if (currentFragment instanceof MainFragment) {
             ((MainFragment) currentFragment).handleNfcIntent(intent);
         } else if (currentFragment instanceof PairFragment) {
-            ((PairFragment) currentFragment).handleNfcIntent(intent);
+            PairFragment pairFragment = (PairFragment) currentFragment;
+            if (pairFragment.isPairingActive()) {
+                pairFragment.handleNfcIntent(intent);
+            } else {
+                passIntentToMainFragment(intent);
+            }
+        } else {
+            passIntentToMainFragment(intent);
         }
+    }
+
+    /**
+     * Navigates to the MainFragment and delivers the intent within a Bundle.
+     *
+     * @param intent the intent to pass to the MainFragment
+     */
+    private void passIntentToMainFragment(Intent intent) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(NFC_SCANNED_INTENT, intent);
+        NavOptions navOptions = new NavOptions.Builder().setPopUpTo(R.id.fragment_main, true).build();
+        navController.navigate(R.id.fragment_main, bundle, navOptions);
     }
 }

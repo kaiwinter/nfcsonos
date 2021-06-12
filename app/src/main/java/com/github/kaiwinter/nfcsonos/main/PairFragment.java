@@ -74,9 +74,18 @@ public class PairFragment extends Fragment {
         return (Item) binding.spinner.getItems().get(binding.spinner.getSelectedIndex());
     }
 
+    /**
+     * Returns true when the user clicked the pairing button previously and the pairing dialog is currently shown.
+     *
+     * @return true when the pairing dialog is currently shown, else false
+     */
+    public boolean isPairingActive() {
+        return dialog != null && dialog.isShowing();
+    }
+
     public void handleNfcIntent(Intent intent) {
 
-        if (dialog == null || !dialog.isShowing()) {
+        if (!isPairingActive()) {
             return;
         }
 
