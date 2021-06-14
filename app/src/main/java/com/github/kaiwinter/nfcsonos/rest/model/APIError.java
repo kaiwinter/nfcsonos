@@ -24,6 +24,7 @@ public class APIError {
      */
     public static final String ERROR_RESOURCE_GONE = "ERROR_RESOURCE_GONE";
 
+    @SerializedName("httpCode")
     public int httpCode;
 
     @SerializedName("errorCode")
