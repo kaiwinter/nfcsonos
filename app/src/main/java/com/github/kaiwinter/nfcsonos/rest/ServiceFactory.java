@@ -38,6 +38,10 @@ public class ServiceFactory {
         return createRestAdapter(API_ENDPOINT, token).create(GroupVolumeService.class);
     }
 
+    public static PlaybackService createPlaybackService(String token) {
+        return createRestAdapter(API_ENDPOINT, token).create(PlaybackService.class);
+    }
+
     private static Retrofit createRestAdapter(String endpoint, String token) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.level(HttpLoggingInterceptor.Level.BODY);

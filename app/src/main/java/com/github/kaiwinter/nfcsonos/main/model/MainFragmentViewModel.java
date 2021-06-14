@@ -12,10 +12,12 @@ import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
+import com.github.kaiwinter.nfcsonos.rest.PlaybackService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.CurrentItem;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
+import com.github.kaiwinter.nfcsonos.rest.model.PlaybackStatus;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
@@ -37,6 +39,9 @@ public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<Integer> soundToPlay = new MutableLiveData<>();
 
     public final SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
+
+    public final MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
+    public final MutableLiveData<Integer> pauseButtonVisibility = new MutableLiveData<>(View.GONE);
 
     private final SharedPreferencesStore sharedPreferencesStore;
     private final AccessTokenManager accessTokenManager;
@@ -142,6 +147,113 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     /**
+     * Loads if the player is playing or paused.
+     */
+    public void loadPlayerState() {
+        if (refreshTokenIfNeeded(this::loadPlayerState)) {
+            return;
+        }
+
+        displayLoading(R.string.loading_playerstate);
+
+        String accessToken = sharedPreferencesStore.getAccessToken();
+        PlaybackService service = ServiceFactory.createPlaybackService(accessToken);
+        service.playbackStatus(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackStatus>() {
+            @Override
+            public void onResponse(Call<PlaybackStatus> call, Response<PlaybackStatus> response) {
+                if (response.isSuccessful()) {
+                    hideLoadingState();
+                    PlaybackStatus playbackStatus = response.body();
+                    if (playbackStatus == null) {
+                        return;
+                    }
+
+                    switch (playbackStatus.playbackState) {
+
+                        case PLAYBACK_STATE_PLAYING:
+                        case PLAYBACK_STATE_BUFFERING:
+                            // show Play Button
+                            playButtonVisibility.postValue(View.GONE);
+                            pauseButtonVisibility.postValue(View.VISIBLE);
+                            break;
+
+                        case PLAYBACK_STATE_PAUSED:
+                            // show Pause Button
+                            playButtonVisibility.postValue(View.VISIBLE);
+                            pauseButtonVisibility.postValue(View.GONE);
+                            break;
+
+                        case PLAYBACK_STATE_IDLE:
+                            // Hide both?
+                            playButtonVisibility.postValue(View.GONE);
+                            pauseButtonVisibility.postValue(View.GONE);
+                            break;
+                    }
+                } else {
+                    handleError(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlaybackStatus> call, Throwable t) {
+                hideLoadingState(t.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Sets the player state to playing.
+     */
+    public void play() {
+        displayLoading(R.string.start_playback);
+        String accessToken = sharedPreferencesStore.getAccessToken();
+        PlaybackService service = ServiceFactory.createPlaybackService(accessToken);
+        service.play(sharedPreferencesStore.getGroupId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    playButtonVisibility.postValue(View.GONE);
+                    pauseButtonVisibility.postValue(View.VISIBLE);
+                    hideLoadingState();
+                } else {
+                    handleError(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                hideLoadingState(t.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Sets the player state to paused.
+     */
+    public void pause() {
+        displayLoading(R.string.stop_playback);
+        String accessToken = sharedPreferencesStore.getAccessToken();
+        PlaybackService service = ServiceFactory.createPlaybackService(accessToken);
+        service.pause(sharedPreferencesStore.getGroupId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    playButtonVisibility.postValue(View.VISIBLE);
+                    pauseButtonVisibility.postValue(View.GONE);
+                    hideLoadingState();
+                } else {
+                    handleError(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                hideLoadingState(t.getMessage());
+            }
+        });
+    }
+
+    /**
      * Handles the error of a service request. If Sonos returns "ERROR_RESOURCE_GONE", the user gets
      * redirected to the {@link DiscoverActivity}.
      * Afterwards the retryAction is called.
@@ -159,6 +271,12 @@ public class MainFragmentViewModel extends ViewModel {
             ErrorMessage errorMessage = ErrorMessage.create(apiError);
             hideLoadingState(errorMessage);
         }
+    }
+
+    private void handleError(Response<?> response) {
+        APIError apiError = ServiceFactory.parseError(response);
+        ErrorMessage errorMessage = ErrorMessage.create(apiError);
+        hideLoadingState(errorMessage);
     }
 
     private void showCoverImage(String favoriteId) {

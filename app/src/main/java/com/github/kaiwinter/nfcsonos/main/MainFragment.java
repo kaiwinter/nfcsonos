@@ -70,9 +70,15 @@ public class MainFragment extends Fragment {
         viewModel.coverImageToLoad.observe(this, this::loadAndShowCoverImage);
         viewModel.soundToPlay.observe(this, this::playSound);
 
+        viewModel.playButtonVisibility.observe(this, binding.playButton::setVisibility);
+        viewModel.pauseButtonVisibility.observe(this, binding.pauseButton::setVisibility);
+
         viewModel.navigateToDiscoverActivity.observe(this, retryAction -> {
             startDiscoverActivity(retryAction.getRetryActionType(), retryAction.getAdditionalId());
         });
+
+        binding.playButton.setOnClickListener(__ -> viewModel.play());
+        binding.pauseButton.setOnClickListener(__ -> viewModel.pause());
 
         if (!viewModel.isUserLoggedIn()) {
             startLoginActivity();
@@ -102,14 +108,15 @@ public class MainFragment extends Fragment {
             } else if (retryActionType == RetryActionType.RETRY_LOAD_METADATA) {
                 viewModel.loadPlaybackMetadata();
             }
-            return;
+        } else {
+            if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+                handleNfcIntent(intent);
+            } else {
+                viewModel.loadPlaybackMetadata();
+            }
         }
 
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            handleNfcIntent(intent);
-        } else {
-            viewModel.loadPlaybackMetadata();
-        }
+        viewModel.loadPlayerState();
     }
 
     @Override
