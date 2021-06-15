@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityDiscoverBinding;
 import com.github.kaiwinter.nfcsonos.main.MainActivity;
+import com.github.kaiwinter.nfcsonos.main.model.RetryAction;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
@@ -36,18 +37,13 @@ public class DiscoverActivity extends AppCompatActivity {
     private SharedPreferencesStore sharedPreferencesStore;
     private AccessTokenManager accessTokenManager;
 
-    private String retryAction; // Contains the name of RetryAction, which is just passed back
-    private String retryId;
+    private RetryAction retryAction; // Contains a RetryAction, which is just passed back
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            retryAction = intent.getStringExtra(RetryActionType.class.getSimpleName());
-            retryId = intent.getStringExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
-        }
+        retryAction = getIntent().getParcelableExtra(RetryAction.class.getSimpleName());
 
         sharedPreferencesStore = new SharedPreferencesStore(this);
         accessTokenManager = new AccessTokenManager(this);
@@ -172,8 +168,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private void switchToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(RetryActionType.class.getSimpleName(), retryAction);
-        intent.putExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION, retryId);
+        intent.putExtra(RetryAction.class.getSimpleName(), retryAction);
         startActivity(intent);
         finish();
     }

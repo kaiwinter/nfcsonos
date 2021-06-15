@@ -73,12 +73,18 @@ public class MainFragment extends Fragment {
         viewModel.playButtonVisibility.observe(this, binding.playButton::setVisibility);
         viewModel.pauseButtonVisibility.observe(this, binding.pauseButton::setVisibility);
 
-        viewModel.navigateToDiscoverActivity.observe(this, retryAction -> {
-            startDiscoverActivity(retryAction.getRetryActionType(), retryAction.getAdditionalId());
-        });
+        viewModel.navigateToDiscoverActivity.observe(this, this::startDiscoverActivity);
 
         binding.playButton.setOnClickListener(__ -> viewModel.play());
         binding.pauseButton.setOnClickListener(__ -> viewModel.pause());
+
+        createInitialState();
+    }
+    private void createInitialState() {
+        // check token here to avoid race condition between loadPlaybackMetadata() and loadPlayerState()
+        if (viewModel.refreshTokenIfNeeded(this::createInitialState)) {
+            return;
+        }
 
         if (!viewModel.isUserLoggedIn()) {
             startLoginActivity();
@@ -86,7 +92,7 @@ public class MainFragment extends Fragment {
         }
 
         if (!viewModel.isHouseholdAndGroupAvailable()) {
-            startDiscoverActivity(null, null);
+            startDiscoverActivity(null);
             return;
         }
 
@@ -99,13 +105,12 @@ public class MainFragment extends Fragment {
                 intent = (Intent) parcelable;
             }
         }
-        String retryActionString = intent.getStringExtra(RetryActionType.class.getSimpleName());
-        if (retryActionString != null) {
-            RetryActionType retryActionType = RetryActionType.valueOf(retryActionString);
-            if (retryActionType == RetryActionType.RETRY_LOAD_FAVORITE) {
-                String retryId = intent.getStringExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION);
+        RetryAction retryAction = intent.getParcelableExtra(RetryAction.class.getSimpleName());
+        if (retryAction != null) {
+            if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_FAVORITE) {
+                String retryId = retryAction.getAdditionalId();
                 viewModel.loadAndStartFavorite(retryId);
-            } else if (retryActionType == RetryActionType.RETRY_LOAD_METADATA) {
+            } else if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_METADATA) {
                 viewModel.loadPlaybackMetadata();
             }
         } else {
@@ -115,7 +120,6 @@ public class MainFragment extends Fragment {
                 viewModel.loadPlaybackMetadata();
             }
         }
-
         viewModel.loadPlayerState();
     }
 
@@ -186,11 +190,11 @@ public class MainFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void startDiscoverActivity(RetryActionType retryActionType, String id) {
+
+    private void startDiscoverActivity(RetryAction retryAction) {
         Intent intent = new Intent(getActivity(), DiscoverActivity.class);
-        if (retryActionType != null) {
-            intent.putExtra(RetryActionType.class.getSimpleName(), retryActionType.name());
-            intent.putExtra(RetryActionType.INTENT_EXTRA_KEYS.ID_FOR_RETRY_ACTION, id);
+        if (retryAction != null) {
+            intent.putExtra(RetryActionType.class.getSimpleName(), retryAction);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

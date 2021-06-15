@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
 
 def apikeyProperties = new Properties()
 apikeyProperties.load(new FileInputStream(rootProject.file("apikey.properties")))
