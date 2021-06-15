@@ -50,4 +50,5 @@
     <string name="loading_playerstate">Lade Wiedergabestatus</string>
     <string name="play_button">Wiedergabe starten</string>
     <string name="pause_button">Wiedergabe pausieren</string>
+    <string name="choose_houshould_group">Haushalt/Gruppe ändern</string>
 </resources>

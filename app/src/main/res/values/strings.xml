@@ -53,4 +53,5 @@
     <string name="loading_playerstate">Loading player state</string>
     <string name="play_button">Start playback</string>
     <string name="pause_button">Pause playback</string>
+    <string name="choose_houshould_group">Change household/group</string>
 </resources>
