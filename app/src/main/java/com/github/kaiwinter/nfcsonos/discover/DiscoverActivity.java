@@ -130,7 +130,7 @@ public class DiscoverActivity extends AppCompatActivity {
                     ErrorMessage errorMessage = ErrorMessage.create(apiError);
                     hideLoadingState(errorMessage);
                 }
-                hideLoadingState(null);
+                hideLoadingState();
             }
 
             @Override
@@ -185,6 +185,13 @@ public class DiscoverActivity extends AppCompatActivity {
 
             binding.loadingDescription.setText(loadingMessage);
             binding.errorContainer.setVisibility(View.GONE);
+        });
+    }
+
+    private void hideLoadingState() {
+        runOnUiThread(() -> {
+            binding.loadingContainer.setVisibility(View.INVISIBLE);
+            binding.authContainer.setEnabled(true);
         });
     }
 
