@@ -169,7 +169,6 @@ public class MainFragmentViewModel extends ViewModel {
                     }
 
                     switch (playbackStatus.playbackState) {
-
                         case PLAYBACK_STATE_PLAYING:
                         case PLAYBACK_STATE_BUFFERING:
                             // show Play Button
@@ -177,15 +176,10 @@ public class MainFragmentViewModel extends ViewModel {
                             pauseButtonVisibility.postValue(View.VISIBLE);
                             break;
 
+                        case PLAYBACK_STATE_IDLE:
                         case PLAYBACK_STATE_PAUSED:
                             // show Pause Button
                             playButtonVisibility.postValue(View.VISIBLE);
-                            pauseButtonVisibility.postValue(View.GONE);
-                            break;
-
-                        case PLAYBACK_STATE_IDLE:
-                            // Hide both?
-                            playButtonVisibility.postValue(View.GONE);
                             pauseButtonVisibility.postValue(View.GONE);
                             break;
                     }
