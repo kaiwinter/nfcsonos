@@ -124,7 +124,7 @@ public class PairFragment extends Fragment {
     }
 
     private void hideLoadingState() {
-        getActivity().runOnUiThread(() -> binding.loadingContainer.setVisibility(View.GONE));
+        getActivity().runOnUiThread(() -> binding.loadingContainer.setVisibility(View.INVISIBLE));
     }
 
     private void hideLoadingState(ErrorMessage errorMessage) {
@@ -134,7 +134,7 @@ public class PairFragment extends Fragment {
                 binding.errorContainer.setVisibility(View.VISIBLE);
                 binding.errorDescription.setText(message);
             }
-            binding.loadingContainer.setVisibility(View.GONE);
+            binding.loadingContainer.setVisibility(View.INVISIBLE);
         });
     }
 }

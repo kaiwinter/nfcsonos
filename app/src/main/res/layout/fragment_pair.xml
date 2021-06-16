@@ -43,15 +43,6 @@
                     android:layout_marginBottom="16dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="36dp"
-                        android:layout_marginBottom="24dp"
-                        android:text="@string/link_tag_description"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-
                     <LinearLayout
                         android:id="@+id/loading_container"
                         android:layout_width="match_parent"
@@ -72,6 +63,15 @@
                             android:layout_height="wrap_content"
                             android:indeterminate="true" />
                     </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="24dp"
+                        android:text="@string/link_tag_description"
+                        android:textColor="#000000"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"

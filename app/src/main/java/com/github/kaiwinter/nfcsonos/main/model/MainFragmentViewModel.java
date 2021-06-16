@@ -30,7 +30,7 @@ import retrofit2.Response;
 public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<String> trackName = new MutableLiveData<>();
 
-    public final MutableLiveData<Integer> loadingContainerVisibility = new MutableLiveData<>(View.GONE);
+    public final MutableLiveData<Integer> loadingContainerVisibility = new MutableLiveData<>(View.INVISIBLE);
     public final MutableLiveData<Integer> loadingDescriptionResId = new MutableLiveData<>();
     public final MutableLiveData<Integer> errorContainerVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<ErrorMessage> errorMessageMutableLiveData = new MutableLiveData<>();
@@ -290,7 +290,7 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     private void hideLoadingState() {
-        loadingContainerVisibility.setValue(View.GONE);
+        loadingContainerVisibility.setValue(View.INVISIBLE);
     }
 
     private void hideLoadingState(String message) {
