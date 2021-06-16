@@ -141,7 +141,8 @@ public class MainFragmentViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
-                hideLoadingState(t.getMessage());
+                ErrorMessage errorMessage = ErrorMessage.create(R.string.error_loading_metadata, t.getMessage());
+                hideLoadingState(errorMessage);
             }
         });
     }

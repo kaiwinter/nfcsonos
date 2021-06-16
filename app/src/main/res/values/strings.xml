@@ -7,14 +7,12 @@
     <string name="login_introduction">To allow the app to control your Sonos you first have to login with your Sonos account. This happens in a browser window on the website of Sonos. That way the app doesn´t see your login details it just gets an access token from Sonos.</string>
     <string name="ready_to_scan">Waiting for NFC tag</string>
     <string name="cover_image">Cover image</string>
-    <string name="pair_button_description">Button to pair a NFC tag with a favorite</string>
     <string name="loading_favorites">Loading favorites</string>
     <string name="refresh_access_token">Refreshing Access Token</string>
     <string name="loading_metadata">Loading metadata</string>
     <string name="error_loading_metadata">Error loading metadata: %1$s</string>
     <string name="starting_favorite">Starting favorite</string>
     <string name="error_starting_favorite">Error starting: %1$s</string>
-    <string name="link_favorite_to_nfc_tag">Link Sonos favorite to NFC tag</string>
     <string name="favorite">Favorite</string>
     <string name="link">Link</string>
     <string name="link_tag_message">This will write a link to \'%1$s\' on the tag. Scanning the tag later on will start this favorite.\n\nPlease hold the tag on the phone now.</string>

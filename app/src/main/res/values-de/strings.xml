@@ -5,14 +5,12 @@
     <string name="login_introduction">Um der App zu erlauben dein Sonos System zu steuern musst du dich zuerst mit deinem Sonos-Account anmelden. Dies geschieht in einem Browserfenster auf der Webseite von Sonos. Die App bekommt dadurch deine Zugangsdaten nicht zu Gesicht, sondern lediglich ein Berechtigungstoken von Sonos.</string>
     <string name="ready_to_scan">Warte auf NFC tag</string>
     <string name="cover_image">Cover Bild</string>
-    <string name="pair_button_description">Verknüpfen eines NFC-Tags mit einem Sonos Favoriten</string>
     <string name="loading_favorites">Lade Favoriten</string>
     <string name="refresh_access_token">Aktualisiere Zugangstoken</string>
     <string name="loading_metadata">Lade Metadaten</string>
     <string name="error_loading_metadata">Fehler beim Laden der Metadaten: %1$s</string>
     <string name="starting_favorite">Starte Favorit</string>
     <string name="error_starting_favorite">Fehler beim Starten: %1$s</string>
-    <string name="link_favorite_to_nfc_tag">Sonos-Favorit mit NFC-Tag verknüpfen</string>
     <string name="favorite">Favorit</string>
     <string name="link">Verknüpfen</string>
     <string name="link_tag_message">Hiermit wird eine Verknüpfung zu \'%1$s\' auf das NFC-Tag geschrieben.\n\nBitte das Tag jetzt an das Gerät halten.</string>
