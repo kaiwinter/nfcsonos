@@ -32,7 +32,7 @@ public class ErrorMessage {
         /**
          * A {@link APIError}.
          */
-        API_ERROR;
+        API_ERROR
     }
 
     private Type type;
