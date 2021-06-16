@@ -36,10 +36,11 @@ The Sonos Cloud API doesn't allow to play a album from e.g. Spotify in a direct 
 - After the speaker was unplugged the group ID changes. If a favorite gets started the API returns 410: ERROR_RESOURCE_GONE. Currently the app switches to the DiscoveryActivity and let the user select a new Group. This could be automated by storing the groups `coordinatorId` and finding the new group ID by it.
 
 ## Screenshots
-![1](https://user-images.githubusercontent.com/110982/110695721-7dedd100-81ea-11eb-9d4c-3b1ee0762495.png)
-![2](https://user-images.githubusercontent.com/110982/110695741-85ad7580-81ea-11eb-8ec7-3123c8e2ba00.png)
-![3](https://user-images.githubusercontent.com/110982/110695751-87773900-81ea-11eb-9ef8-142b92446ef0.png)
-![4](https://user-images.githubusercontent.com/110982/110853909-7abf1780-82b4-11eb-8e79-45b9569e71c7.png)
+![1](https://user-images.githubusercontent.com/110982/122286942-b4756f00-cef0-11eb-8bba-fd8664c7ebbb.png)
+![2](https://user-images.githubusercontent.com/110982/122286947-b5a69c00-cef0-11eb-9451-9c8a32f769f1.png)
+![3](https://user-images.githubusercontent.com/110982/122286954-b6d7c900-cef0-11eb-82da-dd8f31f9e807.png)
+![4](https://user-images.githubusercontent.com/110982/122286957-b808f600-cef0-11eb-8be8-68188e435e5c.png)
+
 
 ## Credits
 
