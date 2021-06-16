@@ -140,7 +140,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:enabled="false"
-                            android:onClick="selectHouseholdAndGroup"
                             android:text="@string/use_selection" />
 
                     </LinearLayout>

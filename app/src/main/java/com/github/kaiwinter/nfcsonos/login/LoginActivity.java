@@ -78,6 +78,7 @@ public final class LoginActivity extends AppCompatActivity {
         Log.i(TAG, "CustomTabsClient.done");
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        binding.startAuth.setOnClickListener(__ -> loginClicked());
         setContentView(binding.getRoot());
 
         if (TextUtils.isEmpty(sharedPreferencesStore.getAccessToken())) {
@@ -96,7 +97,7 @@ public final class LoginActivity extends AppCompatActivity {
     /**
      * Called from the login button defined in the XML.
      */
-    public void loginClicked(View view) {
+    public void loginClicked() {
         displayLoading(getString(R.string.starting_browser_for_login));
 
         String url = AUTHORIZATION_ENDPOINT_URI

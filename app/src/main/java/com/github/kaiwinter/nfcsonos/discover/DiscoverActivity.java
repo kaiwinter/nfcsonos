@@ -11,7 +11,6 @@ import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityDiscoverBinding;
 import com.github.kaiwinter.nfcsonos.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction;
-import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
@@ -49,6 +48,7 @@ public class DiscoverActivity extends AppCompatActivity {
         accessTokenManager = new AccessTokenManager(this);
 
         binding = ActivityDiscoverBinding.inflate(getLayoutInflater());
+        binding.selectButton.setOnClickListener(__ -> selectHouseholdAndGroup());
         setContentView(binding.getRoot());
 
         binding.household.setOnItemSelectedListener((MaterialSpinner.OnItemSelectedListener<Household>) (view, position, id, item) ->
@@ -137,7 +137,7 @@ public class DiscoverActivity extends AppCompatActivity {
         });
     }
 
-    public void selectHouseholdAndGroup(View view) {
+    public void selectHouseholdAndGroup() {
         if (binding.household.getItems() == null || binding.group.getItems() == null) {
             return;
         }
