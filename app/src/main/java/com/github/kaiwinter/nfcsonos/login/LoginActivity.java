@@ -26,7 +26,7 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
+import com.github.kaiwinter.nfcsonos.util.UserMessage;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -112,8 +112,8 @@ public final class LoginActivity extends AppCompatActivity {
         try {
             customTabsIntent.launchUrl(this, Uri.parse(url));
         } catch (ActivityNotFoundException e) {
-            ErrorMessage errorMessage = ErrorMessage.create(R.string.couldnt_start_browser);
-            hideLoadingState(errorMessage);
+            UserMessage userMessage = UserMessage.create(R.string.couldnt_start_browser);
+            hideLoadingState(userMessage);
         }
     }
 
@@ -143,8 +143,8 @@ public final class LoginActivity extends AppCompatActivity {
         Uri data = intent.getData();
         if (data == null) {
             if (binding.loadingContainer.getVisibility() == View.VISIBLE) {
-                ErrorMessage errorMessage = ErrorMessage.create(R.string.authorization_cancelled);
-                hideLoadingState(errorMessage);
+                UserMessage userMessage = UserMessage.create(R.string.authorization_cancelled);
+                hideLoadingState(userMessage);
             }
             return;
         }
@@ -168,22 +168,22 @@ public final class LoginActivity extends AppCompatActivity {
                         switchToMainActivity();
                     } else {
                         APIError apiError = ServiceFactory.parseError(response);
-                        ErrorMessage errorMessage = ErrorMessage.create(apiError);
-                        hideLoadingState(errorMessage);
+                        UserMessage userMessage = UserMessage.create(apiError);
+                        hideLoadingState(userMessage);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AccessToken> call, Throwable t) {
-                    ErrorMessage errorMessage = ErrorMessage.create(t.getMessage());
-                    hideLoadingState(errorMessage);
+                    UserMessage userMessage = UserMessage.create(t.getMessage());
+                    hideLoadingState(userMessage);
                 }
             });
 
         } else if (data.getQueryParameterNames().contains("error")) {
             String error = data.getQueryParameter("error");
-            ErrorMessage errorMessage = ErrorMessage.create(error);
-            hideLoadingState(errorMessage);
+            UserMessage userMessage = UserMessage.create(error);
+            hideLoadingState(userMessage);
         }
     }
 
@@ -202,8 +202,8 @@ public final class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void hideLoadingState(ErrorMessage errorMessage) {
-        String message = errorMessage.getMessage(this);
+    private void hideLoadingState(UserMessage userMessage) {
+        String message = userMessage.getMessage(this);
         runOnUiThread(() -> {
             if (!TextUtils.isEmpty(message)) {
                 binding.errorContainer.setVisibility(View.VISIBLE);

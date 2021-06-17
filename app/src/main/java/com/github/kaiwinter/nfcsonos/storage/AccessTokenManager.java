@@ -11,7 +11,7 @@ import com.github.kaiwinter.nfcsonos.rest.LoginService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
-import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
+import com.github.kaiwinter.nfcsonos.util.UserMessage;
 
 import java.util.Date;
 
@@ -47,7 +47,7 @@ public class AccessTokenManager {
      * @param onSuccess called if the token refresh was successful
      * @param onError   called if the token refresh failed, an error message is passed
      */
-    public void refreshAccessToken(Runnable onSuccess, Consumer<ErrorMessage> onError) {
+    public void refreshAccessToken(Runnable onSuccess, Consumer<UserMessage> onError) {
         LoginService loginService = ServiceFactory.createLoginService();
 
         String refreshToken = sharedPreferencesStore.getRefreshToken();
@@ -68,18 +68,18 @@ public class AccessTokenManager {
                     }
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);
-                    ErrorMessage errorMessage = ErrorMessage.create(apiError);
+                    UserMessage userMessage = UserMessage.create(apiError);
                     if (onError != null) {
-                        onError.accept(errorMessage);
+                        onError.accept(userMessage);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<AccessToken> call, Throwable t) {
-                ErrorMessage errorMessage = ErrorMessage.create(R.string.error, t.getMessage());
+                UserMessage userMessage = UserMessage.create(R.string.error, t.getMessage());
                 if (onError != null) {
-                    onError.accept(errorMessage);
+                    onError.accept(userMessage);
                 }
             }
         });

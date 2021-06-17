@@ -12,7 +12,7 @@ import com.github.kaiwinter.nfcsonos.rest.model.Favorites;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
+import com.github.kaiwinter.nfcsonos.util.UserMessage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,7 +52,7 @@ public class FavoriteCache {
      * @param onSuccess  {@link Consumer} which is called with the loaded favorites
      * @param onError    {@link Consumer} which is called with a possible error message
      */
-    public void getFavorite(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<ErrorMessage> onError) {
+    public void getFavorite(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<UserMessage> onError) {
         File file = new File(context.getFilesDir(), CACHE_FILENAME);
         if (file.exists()) {
             try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
@@ -64,14 +64,14 @@ public class FavoriteCache {
                 onSuccess.accept(storedFavorite);
                 return;
             } catch (IOException | ClassNotFoundException e) {
-                ErrorMessage errorMessage = ErrorMessage.create(R.string.error, e.getMessage());
-                onError.accept(errorMessage);
+                UserMessage userMessage = UserMessage.create(R.string.error, e.getMessage());
+                onError.accept(userMessage);
             }
         }
         updateFavorites(favoriteId, onSuccess, onError);
     }
 
-    void updateFavorites(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<ErrorMessage> onError) {
+    void updateFavorites(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<UserMessage> onError) {
         loadFavorites(favorites -> {
             for (Item item : favorites.items) {
                 if (favoriteId.equals(item.id)) {
@@ -80,8 +80,8 @@ public class FavoriteCache {
                     return;
                 }
             }
-            ErrorMessage errorMessage = ErrorMessage.create(R.string.favorite_not_found_in_cache, favoriteId);
-            onError.accept(errorMessage);
+            UserMessage userMessage = UserMessage.create(R.string.favorite_not_found_in_cache, favoriteId);
+            onError.accept(userMessage);
         }, onError);
     }
 
@@ -91,7 +91,7 @@ public class FavoriteCache {
      * @param onSuccess {@link Consumer} which is called with the loaded favorites
      * @param onError   {@link Consumer} which is called with a possible error message
      */
-    public void loadFavorites(Consumer<Favorites> onSuccess, Consumer<ErrorMessage> onError) {
+    public void loadFavorites(Consumer<Favorites> onSuccess, Consumer<UserMessage> onError) {
         if (refreshTokenIfNeeded(() -> loadFavorites(onSuccess, onError), onError)) {
             return;
         }
@@ -108,20 +108,20 @@ public class FavoriteCache {
                     try {
                         persistFavorites(favorites.items);
                     } catch (IOException e) {
-                        ErrorMessage errorMessage = ErrorMessage.create(R.string.error, e.getMessage());
-                        onError.accept(errorMessage);
+                        UserMessage userMessage = UserMessage.create(R.string.error, e.getMessage());
+                        onError.accept(userMessage);
                     }
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);
-                    ErrorMessage errorMessage = ErrorMessage.create(apiError);
-                    onError.accept(errorMessage);
+                    UserMessage userMessage = UserMessage.create(apiError);
+                    onError.accept(userMessage);
                 }
             }
 
             @Override
             public void onFailure(Call<Favorites> call, Throwable t) {
-                ErrorMessage errorMessage = ErrorMessage.create(R.string.error, t.getMessage());
-                onError.accept(errorMessage);
+                UserMessage userMessage = UserMessage.create(R.string.error, t.getMessage());
+                onError.accept(userMessage);
             }
         });
     }
@@ -138,7 +138,7 @@ public class FavoriteCache {
         }
     }
 
-    private boolean refreshTokenIfNeeded(Runnable runnable, Consumer<ErrorMessage> onError) {
+    private boolean refreshTokenIfNeeded(Runnable runnable, Consumer<UserMessage> onError) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             accessTokenManager.refreshAccessToken(runnable, onError);
             return true;

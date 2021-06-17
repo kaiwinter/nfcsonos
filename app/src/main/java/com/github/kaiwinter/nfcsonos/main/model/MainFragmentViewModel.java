@@ -31,7 +31,7 @@ import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackStatus;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
+import com.github.kaiwinter.nfcsonos.util.UserMessage;
 import com.github.kaiwinter.nfcsonos.util.SingleLiveEvent;
 
 import java.io.IOException;
@@ -46,14 +46,14 @@ public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<Integer> loadingContainerVisibility = new MutableLiveData<>(View.INVISIBLE);
     public final MutableLiveData<Integer> loadingDescriptionResId = new MutableLiveData<>();
     public final MutableLiveData<Integer> errorContainerVisibility = new MutableLiveData<>(View.GONE);
-    public final MutableLiveData<ErrorMessage> errorMessageMutableLiveData = new MutableLiveData<>();
+    public final MutableLiveData<UserMessage> errorMessageMutableLiveData = new MutableLiveData<>();
 
     public final MutableLiveData<String> coverImageToLoad = new MutableLiveData<>();
     public final MutableLiveData<Integer> soundToPlay = new MutableLiveData<>();
 
     public final SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
     public final SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
-    public final SingleLiveEvent<ErrorMessage> showSnackbarMessage = new SingleLiveEvent<>();
+    public final SingleLiveEvent<UserMessage> showSnackbarMessage = new SingleLiveEvent<>();
 
     public final MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<Integer> pauseButtonVisibility = new MutableLiveData<>(View.GONE);
@@ -136,17 +136,17 @@ public class MainFragmentViewModel extends ViewModel {
 
             if (nfcPayload == null) {
                 soundToPlay.postValue(R.raw.negative);
-                showSnackbarMessage.postValue(ErrorMessage.create(R.string.tag_read_empty));
+                showSnackbarMessage.postValue(UserMessage.create(R.string.tag_read_empty));
 
             } else {
                 soundToPlay.postValue(R.raw.positive);
-                showSnackbarMessage.postValue(ErrorMessage.create(R.string.tag_read_ok));
+                showSnackbarMessage.postValue(UserMessage.create(R.string.tag_read_ok));
                 loadAndStartFavorite(nfcPayload.getFavoriteId());
             }
 
         } catch (FormatException | IOException e) {
-            ErrorMessage errorMessage = ErrorMessage.create(R.string.tag_read_error, e.getMessage());
-            showSnackbarMessage.postValue(errorMessage);
+            UserMessage userMessage = UserMessage.create(R.string.tag_read_error, e.getMessage());
+            showSnackbarMessage.postValue(userMessage);
         }
     }
 
@@ -198,8 +198,8 @@ public class MainFragmentViewModel extends ViewModel {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 soundToPlay.setValue(R.raw.negative);
-                ErrorMessage errorMessage = ErrorMessage.create(R.string.error_starting_favorite, t.getMessage());
-                hideLoadingState(errorMessage);
+                UserMessage userMessage = UserMessage.create(R.string.error_starting_favorite, t.getMessage());
+                hideLoadingState(userMessage);
             }
         });
     }
@@ -238,8 +238,8 @@ public class MainFragmentViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<PlaybackMetadata> call, Throwable t) {
-                ErrorMessage errorMessage = ErrorMessage.create(R.string.error_loading_metadata, t.getMessage());
-                hideLoadingState(errorMessage);
+                UserMessage userMessage = UserMessage.create(R.string.error_loading_metadata, t.getMessage());
+                hideLoadingState(userMessage);
             }
         });
     }
@@ -360,15 +360,15 @@ public class MainFragmentViewModel extends ViewModel {
             navigateToDiscoverActivity.postValue(retryAction);
             hideLoadingState();
         } else {
-            ErrorMessage errorMessage = ErrorMessage.create(apiError);
-            hideLoadingState(errorMessage);
+            UserMessage userMessage = UserMessage.create(apiError);
+            hideLoadingState(userMessage);
         }
     }
 
     private void handleError(Response<?> response) {
         APIError apiError = ServiceFactory.parseError(response);
-        ErrorMessage errorMessage = ErrorMessage.create(apiError);
-        hideLoadingState(errorMessage);
+        UserMessage userMessage = UserMessage.create(apiError);
+        hideLoadingState(userMessage);
     }
 
     private void showCoverImage(String favoriteId) {
@@ -391,12 +391,12 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     private void hideLoadingState(String message) {
-        ErrorMessage errorMessage = ErrorMessage.create(message);
-        hideLoadingState(errorMessage);
+        UserMessage userMessage = UserMessage.create(message);
+        hideLoadingState(userMessage);
     }
 
-    private void hideLoadingState(ErrorMessage errorMessage) {
-        errorMessageMutableLiveData.setValue(errorMessage);
+    private void hideLoadingState(UserMessage userMessage) {
+        errorMessageMutableLiveData.setValue(userMessage);
         hideLoadingState();
     }
 }

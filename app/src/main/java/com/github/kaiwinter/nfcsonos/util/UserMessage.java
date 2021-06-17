@@ -8,9 +8,9 @@ import com.github.kaiwinter.nfcsonos.rest.model.APIError;
  * Transports a message from a ViewModel (or any Context-less object) to a Fragment (or any other
  * Context-aware object). {@link #getMessage(Context)} is used to get the error message as a String.
  */
-public class ErrorMessage {
+public class UserMessage {
     /**
-     * Defines different types of {@link ErrorMessage}s.
+     * Defines different types of {@link UserMessage}s.
      */
     enum Type {
         /**
@@ -43,65 +43,65 @@ public class ErrorMessage {
     private APIError apiError;
 
     /**
-     * Creates an {@link ErrorMessage} wrapper for a simple String error message.
+     * Creates an {@link UserMessage} wrapper for a simple String error message.
      *
      * @param message the error message
-     * @return an {@link ErrorMessage} object
+     * @return an {@link UserMessage} object
      */
-    public static ErrorMessage create(String message) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.type = Type.SIMPLE_STRING;
-        errorMessage.simpleStringMessage = message;
-        return errorMessage;
+    public static UserMessage create(String message) {
+        UserMessage userMessage = new UserMessage();
+        userMessage.type = Type.SIMPLE_STRING;
+        userMessage.simpleStringMessage = message;
+        return userMessage;
     }
 
     /**
-     * Creates an {@link ErrorMessage} wrapper for an resource ID (R.string).
+     * Creates an {@link UserMessage} wrapper for an resource ID (R.string).
      *
      * @param resId the resource ID
-     * @return an {@link ErrorMessage} object
+     * @return an {@link UserMessage} object
      */
-    public static ErrorMessage create(int resId) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.type = Type.RESOURCE_ID_WITH_STRING;
-        errorMessage.resId = resId;
-        return errorMessage;
+    public static UserMessage create(int resId) {
+        UserMessage userMessage = new UserMessage();
+        userMessage.type = Type.RESOURCE_ID_WITH_STRING;
+        userMessage.resId = resId;
+        return userMessage;
     }
 
     /**
-     * Creates an {@link ErrorMessage} wrapper for an resource ID (R.string) which uses an string to be substituted into the resource string.
+     * Creates an {@link UserMessage} wrapper for an resource ID (R.string) which uses an string to be substituted into the resource string.
      *
      * @param resId             the resource ID
      * @param replacementString the string which is used as formatArgs.
-     * @return an {@link ErrorMessage} object
+     * @return an {@link UserMessage} object
      */
-    public static ErrorMessage create(int resId, String replacementString) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.type = Type.RESOURCE_ID_WITH_STRING;
-        errorMessage.resId = resId;
-        errorMessage.replacementString = replacementString;
-        return errorMessage;
+    public static UserMessage create(int resId, String replacementString) {
+        UserMessage userMessage = new UserMessage();
+        userMessage.type = Type.RESOURCE_ID_WITH_STRING;
+        userMessage.resId = resId;
+        userMessage.replacementString = replacementString;
+        return userMessage;
     }
 
     /**
-     * Creates an {@link ErrorMessage} wrapper for an error which originates from an {@link APIError}.
+     * Creates an {@link UserMessage} wrapper for an error which originates from an {@link APIError}.
      *
      * @param apiError the {@link APIError}
-     * @return an {@link ErrorMessage} object
+     * @return an {@link UserMessage} object
      */
-    public static ErrorMessage create(APIError apiError) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.type = Type.API_ERROR;
-        errorMessage.apiError = apiError;
-        return errorMessage;
+    public static UserMessage create(APIError apiError) {
+        UserMessage userMessage = new UserMessage();
+        userMessage.type = Type.API_ERROR;
+        userMessage.apiError = apiError;
+        return userMessage;
     }
 
     /**
-     * Returns the message from this {@link ErrorMessage}.
+     * Returns the message from this {@link UserMessage}.
      *
      * @param context some of the error {@link Type}s needs a context to be evaluated. Mainly to
      *                access resources to build formatted error messages.
-     * @return the message from this {@link ErrorMessage}
+     * @return the message from this {@link UserMessage}
      */
     public String getMessage(Context context) {
         if (context == null) {
