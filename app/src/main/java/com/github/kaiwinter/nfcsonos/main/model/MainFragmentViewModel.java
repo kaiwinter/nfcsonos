@@ -1,5 +1,13 @@
 package com.github.kaiwinter.nfcsonos.main.model;
 
+import android.content.Intent;
+import android.nfc.FormatException;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -8,7 +16,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.discover.DiscoverActivity;
+import com.github.kaiwinter.nfcsonos.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
+import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
+import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
@@ -22,6 +33,8 @@ import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.ErrorMessage;
 import com.github.kaiwinter.nfcsonos.util.SingleLiveEvent;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,7 +51,9 @@ public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<String> coverImageToLoad = new MutableLiveData<>();
     public final MutableLiveData<Integer> soundToPlay = new MutableLiveData<>();
 
+    public final SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
     public final SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
+    public final SingleLiveEvent<ErrorMessage> showSnackbarMessage = new SingleLiveEvent<>();
 
     public final MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<Integer> pauseButtonVisibility = new MutableLiveData<>(View.GONE);
@@ -53,17 +68,99 @@ public class MainFragmentViewModel extends ViewModel {
         this.favoriteCache = favoriteCache;
     }
 
-    public boolean isUserLoggedIn() {
+    /**
+     * Initializes the view. Loads the currently playing album and the player state and updates the view.
+     * Also this is the entry point for a {@link RetryAction} and a scanned NFC tag.
+     *
+     * @param intent    the {@link Intent}, may contain a {@link RetryAction} or a NFC tag
+     * @param arguments may contain a {@link Intent} with a NFC tag which was redirected to this Fragment
+     */
+    public void createInitialState(Intent intent, Bundle arguments) {
+        // check token here to avoid race condition between loadPlaybackMetadata() and loadPlayerState()
+        Intent finalIntent = intent;
+        if (refreshTokenIfNeeded(() -> createInitialState(finalIntent, arguments))) {
+            return;
+        }
+
+        if (!isUserLoggedIn()) {
+            navigateToLoginActivity.postValue(null);
+            return;
+        }
+
+        if (!isHouseholdAndGroupAvailable()) {
+            navigateToDiscoverActivity.postValue(null);
+            return;
+        }
+
+        if (arguments != null) {
+            // May be passed from the MainActivity when the MainFragment wasn't selected when a NFC tag was scanned.
+            Parcelable parcelable = arguments.getParcelable(MainActivity.NFC_SCANNED_INTENT);
+            if (parcelable instanceof Intent) {
+                intent = (Intent) parcelable;
+            }
+        }
+        RetryAction retryAction = intent.getParcelableExtra(RetryAction.class.getSimpleName());
+        if (retryAction != null) {
+            if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_FAVORITE) {
+                String retryId = retryAction.getAdditionalId();
+                loadAndStartFavorite(retryId);
+            } else if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_METADATA) {
+                loadPlaybackMetadata();
+            }
+        } else {
+            if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+                handleNfcIntent(intent);
+            } else {
+                loadPlaybackMetadata();
+            }
+        }
+        loadPlayerState();
+    }
+
+    /**
+     * Handles a scanned tag.
+     *
+     * @param intent the {@link Intent} which contains a {@link NfcAdapter#EXTRA_TAG}
+     */
+    public void handleNfcIntent(Intent intent) {
+        Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+        if (tagFromIntent == null) {
+            return;
+        }
+
+        try (Ndef ndef = Ndef.get(tagFromIntent)) {
+            ndef.connect();
+            NdefMessage ndefMessage = ndef.getNdefMessage();
+            NfcPayload nfcPayload = NfcPayloadUtil.parseMessage(ndefMessage);
+
+            if (nfcPayload == null) {
+                soundToPlay.postValue(R.raw.negative);
+                showSnackbarMessage.postValue(ErrorMessage.create(R.string.tag_read_empty));
+
+            } else {
+                soundToPlay.postValue(R.raw.positive);
+                showSnackbarMessage.postValue(ErrorMessage.create(R.string.tag_read_ok));
+                loadAndStartFavorite(nfcPayload.getFavoriteId());
+            }
+
+        } catch (FormatException | IOException e) {
+            ErrorMessage errorMessage = ErrorMessage.create(R.string.tag_read_error, e.getMessage());
+            showSnackbarMessage.postValue(errorMessage);
+        }
+    }
+
+    private boolean isUserLoggedIn() {
         return !TextUtils.isEmpty(sharedPreferencesStore.getAccessToken());
     }
 
-    public boolean isHouseholdAndGroupAvailable() {
+    private boolean isHouseholdAndGroupAvailable() {
         boolean householdSelected = !TextUtils.isEmpty(sharedPreferencesStore.getHouseholdId());
         boolean groupSelected = !TextUtils.isEmpty(sharedPreferencesStore.getGroupId());
         return householdSelected && groupSelected;
     }
 
-    public boolean refreshTokenIfNeeded(Runnable runnable) {
+    private boolean refreshTokenIfNeeded(Runnable runnable) {
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             displayLoading(R.string.refresh_access_token);
             accessTokenManager.refreshAccessToken(runnable, this::hideLoadingState);
@@ -72,7 +169,7 @@ public class MainFragmentViewModel extends ViewModel {
         return false;
     }
 
-    public void loadAndStartFavorite(String favoriteId) {
+    private void loadAndStartFavorite(String favoriteId) {
         if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
             return;
         }
@@ -107,7 +204,7 @@ public class MainFragmentViewModel extends ViewModel {
         });
     }
 
-    public void loadPlaybackMetadata() {
+    private void loadPlaybackMetadata() {
         if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
             return;
         }
@@ -150,7 +247,7 @@ public class MainFragmentViewModel extends ViewModel {
     /**
      * Loads if the player is playing or paused.
      */
-    public void loadPlayerState() {
+    private void loadPlayerState() {
         if (refreshTokenIfNeeded(this::loadPlayerState)) {
             return;
         }

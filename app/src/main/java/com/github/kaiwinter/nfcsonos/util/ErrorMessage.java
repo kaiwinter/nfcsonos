@@ -5,9 +5,8 @@ import android.content.Context;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 
 /**
- * Transports different error types from a ViewModel (or any Context-less object) to a Fragment (or
- * any other Context-aware object). {@link #getMessage(Context)} is used to get the error message
- * as a String.
+ * Transports a message from a ViewModel (or any Context-less object) to a Fragment (or any other
+ * Context-aware object). {@link #getMessage(Context)} is used to get the error message as a String.
  */
 public class ErrorMessage {
     /**
