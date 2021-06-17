@@ -31,8 +31,8 @@ import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackStatus;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-import com.github.kaiwinter.nfcsonos.util.UserMessage;
 import com.github.kaiwinter.nfcsonos.util.SingleLiveEvent;
+import com.github.kaiwinter.nfcsonos.util.UserMessage;
 
 import java.io.IOException;
 
@@ -99,22 +99,24 @@ public class MainFragmentViewModel extends ViewModel {
                 intent = (Intent) parcelable;
             }
         }
-        RetryAction retryAction = intent.getParcelableExtra(RetryAction.class.getSimpleName());
-        if (retryAction != null) {
-            if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_FAVORITE) {
-                String retryId = retryAction.getAdditionalId();
-                loadAndStartFavorite(retryId);
-            } else if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_METADATA) {
-                loadPlaybackMetadata();
-            }
+        if (intent.hasExtra(RetryAction.class.getSimpleName())) {
+            handleRetryAction(intent);
+        } else if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            handleNfcIntent(intent);
         } else {
-            if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-                handleNfcIntent(intent);
-            } else {
-                loadPlaybackMetadata();
-            }
+            loadPlaybackMetadata();
         }
         loadPlayerState();
+    }
+
+    private void handleRetryAction(Intent intent) {
+        RetryAction retryAction = intent.getParcelableExtra(RetryAction.class.getSimpleName());
+        if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_FAVORITE) {
+            String retryId = retryAction.getAdditionalId();
+            loadAndStartFavorite(retryId);
+        } else if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_METADATA) {
+            loadPlaybackMetadata();
+        }
     }
 
     /**
