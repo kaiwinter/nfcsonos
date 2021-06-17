@@ -48,8 +48,8 @@ public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<Integer> errorContainerVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<UserMessage> errorMessageMutableLiveData = new MutableLiveData<>();
 
-    public final MutableLiveData<String> coverImageToLoad = new MutableLiveData<>();
-    public final MutableLiveData<Integer> soundToPlay = new MutableLiveData<>();
+    public final SingleLiveEvent<String> coverImageToLoad = new SingleLiveEvent<>();
+    public final SingleLiveEvent<Integer> soundToPlay = new SingleLiveEvent<>();
 
     public final SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
     public final SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
