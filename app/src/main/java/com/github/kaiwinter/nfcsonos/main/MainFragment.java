@@ -47,7 +47,7 @@ public class MainFragment extends Fragment {
         binding = FragmentMainBinding.inflate(getLayoutInflater());
         viewModel = new ViewModelProvider(this, new MainFragmentViewModelFactory(getActivity().getApplication())).get(MainFragmentViewModel.class);
 
-        viewModel.trackName.observe(this, binding.trackName::setText);
+        viewModel.albumTitle.observe(this, binding.albumTitle::setText);
 
         viewModel.errorContainerVisibility.observe(this, binding.errorContainer::setVisibility);
         viewModel.errorMessageMutableLiveData.observe(this, errorMessage -> {

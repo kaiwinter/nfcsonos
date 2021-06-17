@@ -41,7 +41,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainFragmentViewModel extends ViewModel {
-    public final MutableLiveData<String> trackName = new MutableLiveData<>();
+    public final MutableLiveData<String> albumTitle = new MutableLiveData<>();
 
     public final MutableLiveData<Integer> loadingContainerVisibility = new MutableLiveData<>(View.INVISIBLE);
     public final MutableLiveData<Integer> loadingDescriptionResId = new MutableLiveData<>();
@@ -177,8 +177,8 @@ public class MainFragmentViewModel extends ViewModel {
         }
 
         displayLoading(R.string.starting_favorite);
-        trackName.setValue("");
-        showCoverImage(favoriteId);
+        albumTitle.setValue("");
+        showAlbumCoverAndTitle(favoriteId);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
         FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
@@ -226,7 +226,7 @@ public class MainFragmentViewModel extends ViewModel {
                         return;
                     }
 
-                    trackName.setValue(playbackMetadata.container.name);
+                    albumTitle.setValue(playbackMetadata.container.name);
 
                     CurrentItem currentItem = playbackMetadata.currentItem;
                     if (currentItem != null) {
@@ -373,9 +373,9 @@ public class MainFragmentViewModel extends ViewModel {
         hideLoadingState(userMessage);
     }
 
-    private void showCoverImage(String favoriteId) {
+    private void showAlbumCoverAndTitle(String favoriteId) {
         favoriteCache.getFavorite(favoriteId, storedFavorite -> {
-            trackName.setValue(storedFavorite.name);
+            albumTitle.setValue(storedFavorite.name);
 
             String imageUrl = storedFavorite.imageUrl;
             coverImageToLoad.setValue(imageUrl);

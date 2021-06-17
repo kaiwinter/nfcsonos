@@ -91,14 +91,14 @@
                         android:padding="8dp">
 
                         <TextView
-                            android:id="@+id/track_name"
+                            android:id="@+id/album_title"
                             style="@style/Base.TextAppearance.AppCompat.Title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingStart="8dp"
                             android:paddingEnd="0dp"
                             android:paddingBottom="10dp"
-                            tools:text="Track title" />
+                            tools:text="Album title" />
 
                         <ImageView
                             android:id="@+id/cover_image"
