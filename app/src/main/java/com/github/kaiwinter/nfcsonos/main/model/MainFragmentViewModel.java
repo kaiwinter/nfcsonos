@@ -51,8 +51,8 @@ public class MainFragmentViewModel extends ViewModel {
     public final SingleLiveEvent<String> coverImageToLoad = new SingleLiveEvent<>();
     public final SingleLiveEvent<Integer> soundToPlay = new SingleLiveEvent<>();
 
-    public final SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
-    public final SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
+    public SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
+    public SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
     public final SingleLiveEvent<UserMessage> showSnackbarMessage = new SingleLiveEvent<>();
 
     public final MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
@@ -76,19 +76,19 @@ public class MainFragmentViewModel extends ViewModel {
      * @param arguments may contain a {@link Intent} with a NFC tag which was redirected to this Fragment
      */
     public void createInitialState(Intent intent, Bundle arguments) {
-        // check token here to avoid race condition between loadPlaybackMetadata() and loadPlayerState()
-        Intent finalIntent = intent;
-        if (refreshTokenIfNeeded(() -> createInitialState(finalIntent, arguments))) {
-            return;
-        }
-
         if (!isUserLoggedIn()) {
-            navigateToLoginActivity.postValue(null);
+            navigateToLoginActivity.call();
             return;
         }
 
         if (!isHouseholdAndGroupAvailable()) {
-            navigateToDiscoverActivity.postValue(null);
+            navigateToDiscoverActivity.call();
+            return;
+        }
+
+        // check token here to avoid race condition between loadPlaybackMetadata() and loadPlayerState()
+        Intent finalIntent = intent;
+        if (refreshTokenIfNeeded(() -> createInitialState(finalIntent, arguments))) {
             return;
         }
 
