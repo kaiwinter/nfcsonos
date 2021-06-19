@@ -70,14 +70,14 @@ public class MainFragment extends Fragment {
 
         binding.playButton.setOnClickListener(__ -> viewModel.play());
         binding.pauseButton.setOnClickListener(__ -> viewModel.pause());
-
-        viewModel.createInitialState(getActivity().getIntent(), getArguments());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.createInitialState(new Intent(), null);
+        Intent intent = getActivity().getIntent();
+        Bundle arguments = getArguments();
+        viewModel.createInitialState(intent, arguments);
     }
 
     @Override
