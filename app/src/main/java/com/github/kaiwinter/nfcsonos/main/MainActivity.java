@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String NFC_SCANNED_INTENT = "NFC_SCANNED_INTENT";
 
     private SharedPreferencesStore sharedPreferencesStore;
+    private ServiceFactory serviceFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         sharedPreferencesStore = new SharedPreferencesStore(getApplicationContext());
+        serviceFactory = new ServiceFactory(ServiceFactory.API_ENDPOINT);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private void setVolumeOnSonosGroup(int volumeDelta) {
         String accessToken = sharedPreferencesStore.getAccessToken();
         String groupId = sharedPreferencesStore.getGroupId();
-        GroupVolumeService service = ServiceFactory.createGroupVolumeService(accessToken);
+        GroupVolumeService service = serviceFactory.createGroupVolumeService(accessToken);
         Call<Void> call = service.setRelativeVolume(groupId, new GroupVolumeService.VolumeDeltaRequest(volumeDelta));
         call.enqueue(new Callback<Void>() {
             @Override

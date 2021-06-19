@@ -20,6 +20,7 @@ import com.github.kaiwinter.nfcsonos.databinding.FragmentPairBinding;
 import com.github.kaiwinter.nfcsonos.main.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
+import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.util.UserMessage;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
@@ -38,7 +39,7 @@ public class PairFragment extends Fragment {
 
         binding = FragmentPairBinding.inflate(getLayoutInflater());
 
-        FavoriteCache favoriteCache = new FavoriteCache(getActivity());
+        FavoriteCache favoriteCache = new FavoriteCache(getActivity(), new ServiceFactory(ServiceFactory.API_ENDPOINT));
 
         displayLoading(getString(R.string.loading_favorites));
         favoriteCache.loadFavorites(favorites -> {

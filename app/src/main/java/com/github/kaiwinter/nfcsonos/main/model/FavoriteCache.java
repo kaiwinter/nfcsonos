@@ -38,11 +38,13 @@ public class FavoriteCache {
     private final Context context;
     private final SharedPreferencesStore sharedPreferencesStore;
     private final AccessTokenManager accessTokenManager;
+    private final ServiceFactory serviceFactory;
 
-    public FavoriteCache(Context context) {
+    public FavoriteCache(Context context, ServiceFactory serviceFactory) {
         this.context = context;
         this.sharedPreferencesStore = new SharedPreferencesStore(context);
         this.accessTokenManager = new AccessTokenManager(context);
+        this.serviceFactory = serviceFactory;
     }
 
     /**
@@ -97,7 +99,7 @@ public class FavoriteCache {
         }
 
         String accessToken = sharedPreferencesStore.getAccessToken();
-        FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
+        FavoriteService service = serviceFactory.createFavoriteService(accessToken);
 
         service.getFavorites(sharedPreferencesStore.getHouseholdId()).enqueue(new Callback<Favorites>() {
             @Override

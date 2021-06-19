@@ -16,30 +16,36 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ServiceFactory {
 
     private static final String AUTH_ENDPOINT = "https://api.sonos.com";
-    private static final String API_ENDPOINT = "https://api.ws.sonos.com";
+    public static final String API_ENDPOINT = "https://api.ws.sonos.com";
+
+    private final String apiEndpoint;
+
+    public ServiceFactory(String apiEndpoint) {
+        this.apiEndpoint = apiEndpoint;
+    }
 
     public static LoginService createLoginService() {
         return createRestAdapter(AUTH_ENDPOINT, null).create(LoginService.class);
     }
 
-    public static FavoriteService createFavoriteService(String token) {
-        return createRestAdapter(API_ENDPOINT, token).create(FavoriteService.class);
+    public FavoriteService createFavoriteService(String token) {
+        return createRestAdapter(apiEndpoint, token).create(FavoriteService.class);
     }
 
-    public static PlaybackMetadataService createPlaybackMetadataService(String token) {
-        return createRestAdapter(API_ENDPOINT, token).create(PlaybackMetadataService.class);
+    public PlaybackMetadataService createPlaybackMetadataService(String token) {
+        return createRestAdapter(apiEndpoint, token).create(PlaybackMetadataService.class);
     }
 
-    public static DiscoverService createDiscoverService(String token) {
-        return createRestAdapter(API_ENDPOINT, token).create(DiscoverService.class);
+    public DiscoverService createDiscoverService(String token) {
+        return createRestAdapter(apiEndpoint, token).create(DiscoverService.class);
     }
 
-    public static GroupVolumeService createGroupVolumeService(String token) {
-        return createRestAdapter(API_ENDPOINT, token).create(GroupVolumeService.class);
+    public GroupVolumeService createGroupVolumeService(String token) {
+        return createRestAdapter(apiEndpoint, token).create(GroupVolumeService.class);
     }
 
-    public static PlaybackService createPlaybackService(String token) {
-        return createRestAdapter(API_ENDPOINT, token).create(PlaybackService.class);
+    public PlaybackService createPlaybackService(String token) {
+        return createRestAdapter(apiEndpoint, token).create(PlaybackService.class);
     }
 
     private static Retrofit createRestAdapter(String endpoint, String token) {

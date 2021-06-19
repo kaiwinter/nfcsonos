@@ -35,6 +35,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private SharedPreferencesStore sharedPreferencesStore;
     private AccessTokenManager accessTokenManager;
+    private ServiceFactory serviceFactory;
 
     private RetryAction retryAction; // Contains a RetryAction, which is just passed back
 
@@ -46,6 +47,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
         sharedPreferencesStore = new SharedPreferencesStore(this);
         accessTokenManager = new AccessTokenManager(this);
+        serviceFactory = new ServiceFactory(ServiceFactory.API_ENDPOINT);
 
         binding = ActivityDiscoverBinding.inflate(getLayoutInflater());
         binding.selectButton.setOnClickListener(__ -> selectHouseholdAndGroup());
@@ -70,7 +72,7 @@ public class DiscoverActivity extends AppCompatActivity {
             return;
         }
 
-        DiscoverService service = ServiceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
+        DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
         Call<Households> household = service.getHouseholds();
         household.enqueue(new Callback<Households>() {
             @Override
@@ -107,7 +109,7 @@ public class DiscoverActivity extends AppCompatActivity {
             return;
         }
 
-        DiscoverService service = ServiceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
+        DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
         Call<Groups> group = service.getGroups(householdId);
         group.enqueue(new Callback<Groups>() {
             @Override

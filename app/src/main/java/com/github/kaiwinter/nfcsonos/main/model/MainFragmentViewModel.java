@@ -55,17 +55,19 @@ public class MainFragmentViewModel extends ViewModel {
     public SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
     public final SingleLiveEvent<UserMessage> showSnackbarMessage = new SingleLiveEvent<>();
 
-    public final MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
+    public MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<Integer> pauseButtonVisibility = new MutableLiveData<>(View.GONE);
 
     private final SharedPreferencesStore sharedPreferencesStore;
     private final AccessTokenManager accessTokenManager;
     private final FavoriteCache favoriteCache;
+    private final ServiceFactory serviceFactory;
 
-    public MainFragmentViewModel(SharedPreferencesStore sharedPreferencesStore, AccessTokenManager accessTokenManager, FavoriteCache favoriteCache) {
+    public MainFragmentViewModel(SharedPreferencesStore sharedPreferencesStore, AccessTokenManager accessTokenManager, FavoriteCache favoriteCache, ServiceFactory serviceFactory) {
         this.sharedPreferencesStore = sharedPreferencesStore;
         this.accessTokenManager = accessTokenManager;
         this.favoriteCache = favoriteCache;
+        this.serviceFactory = serviceFactory;
     }
 
     /**
@@ -181,7 +183,7 @@ public class MainFragmentViewModel extends ViewModel {
         showAlbumCoverAndTitle(favoriteId);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
-        FavoriteService service = ServiceFactory.createFavoriteService(accessToken);
+        FavoriteService service = serviceFactory.createFavoriteService(accessToken);
 
         LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId);
 
@@ -214,7 +216,7 @@ public class MainFragmentViewModel extends ViewModel {
         displayLoading(R.string.loading_metadata);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackMetadataService service = ServiceFactory.createPlaybackMetadataService(accessToken);
+        PlaybackMetadataService service = serviceFactory.createPlaybackMetadataService(accessToken);
 
         service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
             @Override
@@ -257,7 +259,7 @@ public class MainFragmentViewModel extends ViewModel {
         displayLoading(R.string.loading_playerstate);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackService service = ServiceFactory.createPlaybackService(accessToken);
+        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
         service.playbackStatus(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackStatus>() {
             @Override
             public void onResponse(Call<PlaybackStatus> call, Response<PlaybackStatus> response) {
@@ -301,7 +303,7 @@ public class MainFragmentViewModel extends ViewModel {
     public void play() {
         displayLoading(R.string.start_playback);
         String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackService service = ServiceFactory.createPlaybackService(accessToken);
+        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
         service.play(sharedPreferencesStore.getGroupId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -327,7 +329,7 @@ public class MainFragmentViewModel extends ViewModel {
     public void pause() {
         displayLoading(R.string.stop_playback);
         String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackService service = ServiceFactory.createPlaybackService(accessToken);
+        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
         service.pause(sharedPreferencesStore.getGroupId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
