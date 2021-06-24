@@ -42,6 +42,7 @@ import retrofit2.Response;
 
 public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<String> albumTitle = new MutableLiveData<>();
+    public final MutableLiveData<String> trackTitle = new MutableLiveData<>();
 
     public final MutableLiveData<Integer> loadingContainerVisibility = new MutableLiveData<>(View.INVISIBLE);
     public final MutableLiveData<Integer> loadingDescriptionResId = new MutableLiveData<>();
@@ -183,6 +184,7 @@ public class MainFragmentViewModel extends ViewModel {
 
         displayLoading(R.string.starting_favorite);
         albumTitle.setValue("");
+        trackTitle.setValue("");
         showAlbumCoverAndTitle(favoriteId);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
@@ -235,6 +237,7 @@ public class MainFragmentViewModel extends ViewModel {
 
                     CurrentItem currentItem = playbackMetadata.currentItem;
                     if (currentItem != null) {
+                        trackTitle.setValue(currentItem.track.name);
                         String imageUrl = currentItem.track.imageUrl;
                         coverImageToLoad.setValue(imageUrl);
                     }

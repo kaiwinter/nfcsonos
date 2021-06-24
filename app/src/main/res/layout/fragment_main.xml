@@ -90,6 +90,13 @@
                         android:orientation="vertical"
                         android:padding="8dp">
 
+                        <ImageView
+                            android:id="@+id/cover_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="300dp"
+                            android:contentDescription="@string/cover_image"
+                            app:srcCompat="@drawable/cover_placeholder" />
+
                         <TextView
                             android:id="@+id/album_title"
                             style="@style/Base.TextAppearance.AppCompat.Title"
@@ -97,15 +104,17 @@
                             android:layout_height="wrap_content"
                             android:paddingStart="8dp"
                             android:paddingEnd="0dp"
-                            android:paddingBottom="10dp"
+                            android:paddingBottom="0dp"
                             tools:text="Album title" />
-
-                        <ImageView
-                            android:id="@+id/cover_image"
+                        <TextView
+                            android:id="@+id/track_title"
+                            style="@style/Base.TextAppearance.AppCompat.Subhead"
                             android:layout_width="match_parent"
-                            android:layout_height="300dp"
-                            android:contentDescription="@string/cover_image"
-                            app:srcCompat="@drawable/cover_placeholder" />
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="0dp"
+                            android:paddingBottom="10dp"
+                            tools:text="Track title" />
 
                     </LinearLayout>
 
