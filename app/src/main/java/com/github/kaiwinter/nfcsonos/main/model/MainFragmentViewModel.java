@@ -113,6 +113,9 @@ public class MainFragmentViewModel extends ViewModel {
 
     private void handleRetryAction(Intent intent) {
         RetryAction retryAction = intent.getParcelableExtra(RetryAction.class.getSimpleName());
+        if (retryAction == null) {
+            return;
+        }
         if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_FAVORITE) {
             String retryId = retryAction.getAdditionalId();
             loadAndStartFavorite(retryId);
