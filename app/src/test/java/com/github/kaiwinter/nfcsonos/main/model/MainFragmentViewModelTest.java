@@ -1,7 +1,6 @@
 package com.github.kaiwinter.nfcsonos.main.model;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -78,7 +77,7 @@ public class MainFragmentViewModelTest {
             viewModel.pause();
             assertEquals(View.VISIBLE, viewModel.loadingContainerVisibility.getValue().intValue());
 
-            await().atMost(10, TimeUnit.SECONDS).until(() -> viewModel.playButtonVisibility.getValue().intValue() != View.GONE);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> viewModel.playButtonVisibility.getValue() != View.GONE);
 
             // No error message
             assertNull(viewModel.errorMessageMutableLiveData.getValue());
