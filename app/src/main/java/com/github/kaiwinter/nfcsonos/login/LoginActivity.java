@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.browser.customtabs.CustomTabsServiceConnection;
-import androidx.browser.customtabs.CustomTabsSession;
 
 import com.github.kaiwinter.nfcsonos.BuildConfig;
 import com.github.kaiwinter.nfcsonos.R;
@@ -39,11 +38,9 @@ public final class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private static final String AUTHORIZATION_ENDPOINT_URI = "https://api.sonos.com/login/v3/oauth";
-    private static final String REDIRECT_URI = "http://localhost/com.github.kaiwinter.nfcsonos";
+    private static final String REDIRECT_URI = "https://vorlesungsfrei.de/nfcsonos-redirect.php";
 
     private ActivityLoginBinding binding;
-
-    private CustomTabsClient customTabsClient;
 
     private SharedPreferencesStore sharedPreferencesStore;
 
@@ -53,29 +50,21 @@ public final class LoginActivity extends AppCompatActivity {
 
         sharedPreferencesStore = new SharedPreferencesStore(this);
 
-        Log.i(TAG, "Creating CustomTabsServiceConnection");
         CustomTabsServiceConnection customTabsServiceConnection = new CustomTabsServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName componentName) {
-                Log.i(TAG, "CustomTabsServiceConnection.onServiceDisconnected");
-                customTabsClient = null;
             }
 
             @Override
             public void onCustomTabsServiceConnected(ComponentName componentName, CustomTabsClient customTabsClient) {
-                Log.i(TAG, "CustomTabsServiceConnection.onCustomTabsServiceConnected");
                 customTabsClient.warmup(0);
-                LoginActivity.this.customTabsClient = customTabsClient;
             }
         };
 
-        Log.i(TAG, "CustomTabsClient.bindCustomTabsService");
         CustomTabsClient.bindCustomTabsService(
                 this,
                 "com.android.chrome",
                 customTabsServiceConnection);
-
-        Log.i(TAG, "CustomTabsClient.done");
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         binding.startAuth.setOnClickListener(__ -> loginClicked());
@@ -107,28 +96,16 @@ public final class LoginActivity extends AppCompatActivity {
                 + "&scope=playback-control-all"
                 + "&redirect_uri=" + REDIRECT_URI;
 
-        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder(createSession(Uri.parse(url))).build();
-        customTabsIntent.intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+        customTabsIntent.intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         try {
             customTabsIntent.launchUrl(this, Uri.parse(url));
         } catch (ActivityNotFoundException e) {
             UserMessage userMessage = UserMessage.create(R.string.couldnt_start_browser);
             hideLoadingState(userMessage);
         }
-    }
-
-    public CustomTabsSession createSession(Uri possibleUri) {
-        if (customTabsClient == null) {
-            return null;
-        }
-
-        CustomTabsSession session = customTabsClient.newSession(null);
-        if (session == null) {
-            return null;
-        }
-        session.mayLaunchUrl(possibleUri, null, null);
-
-        return session;
     }
 
     @Override
