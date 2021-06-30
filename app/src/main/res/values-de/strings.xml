@@ -3,7 +3,6 @@
     <string name="error">Fehler: %1$s</string>
     <string name="error_long">Fehler (%1$d): %2$s, %3$s</string>
     <string name="login_introduction">Um der App zu erlauben dein Sonos System zu steuern musst du dich zuerst mit deinem Sonos-Account anmelden. Dies geschieht in einem Browserfenster auf der Webseite von Sonos. Die App bekommt dadurch deine Zugangsdaten nicht zu Gesicht, sondern lediglich ein Berechtigungstoken von Sonos.</string>
-    <string name="ready_to_scan">Warte auf NFC tag</string>
     <string name="cover_image">Cover Bild</string>
     <string name="loading_favorites">Lade Favoriten</string>
     <string name="refresh_access_token">Aktualisiere Zugangstoken</string>

@@ -5,7 +5,6 @@
     <string name="error">Error: %1$s</string>
     <string name="error_long">Error (%1$d): %2$s, %3$s</string>
     <string name="login_introduction">To allow the app to control your Sonos you first have to login with your Sonos account. This happens in a browser window on the website of Sonos. That way the app doesn´t see your login details it just gets an access token from Sonos.</string>
-    <string name="ready_to_scan">Waiting for NFC tag</string>
     <string name="cover_image">Cover image</string>
     <string name="loading_favorites">Loading favorites</string>
     <string name="refresh_access_token">Refreshing Access Token</string>
