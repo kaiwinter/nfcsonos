@@ -307,6 +307,10 @@ public class MainFragmentViewModel extends ViewModel {
      * Sets the player state to playing.
      */
     public void play() {
+        if (refreshTokenIfNeeded(this::play)) {
+            return;
+        }
+
         displayLoading(R.string.start_playback);
         String accessToken = sharedPreferencesStore.getAccessToken();
         PlaybackService service = serviceFactory.createPlaybackService(accessToken);
@@ -333,6 +337,10 @@ public class MainFragmentViewModel extends ViewModel {
      * Sets the player state to paused.
      */
     public void pause() {
+        if (refreshTokenIfNeeded(this::pause)) {
+            return;
+        }
+
         displayLoading(R.string.stop_playback);
         String accessToken = sharedPreferencesStore.getAccessToken();
         PlaybackService service = serviceFactory.createPlaybackService(accessToken);
