@@ -11,8 +11,7 @@
     <string name="starting_favorite">Starte Favorit</string>
     <string name="error_starting_favorite">Fehler beim Starten: %1$s</string>
     <string name="favorite">Favorit</string>
-    <string name="link">Verknüpfen</string>
-    <string name="link_tag_message">Hiermit wird eine Verknüpfung zu \'%1$s\' auf das NFC-Tag geschrieben.\n\nBitte das Tag jetzt an das Gerät halten.</string>
+    <string name="pair_tag_message">Hiermit wird eine Verknüpfung zu \'%1$s\' auf das NFC-Tag geschrieben.\n\nBitte das Tag jetzt an das Gerät halten.</string>
     <string name="scan_tag">Tag scannen</string>
     <string name="cancel">Abbrechen</string>
     <string name="no_selection">Keine Auswahl</string>
@@ -39,7 +38,8 @@
     <string name="couldnt_start_browser">Browser konnte nicht gestartet werden</string>
     <string name="favorite_not_found_in_cache">Favorit \'%1$s\' nicht im Cache</string>
     <string name="volume_changed">Lautstärke %1$s</string>
-    <string name="pair">Verknüpfen</string>
+    <string name="pair_menu">Verknüpfen</string>
+    <string name="pair_button">Verknüpfen</string>
     <string name="settings">Einstellungen</string>
     <string name="logout">Ausloggen</string>
     <string name="start_playback">Starte…</string>

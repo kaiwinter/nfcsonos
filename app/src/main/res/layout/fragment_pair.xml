@@ -91,7 +91,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:enabled="false"
-                        android:text="@string/link" />
+                        android:text="@string/pair_button" />
 
                     <LinearLayout
                         android:id="@+id/error_container"

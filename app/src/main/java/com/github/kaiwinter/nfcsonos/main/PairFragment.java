@@ -65,7 +65,7 @@ public class PairFragment extends Fragment {
 
         dialog = new MaterialDialog(getActivity(), MaterialDialog.getDEFAULT_BEHAVIOR())
                 .title(null, getString(R.string.scan_tag))
-                .message(null, getString(R.string.link_tag_message, getSelectedFavorite().name), null)
+                .message(null, getString(R.string.pair_tag_message, getSelectedFavorite().name), null)
                 .negativeButton(null, getString(R.string.cancel), null);
 
         dialog.show();
