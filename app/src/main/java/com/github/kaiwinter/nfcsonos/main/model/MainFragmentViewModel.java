@@ -102,9 +102,9 @@ public class MainFragmentViewModel extends ViewModel {
                 intent = (Intent) parcelable;
             }
         }
-        if (intent.hasExtra(RetryAction.class.getSimpleName())) {
+        if (intent != null && intent.hasExtra(RetryAction.class.getSimpleName())) {
             handleRetryAction(intent);
-        } else if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+        } else if (intent != null && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             handleNfcIntent(intent);
         } else {
             loadPlaybackMetadata();
