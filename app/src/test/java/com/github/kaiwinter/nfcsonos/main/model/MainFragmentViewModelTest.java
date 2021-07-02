@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.core.util.Consumer;
 
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
@@ -41,8 +42,8 @@ public class MainFragmentViewModelTest {
      */
     @Test
     public void notLoggedIn_switchToLoginActivity() {
-        SharedPreferencesStore sharedPreferences = when(mock(SharedPreferencesStore.class).getAccessToken()).thenReturn("").getMock();
-        MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferences, null, null, null);
+        SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().build();
+        MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, null, null);
 
         viewModel.navigateToLoginActivity = mock(SingleLiveEvent.class);
         viewModel.createInitialState(new Intent(), null);
@@ -55,8 +56,8 @@ public class MainFragmentViewModelTest {
      */
     @Test
     public void noHouseholdSelection_switchToDiscoverActivity() {
-        SharedPreferencesStore sharedPreferences = when(mock(SharedPreferencesStore.class).getAccessToken()).thenReturn("123").getMock();
-        MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferences, null, null, null);
+        SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().build();
+        MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, null, null);
 
         viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
         viewModel.createInitialState(new Intent(), null);
@@ -66,13 +67,11 @@ public class MainFragmentViewModelTest {
 
     @Test
     public void pause_200() {
-        runWithMockWebServer("/pause_200.json", 200, () -> {
-            SharedPreferencesStore sharedPreferences = mock(SharedPreferencesStore.class);
-            when(sharedPreferences.getAccessToken()).thenReturn("access-token").getMock();
-            when(sharedPreferences.getGroupId()).thenReturn("group-id").getMock();
+        runWithMockWebServer("/pause_200.json", 200, port -> {
+            SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().withGroupId().build();
             AccessTokenManager accessTokenManager = when(mock(AccessTokenManager.class).accessTokenRefreshNeeded()).thenReturn(false).getMock();
-            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:8080");
-            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferences, accessTokenManager, null, serviceFactory);
+            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:" + port);
+            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, null, serviceFactory);
 
             viewModel.pause();
             assertEquals(View.VISIBLE, viewModel.loadingContainerVisibility.getValue().intValue());
@@ -87,18 +86,44 @@ public class MainFragmentViewModelTest {
         });
     }
 
-    private void runWithMockWebServer(String file, int httpCode, Runnable runnable) {
+    private void runWithMockWebServer(String file, int httpCode, Consumer<Integer> runnable) {
         try {
             InputStream inputStream = MainFragmentViewModelTest.class.getResourceAsStream(file);
             Buffer buffer = new Buffer().readFrom(inputStream);
 
             MockWebServer mockWebServer = new MockWebServer();
             mockWebServer.enqueue(new MockResponse().setBody(buffer).setResponseCode(httpCode));
-            mockWebServer.start(8080);
-            runnable.run();
+            mockWebServer.start();
+            runnable.accept(mockWebServer.getPort());
             mockWebServer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    static class SharedPreferencesStoreMockBuilder {
+        boolean withAccessToken;
+        boolean withGroupId;
+
+        SharedPreferencesStoreMockBuilder withAccessToken() {
+            this.withAccessToken = true;
+            return this;
+        }
+
+        SharedPreferencesStoreMockBuilder withGroupId() {
+            this.withGroupId = true;
+            return this;
+        }
+
+        SharedPreferencesStore build() {
+            SharedPreferencesStore sharedPreferences = mock(SharedPreferencesStore.class);
+            if (withAccessToken) {
+                when(sharedPreferences.getAccessToken()).thenReturn("access-token").getMock();
+            }
+            if (withGroupId) {
+                when(sharedPreferences.getGroupId()).thenReturn("group-id").getMock();
+            }
+            return sharedPreferences;
         }
     }
 }
