@@ -1,4 +1,4 @@
-# NFC Player
+# NFC Controller for Sonos
 
 This app starts a Sonos favorite by scanning a NFC tag. 
 
@@ -23,7 +23,7 @@ NFC Controller App
 7. Choose the Sonos favorite from the dropdown and hit the "Pair" button
 8. Hold the NFC tag on (or behind) the phone to link the tag with the favorite
 
-Now you can put the printed CD cover on your phone to start the album on the Sonos box. The app don't have to be opened before doing this.
+Now you can put the printed CD cover on your phone to start the album on the Sonos box. The app doesn't have to be started but the screen have to be turned on.
 
 ## Technical considerations
 
