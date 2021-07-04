@@ -28,7 +28,6 @@
     <string name="no_household_found">Kein Haushalt gefunden</string>
     <string name="no_group_found">Keine Gruppe gefunden</string>
     <string name="tag_read_empty">Leeres oder fehlerhaftes Tag</string>
-    <string name="tag_read_ok">Tag ok</string>
     <string name="tag_read_error">Fehler beim Lesen des Tags: %1$s</string>
     <string name="loading_households">Lade Haushalte</string>
     <string name="loading_groups">Lade Gruppen</string>

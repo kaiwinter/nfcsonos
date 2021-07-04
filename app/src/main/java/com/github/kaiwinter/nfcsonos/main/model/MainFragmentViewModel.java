@@ -148,7 +148,6 @@ public class MainFragmentViewModel extends ViewModel {
 
             } else {
                 soundToPlay.postValue(R.raw.positive);
-                showSnackbarMessage.postValue(UserMessage.create(R.string.tag_read_ok));
                 loadAndStartFavorite(nfcPayload.getFavoriteId());
             }
 

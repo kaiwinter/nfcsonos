@@ -30,7 +30,6 @@
     <string name="no_household_found">No household available</string>
     <string name="no_group_found">No group available</string>
     <string name="tag_read_empty">Empty or unreadable tag</string>
-    <string name="tag_read_ok">Tag ok</string>
     <string name="tag_read_error">Error reading tag: %1$s</string>
     <string name="loading_households">Loading Households</string>
     <string name="loading_groups">Loading Groups</string>
