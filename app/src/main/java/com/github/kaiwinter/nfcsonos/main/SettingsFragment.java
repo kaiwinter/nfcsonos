@@ -46,7 +46,7 @@ public class SettingsFragment extends Fragment {
         sharedPreferencesStore.setHouseholdAndGroup(null, null);
 
         Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
-        loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(loginIntent);
     }
 }
