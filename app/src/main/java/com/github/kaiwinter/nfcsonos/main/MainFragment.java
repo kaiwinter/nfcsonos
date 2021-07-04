@@ -77,6 +77,7 @@ public class MainFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Intent intent = getActivity().getIntent();
+        getActivity().setIntent(null);
         Bundle arguments = getArguments();
         viewModel.createInitialState(intent, arguments);
     }
