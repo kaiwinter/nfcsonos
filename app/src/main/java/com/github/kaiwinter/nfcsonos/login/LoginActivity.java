@@ -165,7 +165,7 @@ public final class LoginActivity extends AppCompatActivity {
     }
 
     private void switchToMainActivity() {
-        Log.i(TAG, "User is already authenticated, proceeding to token activity");
+        Log.i(TAG, "User is authenticated, proceeding to token activity");
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
