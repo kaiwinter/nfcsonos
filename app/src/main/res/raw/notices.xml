@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<notices>
+    <notice>
+        <name>Appcompat</name>
+        <url>https://developer.android.com/jetpack/androidx/releases/appcompat</url>
+        <copyright>Copyright (C) 2011 The Android Open Source Project</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>material-components-android</name>
+        <url>https://github.com/material-components/material-components-android</url>
+        <copyright>Copyright 2017 The Android Open Source Project</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Glide</name>
+        <url>https://github.com/bumptech/glide</url>
+        <copyright>Copyright 2014 Google, Inc.</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Retrofit</name>
+        <url>https://github.com/square/retrofit</url>
+        <copyright>Copyright 2013 Square, Inc.</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>OkHttp</name>
+        <url>https://github.com/square/okhttp</url>
+        <copyright>Copyright 2019 Square, Inc.</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Material Spinner</name>
+        <url>https://github.com/jaredrummler/MaterialSpinner</url>
+        <copyright>Copyright (C) 2016 Jared Rummler</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Material Dialogs</name>
+        <url>https://github.com/afollestad/material-dialogs</url>
+        <copyright>Copyright 2018 Aidan Follestad</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Browser</name>
+        <url>https://developer.android.com/jetpack/androidx/releases/browser</url>
+        <copyright></copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Android Navigation Fragment</name>
+        <url>https://developer.android.com/jetpack/androidx/releases/navigation</url>
+        <copyright>Copyright © 2017 The Android Open Source Project</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Android Navigation UI</name>
+        <url>https://developer.android.com/jetpack/androidx/releases/navigation</url>
+        <copyright>Copyright © 2018 The Android Open Source Project</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>LicensesDialog</name>
+        <url>https://github.com/PSDev/LicensesDialog</url>
+        <copyright>Copyright 2013 Philip Schiffer</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Kotlin Stdlib</name>
+        <url></url>
+        <copyright>Copyright © 20xx Kotlin Team</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Parcelize Runtime</name>
+        <url></url>
+        <copyright>Copyright © 20xx Kotlin Team</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Sounds which are played after scanning</name>
+        <url>https://mixkit.co/</url>
+        <copyright></copyright>
+        <license>mixkit</license>
+    </notice>
+    <notice>
+        <name>CD cover placeholder image designed by rawpixel.com / Freepik</name>
+        <url>http://www.freepik.com</url>
+        <copyright></copyright>
+        <license>freepik</license>
+    </notice>
+    <notice>
+        <name>App icon made by Flat Icons</name>
+        <url>www.flaticon.com</url>
+        <copyright></copyright>
+        <license>flaticon</license>
+    </notice>
+</notices>
