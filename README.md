@@ -2,15 +2,13 @@
 
 This app starts a Sonos favorite by scanning a NFC tag. 
 
-<img style="float: left; padding:10px;" src="https://raw.githubusercontent.com/kaiwinter/nfcsonos/main/app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="app icon">
+<img src="https://raw.githubusercontent.com/kaiwinter/nfcsonos/main/app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="app icon">
 
 I started this project to simplify starting audio books on Sonos for the kids. Now they have a set of printed CD covers from which they can choose what they want to listen to.
 Choosing the same on the display of a smartphone or tablet always felt odd somehow. Now they can search through their collection of CD cover cards and pick one. By holding the card on a smartphone the Sonos box starts playing the linked album.
 
-<div style="clear:both">
-
-<a href='https://play.google.com/store/apps/details?id=com.github.kaiwinter.nfcsonos'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="70px"/></a>
-<a href="https://www.buymeacoffee.com/kaiwinter" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important; padding:10px"></a>
+<a href='https://play.google.com/store/apps/details?id=com.github.kaiwinter.nfcsonos'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="60px"/></a>
+<a href="https://www.buymeacoffee.com/kaiwinter" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="55"></a>
 
 ## How to
 
