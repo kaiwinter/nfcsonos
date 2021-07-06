@@ -11,8 +11,8 @@ android {
         applicationId 'com.github.kaiwinter.nfcsonos'
         minSdkVersion 21 // Retrofit
         targetSdkVersion 30
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.0.3-SNAPSHOT"
 
         buildConfigField("String", "CLIENT_ID", apikeyProperties['CLIENT_ID'])
         buildConfigField("String", "CLIENT_SECRET", apikeyProperties['CLIENT_SECRET'])
