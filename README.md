@@ -30,6 +30,8 @@ NFC Controller App
 
 Now you can put the printed CD cover on your phone to start the album on the Sonos box. The app doesn't have to be started but the screen have to be turned on.
 
+![animation](https://user-images.githubusercontent.com/110982/125839705-2cf2f646-1a08-4bc8-a480-539352c2bc79.gif)
+
 ## Technical considerations
 
 ### Sonos cloud
