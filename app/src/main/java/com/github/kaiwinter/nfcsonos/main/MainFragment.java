@@ -121,7 +121,7 @@ public class MainFragment extends Fragment {
     private void startDiscoverActivity(RetryAction retryAction) {
         Intent intent = new Intent(getActivity(), DiscoverActivity.class);
         if (retryAction != null) {
-            intent.putExtra(RetryActionType.class.getSimpleName(), retryAction);
+            intent.putExtra(RetryAction.class.getSimpleName(), retryAction);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
