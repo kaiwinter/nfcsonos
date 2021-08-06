@@ -171,7 +171,7 @@ public class DiscoverActivity extends AppCompatActivity {
     private void switchToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         if (retryAction != null) {
-        intent.putExtra(RetryAction.class.getSimpleName(), retryAction);
+            intent.putExtra(RetryAction.class.getSimpleName(), retryAction);
         }
         startActivity(intent);
         finish();
