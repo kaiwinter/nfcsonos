@@ -1,5 +1,14 @@
 package com.github.kaiwinter.nfcsonos.main.model;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import android.content.Intent;
 import android.view.View;
 
@@ -21,13 +30,6 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okio.Buffer;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link MainFragmentViewModel}.
@@ -65,6 +67,23 @@ public class MainFragmentViewModelTest {
         verify(viewModel.navigateToDiscoverActivity).call();
     }
 
+    /**
+     * Tests the case that the household ID isn't valid anymore. This happens after the Sonos was unplugged.
+     */
+    @Test
+    public void householdGone_switchToDiscoverActivity() {
+        runWithMockWebServer("/410_gone.json", 410, port -> {
+            SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().withGroupId().withHouseholdId().build();
+            AccessTokenManager accessTokenManager = when(mock(AccessTokenManager.class).accessTokenRefreshNeeded()).thenReturn(false).getMock();
+            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:" + port);
+            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, null, serviceFactory);
+
+            viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
+            viewModel.createInitialState(mock(Intent.class), null);
+            verify(viewModel.navigateToDiscoverActivity, timeout(100000)).postValue(any(RetryAction.class));
+        });
+    }
+
     @Test
     public void pause_200() {
         runWithMockWebServer("/pause_200.json", 200, port -> {
@@ -92,7 +111,7 @@ public class MainFragmentViewModelTest {
             Buffer buffer = new Buffer().readFrom(inputStream);
 
             MockWebServer mockWebServer = new MockWebServer();
-            mockWebServer.enqueue(new MockResponse().setBody(buffer).setResponseCode(httpCode));
+            mockWebServer.enqueue(new MockResponse().setBody(buffer).setResponseCode(httpCode).setHeader("Content-Type", "application/json"));
             mockWebServer.start();
             runnable.accept(mockWebServer.getPort());
             mockWebServer.close();
@@ -104,6 +123,7 @@ public class MainFragmentViewModelTest {
     static class SharedPreferencesStoreMockBuilder {
         boolean withAccessToken;
         boolean withGroupId;
+        boolean withHouseholdId;
 
         SharedPreferencesStoreMockBuilder withAccessToken() {
             this.withAccessToken = true;
@@ -115,6 +135,11 @@ public class MainFragmentViewModelTest {
             return this;
         }
 
+        SharedPreferencesStoreMockBuilder withHouseholdId() {
+            this.withHouseholdId = true;
+            return this;
+        }
+
         SharedPreferencesStore build() {
             SharedPreferencesStore sharedPreferences = mock(SharedPreferencesStore.class);
             if (withAccessToken) {
@@ -122,6 +147,9 @@ public class MainFragmentViewModelTest {
             }
             if (withGroupId) {
                 when(sharedPreferences.getGroupId()).thenReturn("group-id").getMock();
+            }
+            if (withHouseholdId) {
+                when(sharedPreferences.getHouseholdId()).thenReturn("household-id").getMock();
             }
             return sharedPreferences;
         }
