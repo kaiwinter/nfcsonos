@@ -20,6 +20,7 @@ import com.github.kaiwinter.nfcsonos.main.MainActivity;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
+import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
@@ -27,6 +28,8 @@ import com.github.kaiwinter.nfcsonos.rest.PlaybackService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.CurrentItem;
+import com.github.kaiwinter.nfcsonos.rest.model.Group;
+import com.github.kaiwinter.nfcsonos.rest.model.Groups;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackStatus;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
@@ -114,6 +117,10 @@ public class MainFragmentViewModel extends ViewModel {
 
     private void handleRetryAction(Intent intent) {
         RetryAction retryAction = intent.getParcelableExtra(RetryAction.class.getSimpleName());
+        handleRetryAction(retryAction);
+    }
+
+    private void handleRetryAction(RetryAction retryAction) {
         if (retryAction == null) {
             return;
         }
@@ -374,8 +381,8 @@ public class MainFragmentViewModel extends ViewModel {
     private void handleError(Response<?> response, RetryAction retryAction) {
         APIError apiError = ServiceFactory.parseError(response);
         if (response.code() == APIError.ERROR_RESOURCE_GONE_CODE && APIError.ERROR_RESOURCE_GONE.equals(apiError.errorCode)) {
-            navigateToDiscoverActivity.postValue(retryAction);
-            hideLoadingState();
+            // Try to look up group ID, on success run retry action, on error go to DiscoverActivity
+            lookupGroupId(() -> handleRetryAction(retryAction), () -> navigateToDiscoverActivity.postValue(retryAction));
         } else {
             UserMessage userMessage = UserMessage.create(apiError);
             hideLoadingState(userMessage);
@@ -386,6 +393,48 @@ public class MainFragmentViewModel extends ViewModel {
         APIError apiError = ServiceFactory.parseError(response);
         UserMessage userMessage = UserMessage.create(apiError);
         hideLoadingState(userMessage);
+    }
+
+    private void lookupGroupId(Runnable onSuccess, Runnable onError) {
+        displayLoading(R.string.finding_previous_group);
+
+        String householdId = sharedPreferencesStore.getHouseholdId();
+        String groupCoordinatorId = sharedPreferencesStore.getGroupCoordinatorId();
+
+        if (TextUtils.isEmpty(groupCoordinatorId)) {
+            // Without coordinator ID we cannot look up the group ID
+            onError.run();
+            return;
+        }
+
+        DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
+        Call<Groups> groupsCall = service.getGroups(householdId);
+        groupsCall.enqueue(new Callback<Groups>() {
+            @Override
+            public void onResponse(Call<Groups> call, Response<Groups> response) {
+                if (response.isSuccessful()) {
+                    Groups body = response.body();
+                    if (body == null || body.groups == null) {
+                        onError.run();
+                        return;
+                    }
+
+                    for (Group group : body.groups) {
+                        if (groupCoordinatorId.equals(group.coordinatorId)) {
+                            sharedPreferencesStore.setHouseholdAndGroup(householdId, group.id, groupCoordinatorId);
+                            onSuccess.run();
+                            return;
+                        }
+                    }
+                }
+                onError.run();
+            }
+
+            @Override
+            public void onFailure(Call<Groups> call, Throwable t) {
+                onError.run();
+            }
+        });
     }
 
     private void showAlbumCoverAndTitle(String favoriteId) {

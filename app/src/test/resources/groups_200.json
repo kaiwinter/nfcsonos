@@ -1,0 +1,23 @@
+{
+  "groups": [{
+    "id": "RINCON_123456:NEWID",
+    "name": "Room1",
+    "coordinatorId": "RINCON_123456",
+    "playbackState": "PLAYBACK_STATE_IDLE",
+    "playerIds": ["RINCON_123456"]
+  }
+  ],
+  "players": [{
+    "id": "RINCON_123456",
+    "name": "Room1",
+    "websocketUrl": "wss:\/\/192.168.178.26:1443\/websocket\/api",
+    "softwareVersion": "64.3-19080",
+    "apiVersion": "1.24.1",
+    "minApiVersion": "1.1.0",
+    "isUnregistered": false,
+    "capabilities": ["PLAYBACK", "CLOUD", "AUDIO_CLIP"],
+    "deviceIds": ["RINCON_123456"]
+  }
+  ],
+  "partial": false
+}

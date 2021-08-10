@@ -59,7 +59,7 @@ public class SettingsFragment extends Fragment {
 
     private void signOut() {
         sharedPreferencesStore.setTokens(null, null, -1);
-        sharedPreferencesStore.setHouseholdAndGroup(null, null);
+        sharedPreferencesStore.setHouseholdAndGroup(null, null, null);
 
         Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
         loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -31,6 +31,7 @@
     <string name="tag_read_error">Fehler beim Lesen des Tags: %1$s</string>
     <string name="loading_households">Lade Haushalte</string>
     <string name="loading_groups">Lade Gruppen</string>
+    <string name="finding_previous_group">Suche vorherige Gruppe</string>
     <string name="no_household_selected">Kein Haushalt gewählt</string>
     <string name="no_group_selected">Keine Gruppe gewählt</string>
     <string name="authorization_cancelled">Autorisierung abgebrochen</string>

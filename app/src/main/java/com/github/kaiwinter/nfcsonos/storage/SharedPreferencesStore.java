@@ -12,6 +12,7 @@ public class SharedPreferencesStore {
 
     private static final String HOUSEHOLD_ID = "HOUSEHOLD_ID";
     private static final String GROUP_ID = "GROUP_ID";
+    private static final String GROUP_COORDINATOR_ID = "GROUP_COORDINATOR_ID";
 
     private final SharedPreferences sharedPreferences;
 
@@ -19,10 +20,11 @@ public class SharedPreferencesStore {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public void setHouseholdAndGroup(String householdId, String groupId) {
+    public void setHouseholdAndGroup(String householdId, String groupId, String groupCoordinatorId) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(HOUSEHOLD_ID, householdId);
         editor.putString(GROUP_ID, groupId);
+        editor.putString(GROUP_COORDINATOR_ID, groupCoordinatorId);
         editor.apply();
     }
 
@@ -52,5 +54,9 @@ public class SharedPreferencesStore {
 
     public String getGroupId() {
         return sharedPreferences.getString(GROUP_ID, null);
+    }
+
+    public String getGroupCoordinatorId() {
+        return sharedPreferences.getString(GROUP_COORDINATOR_ID, null);
     }
 }

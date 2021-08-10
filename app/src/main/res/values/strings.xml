@@ -33,6 +33,7 @@
     <string name="tag_read_error">Error reading tag: %1$s</string>
     <string name="loading_households">Loading Households</string>
     <string name="loading_groups">Loading Groups</string>
+    <string name="finding_previous_group">Finding previous Group</string>
     <string name="no_household_selected">No Household selected</string>
     <string name="no_group_selected">No Group selected</string>
     <string name="authorization_cancelled">Authorization cancelled</string>
