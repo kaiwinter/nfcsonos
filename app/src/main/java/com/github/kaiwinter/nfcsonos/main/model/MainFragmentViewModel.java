@@ -111,8 +111,9 @@ public class MainFragmentViewModel extends ViewModel {
             handleNfcIntent(intent);
         } else {
             loadPlaybackMetadata();
+            loadPlayerState();
         }
-        loadPlayerState();
+
     }
 
     private void handleRetryAction(Intent intent) {
@@ -129,6 +130,7 @@ public class MainFragmentViewModel extends ViewModel {
             loadAndStartFavorite(retryId);
         } else if (retryAction.getRetryActionType() == RetryActionType.RETRY_LOAD_METADATA) {
             loadPlaybackMetadata();
+            loadPlayerState();
         }
     }
 
@@ -202,6 +204,7 @@ public class MainFragmentViewModel extends ViewModel {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
+                    loadPlayerState();
                     hideLoadingState();
                 } else {
                     soundToPlay.setValue(R.raw.negative);
@@ -220,10 +223,6 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     private void loadPlaybackMetadata() {
-        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
-            return;
-        }
-
         displayLoading(R.string.loading_metadata);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
@@ -264,10 +263,6 @@ public class MainFragmentViewModel extends ViewModel {
      * Loads if the player is playing or paused.
      */
     private void loadPlayerState() {
-        if (refreshTokenIfNeeded(this::loadPlayerState)) {
-            return;
-        }
-
         displayLoading(R.string.loading_playerstate);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
