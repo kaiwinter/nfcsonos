@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
@@ -22,8 +23,8 @@ import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
-import com.github.kaiwinter.nfcsonos.util.UserMessage;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
+import com.github.kaiwinter.nfcsonos.util.UserMessage;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -117,7 +118,7 @@ public class PairFragment extends Fragment {
     }
 
     private void displayLoading(String loadingMessage) {
-        getActivity().runOnUiThread(() -> {
+        runOnUiThread(() -> {
             binding.loadingContainer.setVisibility(View.VISIBLE);
             binding.loadingDescription.setText(loadingMessage);
             binding.errorContainer.setVisibility(View.GONE);
@@ -125,17 +126,25 @@ public class PairFragment extends Fragment {
     }
 
     private void hideLoadingState() {
-        getActivity().runOnUiThread(() -> binding.loadingContainer.setVisibility(View.INVISIBLE));
+        runOnUiThread(() -> binding.loadingContainer.setVisibility(View.INVISIBLE));
     }
 
     private void hideLoadingState(UserMessage userMessage) {
         String message = userMessage.getMessage(getActivity());
-        getActivity().runOnUiThread(() -> {
+        runOnUiThread(() -> {
             if (!TextUtils.isEmpty(message)) {
                 binding.errorContainer.setVisibility(View.VISIBLE);
                 binding.errorDescription.setText(message);
             }
             binding.loadingContainer.setVisibility(View.INVISIBLE);
         });
+    }
+
+    private void runOnUiThread(Runnable runnable) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.runOnUiThread(runnable);
     }
 }
