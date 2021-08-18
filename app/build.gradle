@@ -12,7 +12,7 @@ android {
         minSdkVersion 21 // Retrofit
         targetSdkVersion 30
         versionCode = 7
-        versionName = "1.1.1-SNAPSHOT"
+        versionName = "1.1.1"
 
         buildConfigField("String", "CLIENT_ID", apikeyProperties['CLIENT_ID'])
         buildConfigField("String", "CLIENT_SECRET", apikeyProperties['CLIENT_SECRET'])
