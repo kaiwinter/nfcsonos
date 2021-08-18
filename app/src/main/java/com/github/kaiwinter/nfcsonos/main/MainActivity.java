@@ -102,10 +102,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (!NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            return;
-        }
-
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         if (fragment == null) {
             return;
