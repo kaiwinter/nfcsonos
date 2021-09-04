@@ -103,6 +103,10 @@ public class PairFragment extends Fragment {
         }
 
         try (Ndef ndef = Ndef.get(tagFromIntent)) {
+            if (ndef == null) {
+                SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.tag_invalid, Snackbar.LENGTH_LONG);
+                return;
+            }
             ndef.connect();
             NfcPayload nfcPayload = new NfcPayload(getSelectedFavorite().id);
             NdefMessage ndefMessage = NfcPayloadUtil.createMessage(nfcPayload);

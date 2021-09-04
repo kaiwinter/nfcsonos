@@ -19,6 +19,7 @@
     <string name="no_selection">No selection</string>
     <string name="tag_written">Tag successfully written</string>
     <string name="tag_written_error">Error writing tag: %1$s</string>
+    <string name="tag_invalid">Error writing tag: Invalid tag</string>
     <string name="household_and_group_selection">Household and Group selection</string>
     <string name="household_and_group_selection_description">Before you can start you have to select a Sonos Group which the app should use. The Household is pretty unreadable, please select one and see which Group belongs to it.</string>
     <string name="household">Household</string>

@@ -17,6 +17,7 @@
     <string name="no_selection">Keine Auswahl</string>
     <string name="tag_written">Tag erfolgreich beschrieben</string>
     <string name="tag_written_error">Fehler beim Beschreiben des Tags: %1$s</string>
+    <string name="tag_invalid">Fehler beim Beschreiben des Tags: Ungültiges Tag</string>
     <string name="household_and_group_selection">Auswahl Haushalt und Gruppe</string>
     <string name="household_and_group_selection_description">Bevor du loslegen kannst, musst du einen Haushalt und eine Gruppe deines Sonos-Accounts auswählen. Die Bezeichnung des Haushalts ist ziemlich kryptisch. Wähl einfach einen aus und sieh dir die dazugehörigen Gruppen an.</string>
     <string name="household">Haushalt</string>
