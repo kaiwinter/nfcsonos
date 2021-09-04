@@ -28,6 +28,7 @@ import com.github.kaiwinter.nfcsonos.util.UserMessage;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class PairFragment extends Fragment {
 
@@ -44,14 +45,19 @@ public class PairFragment extends Fragment {
 
         displayLoading(getString(R.string.loading_favorites));
         favoriteCache.loadFavorites(favorites -> {
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
+            if (getActivity() == null) {
+                return;
+            }
+            getActivity().runOnUiThread(() -> {
+                        hideLoadingState();
+                        if (favorites.items.isEmpty()) {
+                            binding.noSonosFavoriteHint.setVisibility(View.VISIBLE);
+                        } else {
                             binding.spinner.setItems(favorites.items);
-                            hideLoadingState();
                             binding.linkButton.setEnabled(true);
                         }
-                );
-            }
+                    }
+            );
         }, this::hideLoadingState);
 
         binding.linkButton.setOnClickListener(__ -> writeTag());

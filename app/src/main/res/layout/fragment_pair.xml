@@ -84,6 +84,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                    <TextView
+                        android:id="@+id/no_sonos_favorite_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/no_favorites"
+                        android:visibility="gone"/>
+
                     <Button
                         android:id="@+id/link_button"
                         style="@style/Widget.AppCompat.Button.Colored"

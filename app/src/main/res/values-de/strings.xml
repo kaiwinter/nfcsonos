@@ -51,4 +51,5 @@
     <string name="choose_household_group">Haushalt/Gruppe ändern</string>
     <string name="app_name_short">NFC Controller für Sonos</string>
     <string name="third_party_notices">Rechtliche Hinweise</string>
+    <string name="no_favorites">Es wurden keine Sonos-Favoriten gefunden. Du musst zuerst mindestens einen Sonos-Favoriten in der Sonos-App festlegen, ansonsten kann hier keiner ausgewählt werden.</string>
 </resources>
