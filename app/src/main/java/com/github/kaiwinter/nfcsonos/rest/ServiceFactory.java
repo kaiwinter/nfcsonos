@@ -1,5 +1,6 @@
 package com.github.kaiwinter.nfcsonos.rest;
 
+import com.github.kaiwinter.nfcsonos.BuildConfig;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.google.gson.Gson;
 
@@ -49,11 +50,12 @@ public class ServiceFactory {
     }
 
     private static Retrofit createRestAdapter(String endpoint, String token) {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.level(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient.Builder defaultHttpClientBuilder = new OkHttpClient.Builder()
-                .addInterceptor(interceptor);
+        OkHttpClient.Builder defaultHttpClientBuilder = new OkHttpClient.Builder();
+        if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.level(HttpLoggingInterceptor.Level.BODY);
+            defaultHttpClientBuilder.addInterceptor(interceptor);
+        }
 
         if (token != null) {
             defaultHttpClientBuilder.addInterceptor(chain -> {
