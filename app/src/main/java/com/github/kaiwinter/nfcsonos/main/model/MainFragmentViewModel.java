@@ -111,7 +111,6 @@ public class MainFragmentViewModel extends ViewModel {
             handleNfcIntent(intent);
         } else {
             loadPlaybackMetadata();
-            loadPlayerState();
         }
 
     }
@@ -246,6 +245,7 @@ public class MainFragmentViewModel extends ViewModel {
                         String imageUrl = currentItem.track.imageUrl;
                         coverImageToLoad.setValue(imageUrl);
                     }
+                    loadPlayerState();
                 } else {
                     handleError(response, new RetryAction(RetryActionType.RETRY_LOAD_METADATA));
                 }
