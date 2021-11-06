@@ -27,7 +27,6 @@ import com.github.kaiwinter.nfcsonos.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModelFactory;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction;
-import com.github.kaiwinter.nfcsonos.main.model.RetryAction.RetryActionType;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
 import com.google.android.material.snackbar.Snackbar;
 

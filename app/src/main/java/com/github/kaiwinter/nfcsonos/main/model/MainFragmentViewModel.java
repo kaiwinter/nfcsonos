@@ -55,11 +55,11 @@ public class MainFragmentViewModel extends ViewModel {
     public final SingleLiveEvent<String> coverImageToLoad = new SingleLiveEvent<>();
     public final SingleLiveEvent<Integer> soundToPlay = new SingleLiveEvent<>();
 
-    public SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
-    public SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
+    public final SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
+    public final SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
     public final SingleLiveEvent<UserMessage> showSnackbarMessage = new SingleLiveEvent<>();
 
-    public MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
+    public final MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<Integer> pauseButtonVisibility = new MutableLiveData<>(View.GONE);
 
     private final SharedPreferencesStore sharedPreferencesStore;
