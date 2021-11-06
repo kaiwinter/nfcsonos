@@ -209,8 +209,6 @@ public class MainFragmentViewModel extends ViewModel {
                     loadPlayerState();
                     hideLoadingState();
                 } else {
-                    soundToPlay.setValue(R.raw.negative);
-
                     handleError(response, new RetryAction(RetryActionType.RETRY_LOAD_FAVORITE, favoriteId));
                 }
             }
@@ -382,6 +380,7 @@ public class MainFragmentViewModel extends ViewModel {
             // Try to look up group ID, on success run retry action, on error go to DiscoverActivity
             lookupGroupId(() -> handleRetryAction(retryAction), () -> navigateToDiscoverActivity.postValue(retryAction));
         } else {
+            soundToPlay.setValue(R.raw.negative);
             UserMessage userMessage = UserMessage.create(apiError);
             hideLoadingState(userMessage);
         }
