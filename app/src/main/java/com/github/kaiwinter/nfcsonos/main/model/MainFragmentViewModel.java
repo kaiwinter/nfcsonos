@@ -159,7 +159,10 @@ public class MainFragmentViewModel extends ViewModel {
                 loadAndStartFavorite(nfcPayload.getFavoriteId());
             }
 
-        } catch (FormatException | IOException e) {
+        } catch (IOException e) {
+            UserMessage userMessage = UserMessage.create(R.string.tag_gone);
+            showSnackbarMessage.postValue(userMessage);
+        } catch (FormatException e) {
             UserMessage userMessage = UserMessage.create(R.string.tag_read_error, e.getMessage());
             showSnackbarMessage.postValue(userMessage);
         }

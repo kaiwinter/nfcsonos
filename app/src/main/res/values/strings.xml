@@ -53,5 +53,6 @@
     <string name="pause_button">Pause playback</string>
     <string name="choose_household_group">Change household/group</string>
     <string name="third_party_notices">Third Party Notices</string>
+    <string name="tag_gone">Error reading tag. Tag still there?</string>
     <string name="no_favorites">No Sonos favorites found. You have to define at least one Sonos favorite in the Sonos app otherwise you can\'t select one here.</string>
 </resources>
