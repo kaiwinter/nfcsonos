@@ -62,6 +62,7 @@ public class FavoriteCache {
                 StoredFavorite storedFavorite = storedFavorites.get(favoriteId);
                 if (storedFavorite == null) {
                     updateFavorites(favoriteId, onSuccess, onError);
+                    return;
                 }
                 onSuccess.accept(storedFavorite);
                 return;
