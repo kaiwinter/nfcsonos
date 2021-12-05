@@ -92,12 +92,6 @@ public class MainFragmentViewModel extends ViewModel {
             return;
         }
 
-        // check token here to avoid race condition between loadPlaybackMetadata() and loadPlayerState()
-        Intent finalIntent = intent;
-        if (refreshTokenIfNeeded(() -> createInitialState(finalIntent, arguments))) {
-            return;
-        }
-
         if (arguments != null) {
             // May be passed from the MainActivity when the MainFragment wasn't selected when a NFC tag was scanned.
             Parcelable parcelable = arguments.getParcelable(MainActivity.NFC_SCANNED_INTENT);
