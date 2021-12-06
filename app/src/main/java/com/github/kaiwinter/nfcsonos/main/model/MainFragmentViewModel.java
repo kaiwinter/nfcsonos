@@ -217,6 +217,10 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     private void loadPlaybackMetadata() {
+        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
+            return;
+        }
+
         displayLoading(R.string.loading_metadata);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
