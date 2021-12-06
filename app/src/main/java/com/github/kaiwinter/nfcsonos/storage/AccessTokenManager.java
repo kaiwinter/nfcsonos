@@ -55,7 +55,7 @@ public class AccessTokenManager {
         String basic = BuildConfig.CLIENT_ID + ":" + BuildConfig.CLIENT_SECRET;
         String authHeader = "Basic " + Base64.encodeToString(basic.getBytes(), Base64.NO_WRAP);
         Call<AccessToken> call = loginService.refreshToken(authHeader, refreshToken, "refresh_token");
-        call.enqueue(new Callback<AccessToken>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
 

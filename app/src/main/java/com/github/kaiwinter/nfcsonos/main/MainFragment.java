@@ -128,7 +128,7 @@ public class MainFragment extends Fragment {
 
     private void loadAndShowCoverImage(String imageUrl) {
         if (imageUrl != null) {
-            RequestListener<Drawable> requestListener = new RequestListener<Drawable>() {
+            RequestListener<Drawable> requestListener = new RequestListener<>() {
 
                 @Override
                 public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {

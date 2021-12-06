@@ -134,7 +134,7 @@ public final class LoginActivity extends AppCompatActivity {
             String basic = BuildConfig.CLIENT_ID + ":" + BuildConfig.CLIENT_SECRET;
             String authHeader = "Basic " + Base64.encodeToString(basic.getBytes(), Base64.NO_WRAP);
             Call<AccessToken> call = service.getAccessToken(authHeader, "authorization_code", code, REDIRECT_URI);
-            call.enqueue(new Callback<AccessToken>() {
+            call.enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
 

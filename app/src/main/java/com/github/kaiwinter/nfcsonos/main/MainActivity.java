@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         String groupId = sharedPreferencesStore.getGroupId();
         GroupVolumeService service = serviceFactory.createGroupVolumeService(accessToken);
         Call<Void> call = service.setRelativeVolume(groupId, new GroupVolumeService.VolumeDeltaRequest(volumeDelta));
-        call.enqueue(new Callback<Void>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
             }

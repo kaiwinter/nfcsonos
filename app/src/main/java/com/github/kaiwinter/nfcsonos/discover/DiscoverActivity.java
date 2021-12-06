@@ -74,7 +74,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
         DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
         Call<Households> household = service.getHouseholds();
-        household.enqueue(new Callback<Households>() {
+        household.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Households> call, Response<Households> response) {
                 if (response.isSuccessful()) {
@@ -111,7 +111,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
         DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
         Call<Groups> group = service.getGroups(householdId);
-        group.enqueue(new Callback<Groups>() {
+        group.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Groups> call, Response<Groups> response) {
                 if (response.isSuccessful()) {

@@ -28,7 +28,6 @@ import com.github.kaiwinter.nfcsonos.util.UserMessage;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class PairFragment extends Fragment {
 

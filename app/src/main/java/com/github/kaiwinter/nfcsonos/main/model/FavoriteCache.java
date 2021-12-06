@@ -102,7 +102,7 @@ public class FavoriteCache {
         String accessToken = sharedPreferencesStore.getAccessToken();
         FavoriteService service = serviceFactory.createFavoriteService(accessToken);
 
-        service.getFavorites(sharedPreferencesStore.getHouseholdId()).enqueue(new Callback<Favorites>() {
+        service.getFavorites(sharedPreferencesStore.getHouseholdId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Favorites> call, Response<Favorites> response) {
                 if (response.isSuccessful()) {

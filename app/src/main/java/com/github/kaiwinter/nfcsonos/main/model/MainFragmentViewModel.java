@@ -196,7 +196,7 @@ public class MainFragmentViewModel extends ViewModel {
 
         LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId);
 
-        service.loadFavorite(sharedPreferencesStore.getGroupId(), request).enqueue(new Callback<Void>() {
+        service.loadFavorite(sharedPreferencesStore.getGroupId(), request).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -222,7 +222,7 @@ public class MainFragmentViewModel extends ViewModel {
         String accessToken = sharedPreferencesStore.getAccessToken();
         PlaybackMetadataService service = serviceFactory.createPlaybackMetadataService(accessToken);
 
-        service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackMetadata>() {
+        service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<PlaybackMetadata> call, Response<PlaybackMetadata> response) {
                 if (response.isSuccessful()) {
@@ -262,7 +262,7 @@ public class MainFragmentViewModel extends ViewModel {
 
         String accessToken = sharedPreferencesStore.getAccessToken();
         PlaybackService service = serviceFactory.createPlaybackService(accessToken);
-        service.playbackStatus(sharedPreferencesStore.getGroupId()).enqueue(new Callback<PlaybackStatus>() {
+        service.playbackStatus(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<PlaybackStatus> call, Response<PlaybackStatus> response) {
                 if (response.isSuccessful()) {
@@ -310,7 +310,7 @@ public class MainFragmentViewModel extends ViewModel {
         displayLoading(R.string.start_playback);
         String accessToken = sharedPreferencesStore.getAccessToken();
         PlaybackService service = serviceFactory.createPlaybackService(accessToken);
-        service.play(sharedPreferencesStore.getGroupId()).enqueue(new Callback<Void>() {
+        service.play(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -340,7 +340,7 @@ public class MainFragmentViewModel extends ViewModel {
         displayLoading(R.string.stop_playback);
         String accessToken = sharedPreferencesStore.getAccessToken();
         PlaybackService service = serviceFactory.createPlaybackService(accessToken);
-        service.pause(sharedPreferencesStore.getGroupId()).enqueue(new Callback<Void>() {
+        service.pause(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -400,7 +400,7 @@ public class MainFragmentViewModel extends ViewModel {
 
         DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
         Call<Groups> groupsCall = service.getGroups(householdId);
-        groupsCall.enqueue(new Callback<Groups>() {
+        groupsCall.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Groups> call, Response<Groups> response) {
                 if (response.isSuccessful()) {
