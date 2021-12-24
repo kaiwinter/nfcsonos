@@ -53,4 +53,6 @@
     <string name="third_party_notices">Rechtliche Hinweise</string>
     <string name="tag_gone">Fehler beim Lesen des Tags. Ist das Tag noch am Gerät?</string>
     <string name="no_favorites">Es wurden keine Sonos-Favoriten gefunden. Du musst zuerst mindestens einen Sonos-Favoriten in der Sonos-App festlegen, ansonsten kann hier keiner ausgewählt werden.</string>
+    <string name="no_nfc_adapter_title">Kein NFC Chip gefunden</string>
+    <string name="no_nfc_adapter_message">Ohne NFC Chip kann die App nicht verwendet werden :\'-(</string>
 </resources>

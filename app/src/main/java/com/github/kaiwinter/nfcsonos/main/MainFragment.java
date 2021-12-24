@@ -5,6 +5,7 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModelFactory;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.FileDescriptor;
@@ -75,6 +77,17 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+        if (nfcAdapter == null) {
+            new MaterialAlertDialogBuilder(getActivity())
+                    .setTitle(R.string.no_nfc_adapter_title)
+                    .setMessage(R.string.no_nfc_adapter_message)
+                    .setPositiveButton("OK", null)
+                    .create().show();
+            return;
+        }
+
         Intent intent = getActivity().getIntent();
         getActivity().setIntent(null);
         Bundle arguments = getArguments();

@@ -55,4 +55,6 @@
     <string name="third_party_notices">Third Party Notices</string>
     <string name="tag_gone">Error reading tag. Tag still there?</string>
     <string name="no_favorites">No Sonos favorites found. You have to define at least one Sonos favorite in the Sonos app otherwise you can\'t select one here.</string>
+    <string name="no_nfc_adapter_title">No NFC adapter found</string>
+    <string name="no_nfc_adapter_message">The app cannot be used without a NFC adapter :\'-(</string>
 </resources>
