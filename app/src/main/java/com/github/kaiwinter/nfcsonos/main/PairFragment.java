@@ -12,10 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.FragmentPairBinding;
 import com.github.kaiwinter.nfcsonos.main.model.FavoriteCache;
@@ -25,6 +25,7 @@ import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
 import com.github.kaiwinter.nfcsonos.util.UserMessage;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ import java.io.IOException;
 public class PairFragment extends Fragment {
 
     private FragmentPairBinding binding;
-    private MaterialDialog dialog;
+    private AlertDialog pairDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,13 +69,13 @@ public class PairFragment extends Fragment {
     }
 
     public void writeTag() {
+        pairDialog = new MaterialAlertDialogBuilder(getActivity())
+                .setTitle(R.string.scan_tag)
+                .setMessage(getString(R.string.pair_tag_message, getSelectedFavorite().name))
+                .setPositiveButton(getString(R.string.cancel), null)
+                .create();
 
-        dialog = new MaterialDialog(getActivity(), MaterialDialog.getDEFAULT_BEHAVIOR())
-                .title(null, getString(R.string.scan_tag))
-                .message(null, getString(R.string.pair_tag_message, getSelectedFavorite().name), null)
-                .negativeButton(null, getString(R.string.cancel), null);
-
-        dialog.show();
+        pairDialog.show();
     }
 
     private Item getSelectedFavorite() {
@@ -87,7 +88,7 @@ public class PairFragment extends Fragment {
      * @return true when the pairing dialog is currently shown, else false
      */
     public boolean isPairingActive() {
-        return dialog != null && dialog.isShowing();
+        return pairDialog != null && pairDialog.isShowing();
     }
 
     public void handleNfcIntent(Intent intent) {
@@ -122,7 +123,7 @@ public class PairFragment extends Fragment {
         } catch (FormatException | IOException e) {
             SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, getString(R.string.tag_written_error, e.getMessage()), Snackbar.LENGTH_LONG);
         } finally {
-            dialog.dismiss();
+            pairDialog.dismiss();
         }
     }
 
