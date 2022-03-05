@@ -17,7 +17,6 @@
     <string name="no_selection">Keine Auswahl</string>
     <string name="tag_written">Tag erfolgreich beschrieben</string>
     <string name="tag_written_error">Fehler beim Beschreiben des Tags: %1$s</string>
-    <string name="tag_invalid">Fehler beim Beschreiben des Tags: Ungültiges Tag</string>
     <string name="household_and_group_selection">Auswahl Haushalt und Gruppe</string>
     <string name="household_and_group_selection_description">Bevor du loslegen kannst, musst du einen Haushalt und eine Gruppe deines Sonos-Accounts auswählen. Die Bezeichnung des Haushalts ist ziemlich kryptisch. Wähl einfach einen aus und sieh dir die dazugehörigen Gruppen an.</string>
     <string name="household">Haushalt</string>
@@ -55,4 +54,8 @@
     <string name="no_favorites">Es wurden keine Sonos-Favoriten gefunden. Du musst zuerst mindestens einen Sonos-Favoriten in der Sonos-App festlegen, ansonsten kann hier keiner ausgewählt werden.</string>
     <string name="no_nfc_adapter_title">Kein NFC Chip gefunden</string>
     <string name="no_nfc_adapter_message">Ohne NFC Chip kann die App nicht verwendet werden :\'-(</string>
+    <string name="tag_invalid_title">Fehler: Ungültiges Tag</string>
+    <string name="tag_invalid_ndef">NDEF Tag nicht beschreibbar</string>
+    <string name="tag_invalid">Tag unterstützt: %1$s, benötigt wird \'android.nfc.tech.Ndef\' oder \'android.nfc.tech.NdefFormattable\'</string>
+    <string name="tag_invalid_ndefformattable">NDEF Formattable Tag nicht beschreibar</string>
 </resources>

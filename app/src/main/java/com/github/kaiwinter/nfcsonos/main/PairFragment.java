@@ -6,6 +6,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
+import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class PairFragment extends Fragment {
 
@@ -108,16 +111,34 @@ public class PairFragment extends Fragment {
             return;
         }
 
+        List<String> techList = Arrays.asList(tagFromIntent.getTechList());
+
+        if (techList.contains(Ndef.class.getName())) {
+            writeToNdef(tagFromIntent);
+
+        } else if (techList.contains(NdefFormatable.class.getName())) {
+            writeToNdefFormattable(tagFromIntent);
+
+        } else {
+            pairDialog.dismiss();
+            new MaterialAlertDialogBuilder(getActivity())
+                    .setTitle(R.string.tag_invalid_title)
+                    .setMessage(getString(R.string.tag_invalid, TextUtils.join(", ", techList)))
+                    .setPositiveButton(getString(R.string.cancel), null)
+                    .create()
+                    .show();
+        }
+    }
+
+    private void writeToNdef(Tag tagFromIntent) {
         try (Ndef ndef = Ndef.get(tagFromIntent)) {
             if (ndef == null) {
-                SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.tag_invalid, Snackbar.LENGTH_LONG);
+                SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.tag_invalid_ndef, Snackbar.LENGTH_LONG);
                 return;
             }
             ndef.connect();
-            NfcPayload nfcPayload = new NfcPayload(getSelectedFavorite().id);
-            NdefMessage ndefMessage = NfcPayloadUtil.createMessage(nfcPayload);
 
-            ndef.writeNdefMessage(ndefMessage);
+            ndef.writeNdefMessage(createNdefMessage());
             SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.tag_written, Snackbar.LENGTH_LONG);
 
         } catch (FormatException | IOException e) {
@@ -125,6 +146,29 @@ public class PairFragment extends Fragment {
         } finally {
             pairDialog.dismiss();
         }
+    }
+
+    private void writeToNdefFormattable(Tag tagFromIntent) {
+        try (NdefFormatable ndef = NdefFormatable.get(tagFromIntent)) {
+            if (ndef == null) {
+                SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.tag_invalid_ndefformattable, Snackbar.LENGTH_LONG);
+                return;
+            }
+            ndef.connect();
+
+            ndef.format(createNdefMessage());
+            SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.tag_written, Snackbar.LENGTH_LONG);
+
+        } catch (FormatException | IOException e) {
+            SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, getString(R.string.tag_written_error, e.getMessage()), Snackbar.LENGTH_LONG);
+        } finally {
+            pairDialog.dismiss();
+        }
+    }
+
+    private NdefMessage createNdefMessage() {
+        NfcPayload nfcPayload = new NfcPayload(getSelectedFavorite().id);
+        return NfcPayloadUtil.createMessage(nfcPayload);
     }
 
     private void displayLoading(String loadingMessage) {
