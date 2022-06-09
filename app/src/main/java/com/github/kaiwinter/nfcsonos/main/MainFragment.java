@@ -72,12 +72,11 @@ public class MainFragment extends Fragment {
 
         binding.playButton.setOnClickListener(__ -> viewModel.play());
         binding.pauseButton.setOnClickListener(__ -> viewModel.pause());
+
+        checkForNfcAdapter();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    private void checkForNfcAdapter() {
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
         if (nfcAdapter == null) {
             new MaterialAlertDialogBuilder(getActivity())
@@ -85,8 +84,12 @@ public class MainFragment extends Fragment {
                     .setMessage(R.string.no_nfc_adapter_message)
                     .setPositiveButton("OK", null)
                     .create().show();
-            return;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         Intent intent = getActivity().getIntent();
         getActivity().setIntent(null);
