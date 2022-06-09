@@ -18,10 +18,10 @@
         <!-- Login activity -->
         <activity
                 android:name=".login.LoginActivity"
-                android:label="@string/app_name_short"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:windowSoftInputMode="stateHidden"
-                android:screenOrientation="portrait">
+                android:screenOrientation="portrait"
+                android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -35,10 +35,10 @@
         <!-- Main activity -->
         <activity
             android:name=".main.MainActivity"
-            android:label="@string/app_name_short"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
