@@ -156,7 +156,7 @@ public class MainFragmentViewModel extends ViewModel {
         } catch (IOException e) {
             UserMessage userMessage = UserMessage.create(R.string.tag_gone);
             showSnackbarMessage.postValue(userMessage);
-        } catch (FormatException e) {
+        } catch (FormatException | SecurityException e) {
             UserMessage userMessage = UserMessage.create(R.string.tag_read_error, e.getMessage());
             showSnackbarMessage.postValue(userMessage);
         }
