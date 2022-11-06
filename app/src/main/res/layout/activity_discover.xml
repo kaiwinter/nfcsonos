@@ -36,7 +36,8 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
                 app:cardUseCompatPadding="true"
-                app:contentPadding="16dp">
+                app:contentPadding="16dp"
+                app:contentPaddingTop="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -49,8 +50,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="36dp"
                         android:layout_marginBottom="24dp"
-                        android:text="@string/household_and_group_selection"
                         android:gravity="center"
+                        android:text="@string/household_and_group_selection"
                         android:textColor="#000000"
                         android:textSize="24sp" />
 
@@ -100,7 +101,7 @@
                         <com.jaredrummler.materialspinner.MaterialSpinner
                             android:id="@+id/household"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content" />
 
                     </LinearLayout>
 
@@ -121,7 +122,7 @@
                         <com.jaredrummler.materialspinner.MaterialSpinner
                             android:id="@+id/group"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content" />
 
                     </LinearLayout>
 
@@ -150,8 +151,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:visibility="gone"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/error_description"

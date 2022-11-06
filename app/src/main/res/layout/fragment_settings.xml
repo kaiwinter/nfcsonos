@@ -36,7 +36,8 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
                 app:cardUseCompatPadding="true"
-                app:contentPadding="16dp">
+                app:contentPadding="16dp"
+                app:contentPaddingTop="0dp">
 
                 <LinearLayout
                     android:id="@+id/authorized"
@@ -49,8 +50,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="36dp"
                         android:layout_marginBottom="24dp"
-                        android:text="@string/settings"
                         android:gravity="center"
+                        android:text="@string/settings"
                         android:textColor="#000000"
                         android:textSize="24sp" />
 
@@ -68,7 +69,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="@string/choose_household_group"/>
+                            android:text="@string/choose_household_group" />
 
                         <Button
                             android:id="@+id/third_party_notices"
@@ -76,7 +77,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="@string/third_party_notices"/>
+                            android:text="@string/third_party_notices" />
 
                         <Button
                             android:id="@+id/logout_button"
@@ -84,7 +85,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="@string/logout"/>
+                            android:text="@string/logout" />
 
                     </LinearLayout>
 

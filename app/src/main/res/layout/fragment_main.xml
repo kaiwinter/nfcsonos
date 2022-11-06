@@ -23,7 +23,7 @@
                 android:layout_height="100dp"
                 android:background="@color/colorPrimary"
                 android:orientation="vertical"
-                android:paddingTop="24dp">
+                android:paddingTop="240dp">
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
@@ -32,11 +32,12 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="-64dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="64dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
                 app:cardUseCompatPadding="true"
-                app:contentPadding="16dp">
+                app:contentPadding="16dp"
+                app:contentPaddingTop="0dp">
 
                 <LinearLayout
                     android:id="@+id/authorized"
@@ -64,6 +65,7 @@
                             android:layout_height="wrap_content"
                             android:indeterminate="true" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/error_container"
                         android:layout_width="match_parent"
@@ -106,6 +108,7 @@
                             android:paddingEnd="0dp"
                             android:paddingBottom="0dp"
                             tools:text="Album title" />
+
                         <TextView
                             android:id="@+id/track_title"
                             style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -119,9 +122,9 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        style="?android:attr/buttonBarStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="?android:attr/buttonBarStyle"
                         android:gravity="center">
 
                         <ImageButton
