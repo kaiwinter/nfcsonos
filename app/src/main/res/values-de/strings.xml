@@ -58,4 +58,5 @@
     <string name="tag_invalid_ndef">NDEF Tag nicht beschreibbar</string>
     <string name="tag_invalid">Tag unterstützt: %1$s, benötigt wird \'android.nfc.tech.Ndef\' oder \'android.nfc.tech.NdefFormattable\'</string>
     <string name="tag_invalid_ndefformattable">NDEF Formattable Tag nicht beschreibar</string>
+    <string name="tag_invalid_unsupported">Tag nicht NDEF-formatiert oder vom Gerät nicht unterstützt</string>
 </resources>

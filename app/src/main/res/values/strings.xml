@@ -60,4 +60,5 @@
     <string name="tag_invalid_title">Error: Invalid tag</string>
     <string name="tag_invalid_ndef">NDEF tag not writable</string>
     <string name="tag_invalid_ndefformattable">NDEF Formattable tag not writable</string>
+    <string name="tag_invalid_unsupported">Tag not NDEF formatted, or not supported by this device</string>
 </resources>

@@ -140,6 +140,11 @@ public class MainFragmentViewModel extends ViewModel {
         }
 
         try (Ndef ndef = Ndef.get(tagFromIntent)) {
+            if (ndef == null) {
+                UserMessage userMessage = UserMessage.create(R.string.tag_invalid_unsupported);
+                showSnackbarMessage.postValue(userMessage);
+                return;
+            }
             ndef.connect();
             NdefMessage ndefMessage = ndef.getNdefMessage();
             NfcPayload nfcPayload = NfcPayloadUtil.parseMessage(ndefMessage);
