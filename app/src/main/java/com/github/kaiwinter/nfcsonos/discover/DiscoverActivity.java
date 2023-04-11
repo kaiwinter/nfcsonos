@@ -23,6 +23,7 @@ import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.UserMessage;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import retrofit2.Call;
@@ -116,7 +117,7 @@ public class DiscoverActivity extends AppCompatActivity {
             public void onResponse(Call<Groups> call, Response<Groups> response) {
                 if (response.isSuccessful()) {
                     Groups body = response.body();
-                    if (body.groups == null || body.groups.isEmpty()) {
+                    if (isNullOrEmpty(body.groups)) {
                         UserMessage userMessage = UserMessage.create(R.string.no_group_found);
                         hideLoadingState(userMessage);
                         return;
@@ -140,7 +141,7 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     public void selectHouseholdAndGroup() {
-        if (binding.household.getItems() == null || binding.group.getItems() == null) {
+        if (isNullOrEmpty(binding.household.getItems()) || isNullOrEmpty(binding.group.getItems())) {
             return;
         }
         Household selectedHousehold = (Household) binding.household.getItems().get(binding.household.getSelectedIndex());
@@ -204,5 +205,9 @@ public class DiscoverActivity extends AppCompatActivity {
             binding.loadingContainer.setVisibility(View.INVISIBLE);
             binding.authContainer.setEnabled(true);
         });
+    }
+
+    private boolean isNullOrEmpty(Collection<?> collection) {
+        return collection == null || collection.isEmpty();
     }
 }
