@@ -113,10 +113,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager childFragmentManager = fragment.getChildFragmentManager();
         Fragment currentFragment = childFragmentManager.getPrimaryNavigationFragment();
 
-        if (currentFragment instanceof MainFragment) {
-            ((MainFragment) currentFragment).handleNfcIntent(intent);
-        } else if (currentFragment instanceof PairFragment) {
-            PairFragment pairFragment = (PairFragment) currentFragment;
+        if (currentFragment instanceof MainFragment mainFragment) {
+            mainFragment.handleNfcIntent(intent);
+        } else if (currentFragment instanceof PairFragment pairFragment) {
             if (pairFragment.isPairingActive()) {
                 pairFragment.handleNfcIntent(intent);
             } else {

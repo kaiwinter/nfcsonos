@@ -282,19 +282,16 @@ public class MainFragmentViewModel extends ViewModel {
                     }
 
                     switch (playbackStatus.playbackState) {
-                        case PLAYBACK_STATE_PLAYING:
-                        case PLAYBACK_STATE_BUFFERING:
+                        case PLAYBACK_STATE_PLAYING, PLAYBACK_STATE_BUFFERING -> {
                             // show Play Button
                             playButtonVisibility.postValue(View.GONE);
                             pauseButtonVisibility.postValue(View.VISIBLE);
-                            break;
-
-                        case PLAYBACK_STATE_IDLE:
-                        case PLAYBACK_STATE_PAUSED:
+                        }
+                        case PLAYBACK_STATE_IDLE, PLAYBACK_STATE_PAUSED -> {
                             // show Pause Button
                             playButtonVisibility.postValue(View.VISIBLE);
                             pauseButtonVisibility.postValue(View.GONE);
-                            break;
+                        }
                     }
                 } else {
                     handleError(response);
