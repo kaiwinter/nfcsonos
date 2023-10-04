@@ -25,6 +25,6 @@ public class MainFragmentViewModelFactory implements ViewModelProvider.Factory {
             FavoriteCache favoriteCache = new FavoriteCache(application, serviceFactory);
             return (T) new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, favoriteCache, serviceFactory);
         }
-        return null;
+        throw new RuntimeException("Cannot create an instance of " + modelClass);
     }
 }
