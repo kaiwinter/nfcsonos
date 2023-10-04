@@ -465,4 +465,12 @@ public class MainFragmentViewModel extends ViewModel {
         errorMessageMutableLiveData.setValue(userMessage);
         hideLoadingState();
     }
+
+    /**
+     * Returns the setting if a sound should be played after a tag was scanned.
+     * @return true when a sound should be played, false otherwise
+     */
+    public boolean shouldPlaySounds() {
+        return sharedPreferencesStore.getPlaySounds();
+    }
 }

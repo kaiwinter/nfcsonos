@@ -1,0 +1,32 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:title="@string/settings">
+
+        <SwitchPreferenceCompat
+            app:key="PLAY_SOUNDS"
+            app:summary="@string/play_sound_when_scanning_a_tag_summary"
+            app:title="@string/play_sound_when_scanning_a_tag" />
+        <Preference
+            app:key="householdAndGroupSelection"
+            app:summary="Household: #1...\nGroup: #2..."
+            app:title="@string/choose_household_group" >
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/other">
+
+        <Preference
+            app:key="thirdParty"
+            app:summary="@string/third_party_notices_summary"
+            app:title="@string/third_party_notices" />
+        <Preference
+            app:key="logout"
+            app:summary="@string/logout_summary"
+            app:title="@string/logout" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

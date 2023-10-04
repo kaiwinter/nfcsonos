@@ -17,6 +17,5 @@
 
     <fragment
         android:id="@+id/fragment_about"
-        android:name="com.github.kaiwinter.nfcsonos.main.SettingsFragment"
-        tools:layout="@layout/fragment_settings" />
+        android:name="com.github.kaiwinter.nfcsonos.main.SettingsFragment" />
 </navigation>

@@ -28,6 +28,7 @@ import com.github.kaiwinter.nfcsonos.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModelFactory;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction;
+import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -113,6 +114,9 @@ public class MainFragment extends Fragment {
 //        }
 //    }
     private void playSound(int sound) {
+        if (!viewModel.shouldPlaySounds()) {
+            return;
+        }
         //setVolume();
         try (AssetFileDescriptor afd = getResources().openRawResourceFd(sound)) {
             FileDescriptor fileDescriptor = afd.getFileDescriptor();

@@ -52,7 +52,7 @@
     <string name="play_button">Start playback</string>
     <string name="pause_button">Pause playback</string>
     <string name="choose_household_group">Change household/group</string>
-    <string name="third_party_notices">Third Party Notices</string>
+    <string name="third_party_notices">Third-Party Libraries</string>
     <string name="tag_gone">Error reading tag. Tag still there?</string>
     <string name="no_favorites">No Sonos favorites found. You have to define at least one Sonos favorite in the Sonos app otherwise you can\'t select one here.</string>
     <string name="no_nfc_adapter_title">No NFC adapter found</string>
@@ -61,4 +61,10 @@
     <string name="tag_invalid_ndef">NDEF tag not writable</string>
     <string name="tag_invalid_ndefformattable">NDEF Formattable tag not writable</string>
     <string name="tag_invalid_unsupported">Tag not NDEF formatted, or not supported by this device</string>
+    <string name="third_party_notices_summary">Used third-party libraries</string>
+    <string name="logout_summary">Remove user data and login again</string>
+    <string name="play_sound_when_scanning_a_tag">Play sound when scanning a tag</string>
+    <string name="play_sound_when_scanning_a_tag_summary">When turned on, a sound is played to indicate success/failure</string>
+    <string name="household_and_group_selection_summary">Household: %1$s…\nGroup: %2$s…</string>
+    <string name="other">Other</string>
 </resources>

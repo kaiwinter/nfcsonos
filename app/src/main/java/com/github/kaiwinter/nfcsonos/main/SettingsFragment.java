@@ -3,14 +3,11 @@ package com.github.kaiwinter.nfcsonos.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.kaiwinter.nfcsonos.R;
-import com.github.kaiwinter.nfcsonos.databinding.FragmentSettingsBinding;
 import com.github.kaiwinter.nfcsonos.discover.DiscoverActivity;
 import com.github.kaiwinter.nfcsonos.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
@@ -22,30 +19,28 @@ import de.psdev.licensesdialog.licenses.License;
 /**
  * The settings fragment.
  */
-public class SettingsFragment extends Fragment {
-
-    private FragmentSettingsBinding binding;
-    private SharedPreferencesStore sharedPreferencesStore;
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        sharedPreferencesStore = new SharedPreferencesStore(getActivity().getApplicationContext());
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStore(getActivity());
 
-        binding = FragmentSettingsBinding.inflate(getLayoutInflater());
-        binding.discoverButton.setOnClickListener(__ -> startDiscoverActivity());
-        binding.thirdPartyNotices.setOnClickListener(__ -> startLicensesDialog());
-        binding.logoutButton.setOnClickListener(__ -> signOut());
-    }
+        setPreferencesFromResource(R.xml.preferences, rootKey);
+        Preference logout = findPreference("logout");
+        logout.setIntent(signOutIntent());
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return binding.getRoot();
-    }
+        Preference householdAndGroupSelection = findPreference("householdAndGroupSelection");
+        householdAndGroupSelection.setIntent(new Intent(getActivity(), DiscoverActivity.class));
+        householdAndGroupSelection.setSummaryProvider(preference ->
+                getString(R.string.household_and_group_selection_summary,
+                        sharedPreferencesStore.getHouseholdId().substring(0, 20),
+                        sharedPreferencesStore.getGroupId().substring(0, 20)));
 
-    private void startDiscoverActivity() {
-        Intent intent = new Intent(getActivity(), DiscoverActivity.class);
-        startActivity(intent);
+        Preference thirdParty = findPreference("thirdParty");
+        thirdParty.setOnPreferenceClickListener(preference -> {
+            startLicensesDialog();
+            return true;
+        });
     }
 
     private void startLicensesDialog() {
@@ -57,13 +52,10 @@ public class SettingsFragment extends Fragment {
                 .build().show();
     }
 
-    private void signOut() {
-        sharedPreferencesStore.setTokens(null, null, -1);
-        sharedPreferencesStore.setHouseholdAndGroup(null, null, null);
-
+    private Intent signOutIntent() {
         Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
         loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(loginIntent);
+        return loginIntent;
     }
 
     public static License createLicense(String name, int summaryFile, String summaryText) {

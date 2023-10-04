@@ -2,7 +2,8 @@ package com.github.kaiwinter.nfcsonos.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 public class SharedPreferencesStore {
 
@@ -13,6 +14,8 @@ public class SharedPreferencesStore {
     private static final String HOUSEHOLD_ID = "HOUSEHOLD_ID";
     private static final String GROUP_ID = "GROUP_ID";
     private static final String GROUP_COORDINATOR_ID = "GROUP_COORDINATOR_ID";
+
+    private static final String PLAY_SOUNDS = "PLAY_SOUNDS";
 
     private final SharedPreferences sharedPreferences;
 
@@ -54,6 +57,14 @@ public class SharedPreferencesStore {
 
     public String getGroupId() {
         return sharedPreferences.getString(GROUP_ID, null);
+    }
+
+    /**
+     * Returns the setting if a sound should be played after a tag was scanned.
+     * @return true when a sound should be played, false otherwise
+     */
+    public boolean getPlaySounds() {
+        return sharedPreferences.getBoolean(PLAY_SOUNDS, false);
     }
 
     public String getGroupCoordinatorId() {

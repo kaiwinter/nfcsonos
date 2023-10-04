@@ -59,4 +59,10 @@
     <string name="tag_invalid">Tag unterstützt: %1$s, benötigt wird \'android.nfc.tech.Ndef\' oder \'android.nfc.tech.NdefFormattable\'</string>
     <string name="tag_invalid_ndefformattable">NDEF Formattable Tag nicht beschreibar</string>
     <string name="tag_invalid_unsupported">Tag nicht NDEF-formatiert oder vom Gerät nicht unterstützt</string>
+    <string name="third_party_notices_summary">Verwendete Bibliotheken von Drittanbietern</string>
+    <string name="logout_summary">Benutzerdaten entfernen und erneut anmelden</string>
+    <string name="play_sound_when_scanning_a_tag">Ton beim Scannen eines Tags</string>
+    <string name="play_sound_when_scanning_a_tag_summary">Wenn eingeschaltet, wird ein Ton abgespielt, um Erfolg/Fehlschlag zu signalisieren</string>
+    <string name="household_and_group_selection_summary">"Haushalt: %1$s…\nGruppe: %2$s…"</string>
+    <string name="other">Sonstiges</string>
 </resources>
