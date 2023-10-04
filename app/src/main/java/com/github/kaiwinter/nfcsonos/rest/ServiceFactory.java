@@ -79,24 +79,26 @@ public class ServiceFactory {
      * @return an {@link APIError} object
      */
     public static APIError parseError(retrofit2.Response<?> response) {
-        if (response.errorBody() == null) {
-            return new APIError(response.code(), "", "Error body was empty");
-        }
-
-        MediaType mediaType = response.errorBody().contentType();
-        if (mediaType != null && "text".equals(mediaType.type()) && "plain".equals(mediaType.subtype())) {
-            try {
-                return new APIError(response.code(), "", response.errorBody().string());
-            } catch (IOException e) {
-                return new APIError(response.code(), "", "Couldn't read error body");
+        try (var responseErrorBody = response.errorBody()) {
+            if (responseErrorBody == null) {
+                return new APIError(response.code(), "", "Error body was empty");
             }
-        } else if (mediaType != null && "application".equals(mediaType.type()) && "json".equals(mediaType.subtype())) {
-            Gson gson = new Gson();
-            APIError apiError = gson.fromJson(response.errorBody().charStream(), APIError.class);
-            apiError.httpCode = response.code();
-            return apiError;
-        }
 
-        return new APIError(response.code(), "", "Couldn't read error response");
+            MediaType mediaType = responseErrorBody.contentType();
+            if (mediaType != null && "text".equals(mediaType.type()) && "plain".equals(mediaType.subtype())) {
+                try {
+                    return new APIError(response.code(), "", responseErrorBody.string());
+                } catch (IOException e) {
+                    return new APIError(response.code(), "", "Couldn't read error body");
+                }
+            } else if (mediaType != null && "application".equals(mediaType.type()) && "json".equals(mediaType.subtype())) {
+                Gson gson = new Gson();
+                APIError apiError = gson.fromJson(responseErrorBody.charStream(), APIError.class);
+                apiError.httpCode = response.code();
+                return apiError;
+            }
+
+            return new APIError(response.code(), "", "Couldn't read error response");
+        }
     }
 }

@@ -132,8 +132,8 @@ public class MainFragmentViewModelTest {
 
     private Buffer fileAsBuffer(String file) {
         InputStream inputStream = MainFragmentViewModelTest.class.getResourceAsStream(file);
-        try {
-            return new Buffer().readFrom(inputStream);
+        try (var buffer = new Buffer()) {
+            return buffer.readFrom(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
