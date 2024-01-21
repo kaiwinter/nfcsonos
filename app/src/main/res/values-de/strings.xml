@@ -65,4 +65,6 @@
     <string name="play_sound_when_scanning_a_tag_summary">Wenn eingeschaltet, wird ein Ton abgespielt, um Erfolg/Fehlschlag zu signalisieren</string>
     <string name="household_and_group_selection_summary">"Haushalt: %1$s…\nGruppe: %2$s…"</string>
     <string name="other">Sonstiges</string>
+    <string name="shuffle_playback">Shuffle Wiedergabe</string>
+    <string name="shuffle_playback_summary">Wiedergabe der Titel in zufälliger Reihenfolge</string>
 </resources>

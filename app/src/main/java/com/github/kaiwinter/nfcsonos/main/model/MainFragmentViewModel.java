@@ -186,7 +186,7 @@ public class MainFragmentViewModel extends ViewModel {
         return false;
     }
 
-    private void loadAndStartFavorite(String favoriteId) {
+    void loadAndStartFavorite(String favoriteId) {
         if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
             return;
         }
@@ -199,7 +199,7 @@ public class MainFragmentViewModel extends ViewModel {
         String accessToken = sharedPreferencesStore.getAccessToken();
         FavoriteService service = serviceFactory.createFavoriteService(accessToken);
 
-        LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId);
+        LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId, new LoadFavoriteRequest.PlayModes(sharedPreferencesStore.getShufflePlayback()));
 
         service.loadFavorite(sharedPreferencesStore.getGroupId(), request).enqueue(new Callback<>() {
             @Override

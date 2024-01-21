@@ -67,4 +67,6 @@
     <string name="play_sound_when_scanning_a_tag_summary">When turned on, a sound is played to indicate success/failure</string>
     <string name="household_and_group_selection_summary">Household: %1$s…\nGroup: %2$s…</string>
     <string name="other">Other</string>
+    <string name="shuffle_playback">Shuffle playback</string>
+    <string name="shuffle_playback_summary">Play the tracks in the queue in a randomly shuffled order</string>
 </resources>

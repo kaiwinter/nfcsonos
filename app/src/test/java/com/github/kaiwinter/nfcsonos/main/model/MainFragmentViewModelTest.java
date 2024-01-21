@@ -3,7 +3,9 @@ package com.github.kaiwinter.nfcsonos.main.model;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
@@ -17,16 +19,20 @@ import androidx.annotation.NonNull;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.core.util.Consumer;
 
+import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
+import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.SingleLiveEvent;
+import com.google.gson.Gson;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.mockwebserver.Dispatcher;
@@ -95,6 +101,36 @@ public class MainFragmentViewModelTest {
                     return new MockResponse().setBody(fileAsBuffer("/410_gone.json")).setResponseCode(410).setHeader("Content-Type", "application/json");
                 }
                 return new MockResponse();
+            }
+        });
+    }
+
+    /**
+     * Tests if the favorite is configured to be shuffled.
+     */
+    @Test
+    public void loadAndStartFavoriteWithShuffle() {
+        runWithMockWebServer(port -> {
+            SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().withGroupId().withShufflePlayback(true).build();
+            AccessTokenManager accessTokenManager = when(mock(AccessTokenManager.class).accessTokenRefreshNeeded()).thenReturn(false).getMock();
+
+            FavoriteService favoriteService = new ServiceFactory("http://localhost:" + port).createFavoriteService("");
+            ServiceFactory serviceFactory = when(mock(ServiceFactory.class).createFavoriteService(anyString())).thenReturn(favoriteService).getMock();
+            FavoriteCache favoriteCache = mock(FavoriteCache.class);
+            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, favoriteCache, serviceFactory);
+
+            viewModel.loadAndStartFavorite("15");
+            await().untilAsserted(() -> viewModel.errorMessageMutableLiveData.setValue(any()) // triggered by response code 500
+            );
+        }, new Dispatcher() {
+            @NonNull
+            @Override
+            public MockResponse dispatch(@NonNull RecordedRequest recordedRequest) {
+                Buffer body = recordedRequest.getBody();
+                LoadFavoriteRequest request = new Gson().fromJson(body.readString(StandardCharsets.UTF_8), LoadFavoriteRequest.class);
+                assertEquals("15", request.getFavoriteId());
+                assertTrue(request.getPlayModes().isShuffle());
+                return new MockResponse().setResponseCode(500); // cancel further processing
             }
         });
     }
@@ -190,6 +226,7 @@ public class MainFragmentViewModelTest {
         boolean withGroupId;
         boolean withHouseholdId;
         boolean withGroupCoordinatorId;
+        private boolean shufflePlayback;
 
         SharedPreferencesStoreMockBuilder withAccessToken() {
             this.withAccessToken = true;
@@ -211,6 +248,11 @@ public class MainFragmentViewModelTest {
             return this;
         }
 
+        SharedPreferencesStoreMockBuilder withShufflePlayback(Boolean shufflePlayback) {
+            this.shufflePlayback = shufflePlayback;
+            return this;
+        }
+
         SharedPreferencesStore build() {
             SharedPreferencesStore sharedPreferences = mock(SharedPreferencesStore.class);
             if (withAccessToken) {
@@ -224,6 +266,9 @@ public class MainFragmentViewModelTest {
             }
             if (withGroupCoordinatorId) {
                 when(sharedPreferences.getGroupCoordinatorId()).thenReturn("RINCON_123456").getMock();
+            }
+            if (shufflePlayback) {
+                when(sharedPreferences.getShufflePlayback()).thenReturn(shufflePlayback).getMock();
             }
             return sharedPreferences;
         }

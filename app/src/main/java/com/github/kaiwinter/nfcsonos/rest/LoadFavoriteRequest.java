@@ -12,18 +12,31 @@ public class LoadFavoriteRequest {
     private final String action = "REPLACE";
 
     // (Optional) Defines the functionality of one or more play modes. You can set these to customize shuffle, repeat, repeat-one and crossfade.
-    private final PlayModes playModes = new PlayModes();
+    private final PlayModes playModes;
 
-    public LoadFavoriteRequest(String favoriteId) {
+    public LoadFavoriteRequest(String favoriteId, PlayModes playModes) {
         this.favoriteId = favoriteId;
+        this.playModes = playModes;
     }
 
     public String getFavoriteId() {
         return favoriteId;
     }
 
-    static class PlayModes {
-        boolean shuffle = false;
-        boolean repeat = false;
+    public PlayModes getPlayModes() {
+        return playModes;
+    }
+
+    public static class PlayModes {
+        private boolean shuffle = false;
+        private boolean repeat = false;
+
+        public PlayModes(Boolean shuffle) {
+            this.shuffle = shuffle;
+        }
+
+        public boolean isShuffle() {
+            return shuffle;
+        }
     }
 }

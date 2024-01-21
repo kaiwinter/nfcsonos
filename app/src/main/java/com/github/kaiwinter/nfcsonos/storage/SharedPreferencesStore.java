@@ -17,6 +17,8 @@ public class SharedPreferencesStore {
 
     private static final String PLAY_SOUNDS = "PLAY_SOUNDS";
 
+    private static final String SHUFFLE_PLAYBACK = "SHUFFLE_PLAYBACK";
+
     private final SharedPreferences sharedPreferences;
 
     public SharedPreferencesStore(Context context) {
@@ -65,6 +67,14 @@ public class SharedPreferencesStore {
      */
     public boolean getPlaySounds() {
         return sharedPreferences.getBoolean(PLAY_SOUNDS, false);
+    }
+
+    /**
+     * Returns the setting if the playback should be shuffled.
+     * @return true when the playback should be shuffled, false otherwise
+     */
+    public boolean getShufflePlayback() {
+        return sharedPreferences.getBoolean(SHUFFLE_PLAYBACK, false);
     }
 
     public String getGroupCoordinatorId() {

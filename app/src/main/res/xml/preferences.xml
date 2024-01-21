@@ -7,6 +7,11 @@
             app:key="PLAY_SOUNDS"
             app:summary="@string/play_sound_when_scanning_a_tag_summary"
             app:title="@string/play_sound_when_scanning_a_tag" />
+
+        <SwitchPreferenceCompat
+            app:key="SHUFFLE_PLAYBACK"
+            app:summary="@string/shuffle_playback_summary"
+            app:title="@string/shuffle_playback" />
         <Preference
             app:key="householdAndGroupSelection"
             app:summary="Household: #1...\nGroup: #2..."
