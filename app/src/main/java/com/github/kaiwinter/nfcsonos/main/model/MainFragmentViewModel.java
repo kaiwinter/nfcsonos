@@ -59,8 +59,10 @@ public class MainFragmentViewModel extends ViewModel {
     public SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
     public final SingleLiveEvent<UserMessage> showSnackbarMessage = new SingleLiveEvent<>();
 
+    public final MutableLiveData<Integer> skipToPreviousButtonVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<Integer> playButtonVisibility = new MutableLiveData<>(View.GONE);
     public final MutableLiveData<Integer> pauseButtonVisibility = new MutableLiveData<>(View.GONE);
+    public final MutableLiveData<Integer> skipToNextButtonVisibility = new MutableLiveData<>(View.GONE);
 
     private final SharedPreferencesStore sharedPreferencesStore;
     private final AccessTokenManager accessTokenManager;
@@ -283,14 +285,18 @@ public class MainFragmentViewModel extends ViewModel {
 
                     switch (playbackStatus.playbackState) {
                         case PLAYBACK_STATE_PLAYING, PLAYBACK_STATE_BUFFERING -> {
-                            // show Play Button
+                            // show Play State
+                            skipToPreviousButtonVisibility.postValue(View.VISIBLE);
                             playButtonVisibility.postValue(View.GONE);
                             pauseButtonVisibility.postValue(View.VISIBLE);
+                            skipToNextButtonVisibility.postValue(View.VISIBLE);
                         }
                         case PLAYBACK_STATE_IDLE, PLAYBACK_STATE_PAUSED -> {
-                            // show Pause Button
+                            // show Pause State
+                            skipToPreviousButtonVisibility.postValue(View.VISIBLE);
                             playButtonVisibility.postValue(View.VISIBLE);
                             pauseButtonVisibility.postValue(View.GONE);
+                            skipToNextButtonVisibility.postValue(View.VISIBLE);
                         }
                     }
                 } else {
@@ -353,6 +359,58 @@ public class MainFragmentViewModel extends ViewModel {
                     playButtonVisibility.postValue(View.VISIBLE);
                     pauseButtonVisibility.postValue(View.GONE);
                     hideLoadingState();
+                } else {
+                    handleError(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                hideLoadingState(t.getMessage());
+            }
+        });
+    }
+
+    public void skipToPrevious() {
+        if (refreshTokenIfNeeded(this::skipToPrevious)) {
+            return;
+        }
+
+        displayLoading(R.string.skip_to_previous);
+        String accessToken = sharedPreferencesStore.getAccessToken();
+        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
+        service.skipToPreviousTrack(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    hideLoadingState();
+                    loadPlaybackMetadata();
+                } else {
+                    handleError(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                hideLoadingState(t.getMessage());
+            }
+        });
+    }
+
+    public void skipToNext() {
+        if (refreshTokenIfNeeded(this::skipToNext)) {
+            return;
+        }
+
+        displayLoading(R.string.skip_to_next);
+        String accessToken = sharedPreferencesStore.getAccessToken();
+        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
+        service.skipToNextTrack(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    hideLoadingState();
+                    loadPlaybackMetadata();
                 } else {
                     handleError(response);
                 }

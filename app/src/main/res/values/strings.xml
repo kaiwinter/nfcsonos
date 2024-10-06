@@ -48,9 +48,13 @@
     <string name="logout">Logout</string>
     <string name="start_playback">Starting playback</string>
     <string name="stop_playback">Stopping playback</string>
+    <string name="skip_to_previous">Skipping to previous title</string>
+    <string name="skip_to_next">Skipping to next title</string>
     <string name="loading_playerstate">Loading player state</string>
+    <string name="skip_to_previous_button">Previous title</string>
     <string name="play_button">Start playback</string>
     <string name="pause_button">Pause playback</string>
+    <string name="skip_to_next_button">Next title</string>
     <string name="choose_household_group">Change household/group</string>
     <string name="third_party_notices">Third-Party Libraries</string>
     <string name="tag_gone">Error reading tag. Tag still there?</string>

@@ -64,15 +64,19 @@ public class MainFragment extends Fragment {
         viewModel.coverImageToLoad.observe(this, this::loadAndShowCoverImage);
         viewModel.soundToPlay.observe(this, this::playSound);
 
+        viewModel.skipToPreviousButtonVisibility.observe(this, binding.skipToPreviousButton::setVisibility);
         viewModel.playButtonVisibility.observe(this, binding.playButton::setVisibility);
         viewModel.pauseButtonVisibility.observe(this, binding.pauseButton::setVisibility);
+        viewModel.skipToNextButtonVisibility.observe(this, binding.skipToNextButton::setVisibility);
 
         viewModel.navigateToLoginActivity.observe(this, __ -> startLoginActivity());
         viewModel.navigateToDiscoverActivity.observe(this, this::startDiscoverActivity);
         viewModel.showSnackbarMessage.observe(this, errorMessage -> SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, errorMessage.getMessage(getActivity()), Snackbar.LENGTH_LONG));
 
+        binding.skipToPreviousButton.setOnClickListener(__ -> viewModel.skipToPrevious());
         binding.playButton.setOnClickListener(__ -> viewModel.play());
         binding.pauseButton.setOnClickListener(__ -> viewModel.pause());
+        binding.skipToNextButton.setOnClickListener(__ -> viewModel.skipToNext());
 
         checkForNfcAdapter();
     }

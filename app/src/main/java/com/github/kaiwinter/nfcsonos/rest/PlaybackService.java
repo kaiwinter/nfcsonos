@@ -51,4 +51,24 @@ public interface PlaybackService {
     @Headers("Content-Type: application/json")
     @POST("/control/api/v1/groups/{groupId}/playback/pause")
     Call<Void> pause(@Path("groupId") String groupId);
+
+    /**
+     * Use the skipToPreviousTrack command in the playback namespace to skip to the previous track.
+     *
+     * @param groupId groupId to determine the target of the command
+     * @return Returns an empty body
+     */
+    @Headers("Content-Type: application/json")
+    @POST("/control/api/v1/groups/{groupId}/playback/skipToPreviousTrack")
+    Call<Void> skipToPreviousTrack(@Path("groupId") String groupId);
+
+    /**
+     * Use the skipToNextTrack command in the playback namespace to skip to the next track.
+     *
+     * @param groupId groupId to determine the target of the command
+     * @return Returns an empty body
+     */
+    @Headers("Content-Type: application/json")
+    @POST("/control/api/v1/groups/{groupId}/playback/skipToNextTrack")
+    Call<Void> skipToNextTrack(@Path("groupId") String groupId);
 }
