@@ -284,20 +284,40 @@ public class MainFragmentViewModel extends ViewModel {
                     }
 
                     switch (playbackStatus.playbackState) {
+                        case PLAYBACK_STATE_IDLE -> {
+                            if (playbackStatus.availablePlaybackActions.canPlay) {
+                                // This combination occurs with a stopped radio station
+                                playButtonVisibility.postValue(View.VISIBLE);
+                                pauseButtonVisibility.postValue(View.GONE);
+                            } else {
+                                albumTitle.postValue("Playlist empty");
+                                trackTitle.postValue("Scan an NFC tag to start");
+                                playButtonVisibility.postValue(View.GONE);
+                                pauseButtonVisibility.postValue(View.GONE);
+                            }
+                        }
                         case PLAYBACK_STATE_PLAYING, PLAYBACK_STATE_BUFFERING -> {
                             // show Play State
-                            skipToPreviousButtonVisibility.postValue(View.VISIBLE);
                             playButtonVisibility.postValue(View.GONE);
                             pauseButtonVisibility.postValue(View.VISIBLE);
-                            skipToNextButtonVisibility.postValue(View.VISIBLE);
                         }
-                        case PLAYBACK_STATE_IDLE, PLAYBACK_STATE_PAUSED -> {
+                        case PLAYBACK_STATE_PAUSED -> {
                             // show Pause State
-                            skipToPreviousButtonVisibility.postValue(View.VISIBLE);
                             playButtonVisibility.postValue(View.VISIBLE);
                             pauseButtonVisibility.postValue(View.GONE);
-                            skipToNextButtonVisibility.postValue(View.VISIBLE);
                         }
+                    }
+
+                    if (playbackStatus.availablePlaybackActions.canSkipBack) {
+                        skipToPreviousButtonVisibility.postValue(View.VISIBLE);
+                    } else {
+                        skipToPreviousButtonVisibility.postValue(View.INVISIBLE);
+                    }
+
+                    if (playbackStatus.availablePlaybackActions.canSkip) {
+                        skipToNextButtonVisibility.postValue(View.VISIBLE);
+                    } else {
+                        skipToNextButtonVisibility.postValue(View.INVISIBLE);
                     }
                 } else {
                     handleError(response);

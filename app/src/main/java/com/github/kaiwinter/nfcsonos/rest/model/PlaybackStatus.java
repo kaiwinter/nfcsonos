@@ -9,6 +9,7 @@ public class PlaybackStatus {
 
     @SerializedName("playbackState")
     public PlaybackStatusEnum playbackState;
+    public AvailablePlaybackActions availablePlaybackActions;
 
     public enum PlaybackStatusEnum {
         /**

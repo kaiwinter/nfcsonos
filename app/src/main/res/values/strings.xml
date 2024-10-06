@@ -73,4 +73,6 @@
     <string name="other">Other</string>
     <string name="shuffle_playback">Shuffle playback</string>
     <string name="shuffle_playback_summary">Play the tracks in the queue in a randomly shuffled order</string>
+    <string name="playlist_empty">Playlist empty</string>
+    <string name="playlist_empty_hint">Scan an NFC tag to start</string>
 </resources>
