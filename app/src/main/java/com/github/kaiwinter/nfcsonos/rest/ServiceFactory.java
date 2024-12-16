@@ -2,6 +2,7 @@ package com.github.kaiwinter.nfcsonos.rest;
 
 import com.github.kaiwinter.nfcsonos.BuildConfig;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
+import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -20,54 +21,59 @@ public class ServiceFactory {
     public static final String API_ENDPOINT = "https://api.ws.sonos.com";
 
     private final String apiEndpoint;
+    private final AccessTokenManager accessTokenManager;
 
-    public ServiceFactory(String apiEndpoint) {
+    public ServiceFactory(String apiEndpoint, AccessTokenManager accessTokenManager) {
         this.apiEndpoint = apiEndpoint;
+        this.accessTokenManager = accessTokenManager;
     }
 
     public static LoginService createLoginService() {
-        return createRestAdapter(AUTH_ENDPOINT, null).create(LoginService.class);
+        return createRestAdapter(AUTH_ENDPOINT, null, null).create(LoginService.class);
     }
 
-    public FavoriteService createFavoriteService(String token) {
-        return createRestAdapter(apiEndpoint, token).create(FavoriteService.class);
+    public FavoriteService createFavoriteService(Runnable loadingState) {
+        return createRestAdapter(apiEndpoint, accessTokenManager, loadingState).create(FavoriteService.class);
     }
 
-    public PlaybackMetadataService createPlaybackMetadataService(String token) {
-        return createRestAdapter(apiEndpoint, token).create(PlaybackMetadataService.class);
+    public PlaybackMetadataService createPlaybackMetadataService(Runnable loadingState) {
+        return createRestAdapter(apiEndpoint, accessTokenManager, loadingState).create(PlaybackMetadataService.class);
     }
 
-    public DiscoverService createDiscoverService(String token) {
-        return createRestAdapter(apiEndpoint, token).create(DiscoverService.class);
+    public DiscoverService createDiscoverService(Runnable loadingState) {
+        return createRestAdapter(apiEndpoint, accessTokenManager, loadingState).create(DiscoverService.class);
     }
 
-    public GroupVolumeService createGroupVolumeService(String token) {
-        return createRestAdapter(apiEndpoint, token).create(GroupVolumeService.class);
+    public GroupVolumeService createGroupVolumeService(Runnable loadingState) {
+        return createRestAdapter(apiEndpoint, accessTokenManager, loadingState).create(GroupVolumeService.class);
     }
 
-    public PlaybackService createPlaybackService(String token) {
-        return createRestAdapter(apiEndpoint, token).create(PlaybackService.class);
+    public PlaybackService createPlaybackService(Runnable loadingState) {
+        return createRestAdapter(apiEndpoint, accessTokenManager, loadingState).create(PlaybackService.class);
     }
 
-    private static Retrofit createRestAdapter(String endpoint, String token) {
-        OkHttpClient.Builder defaultHttpClientBuilder = new OkHttpClient.Builder();
+    private static Retrofit createRestAdapter(String endpoint, AccessTokenManager accessTokenManager, Runnable loadingState) {
+        OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
+
+        if (accessTokenManager != null) {
+            okHttpClientBuilder.authenticator(new RestAuthenticator(accessTokenManager, loadingState));
+        }
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.level(HttpLoggingInterceptor.Level.BODY);
-            defaultHttpClientBuilder.addInterceptor(interceptor);
+            okHttpClientBuilder.addInterceptor(interceptor);
         }
-
-        if (token != null) {
-            defaultHttpClientBuilder.addInterceptor(chain -> {
+        if (accessTokenManager != null && accessTokenManager.getAccessToken() != null) {
+            okHttpClientBuilder.addInterceptor(chain -> {
                 Request authorisedRequest = chain.request().newBuilder()
-                        .addHeader("Authorization", "Bearer " + token).build();
+                        .addHeader("Authorization", "Bearer " + accessTokenManager.getAccessToken()).build();
                 return chain.proceed(authorisedRequest);
             });
         }
 
         return new Retrofit.Builder()
                 .baseUrl(endpoint)
-                .client(defaultHttpClientBuilder.build())
+                .client(okHttpClientBuilder.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

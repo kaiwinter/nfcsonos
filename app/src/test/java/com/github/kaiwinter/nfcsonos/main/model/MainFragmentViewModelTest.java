@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
@@ -55,7 +54,7 @@ public class MainFragmentViewModelTest {
     @Test
     public void notLoggedIn_switchToLoginActivity() {
         SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().build();
-        MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, null, null);
+        MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, null);
 
         viewModel.navigateToLoginActivity = mock(SingleLiveEvent.class);
         viewModel.createInitialState(new Intent(), null);
@@ -69,7 +68,7 @@ public class MainFragmentViewModelTest {
     @Test
     public void noHouseholdSelection_switchToDiscoverActivity() {
         SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().build();
-        MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, null, null);
+        MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, null);
 
         viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
         viewModel.createInitialState(new Intent(), null);
@@ -86,9 +85,9 @@ public class MainFragmentViewModelTest {
     public void groupGone_switchToDiscoverActivity() {
         runWithMockWebServer(port -> {
             SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().withGroupId().withHouseholdId().build();
-            AccessTokenManager accessTokenManager = when(mock(AccessTokenManager.class).accessTokenRefreshNeeded()).thenReturn(false).getMock();
-            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:" + port);
-            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, null, serviceFactory);
+            AccessTokenManager accessTokenManager = mock(AccessTokenManager.class);
+            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:" + port, accessTokenManager);
+            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, serviceFactory);
 
             viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
             viewModel.createInitialState(mock(Intent.class), null);
@@ -112,12 +111,12 @@ public class MainFragmentViewModelTest {
     public void loadAndStartFavoriteWithShuffle() {
         runWithMockWebServer(port -> {
             SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().withGroupId().withShufflePlayback(true).build();
-            AccessTokenManager accessTokenManager = when(mock(AccessTokenManager.class).accessTokenRefreshNeeded()).thenReturn(false).getMock();
+            AccessTokenManager accessTokenManager = mock(AccessTokenManager.class);
 
-            FavoriteService favoriteService = new ServiceFactory("http://localhost:" + port).createFavoriteService("");
-            ServiceFactory serviceFactory = when(mock(ServiceFactory.class).createFavoriteService(anyString())).thenReturn(favoriteService).getMock();
+            FavoriteService favoriteService = new ServiceFactory("http://localhost:" + port, accessTokenManager).createFavoriteService(() -> {});
+            ServiceFactory serviceFactory = when(mock(ServiceFactory.class).createFavoriteService(any())).thenReturn(favoriteService).getMock();
             FavoriteCache favoriteCache = mock(FavoriteCache.class);
-            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, favoriteCache, serviceFactory);
+            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, favoriteCache, serviceFactory);
 
             viewModel.loadAndStartFavorite("15");
             await().untilAsserted(() -> viewModel.errorMessageMutableLiveData.setValue(any()) // triggered by response code 500
@@ -144,9 +143,9 @@ public class MainFragmentViewModelTest {
     public void groupGone_LookupGroupId() {
         runWithMockWebServer(port -> {
             SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().withGroupId().withHouseholdId().withGroupCoordinatorId().build();
-            AccessTokenManager accessTokenManager = when(mock(AccessTokenManager.class).accessTokenRefreshNeeded()).thenReturn(false).getMock();
-            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:" + port);
-            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, null, serviceFactory);
+            AccessTokenManager accessTokenManager = mock(AccessTokenManager.class);
+            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:" + port, accessTokenManager);
+            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, serviceFactory);
 
             viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
             viewModel.createInitialState(mock(Intent.class), null);
@@ -179,9 +178,9 @@ public class MainFragmentViewModelTest {
     public void pause_200() {
         runWithMockWebServer(port -> {
             SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStoreMockBuilder().withAccessToken().withGroupId().build();
-            AccessTokenManager accessTokenManager = when(mock(AccessTokenManager.class).accessTokenRefreshNeeded()).thenReturn(false).getMock();
-            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:" + port);
-            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, null, serviceFactory);
+            AccessTokenManager accessTokenManager = mock(AccessTokenManager.class);
+            ServiceFactory serviceFactory = new ServiceFactory("http://localhost:" + port, accessTokenManager);
+            MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, serviceFactory);
 
             viewModel.pause();
             assertEquals(View.VISIBLE, viewModel.loadingContainerVisibility.getValue().intValue());

@@ -23,7 +23,6 @@ import com.github.kaiwinter.nfcsonos.rest.LoginService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
 import com.github.kaiwinter.nfcsonos.rest.model.AccessToken;
-import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.UserMessage;
 
@@ -49,7 +48,7 @@ public final class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         sharedPreferencesStore = new SharedPreferencesStore(this);
-        sharedPreferencesStore.setTokens(null, null, -1);
+        sharedPreferencesStore.setTokens(null, null);
         sharedPreferencesStore.setHouseholdAndGroup(null, null, null);
 
         CustomTabsServiceConnection customTabsServiceConnection = new CustomTabsServiceConnection() {
@@ -71,18 +70,6 @@ public final class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         binding.startAuth.setOnClickListener(__ -> loginClicked());
         setContentView(binding.getRoot());
-
-        if (TextUtils.isEmpty(sharedPreferencesStore.getAccessToken())) {
-            return;
-        }
-
-        AccessTokenManager accessTokenManager = new AccessTokenManager(this);
-        if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(this::switchToMainActivity, this::hideLoadingState);
-            return;
-        }
-
-        switchToMainActivity();
     }
 
     /**
@@ -142,8 +129,7 @@ public final class LoginActivity extends AppCompatActivity {
 
                     if (response.isSuccessful()) {
                         AccessToken body = response.body();
-                        long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
-                        sharedPreferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
+                        sharedPreferencesStore.setTokens(body.refreshToken, body.accessToken);
                         switchToMainActivity();
                     } else {
                         APIError apiError = ServiceFactory.parseError(response);

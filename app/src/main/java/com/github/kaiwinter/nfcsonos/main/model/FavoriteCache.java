@@ -37,14 +37,12 @@ public class FavoriteCache {
 
     private final Context context;
     private final SharedPreferencesStore sharedPreferencesStore;
-    private final AccessTokenManager accessTokenManager;
     private final ServiceFactory serviceFactory;
 
-    public FavoriteCache(Context context, ServiceFactory serviceFactory) {
+    public FavoriteCache(Context context) {
         this.context = context;
         this.sharedPreferencesStore = new SharedPreferencesStore(context);
-        this.accessTokenManager = new AccessTokenManager(context);
-        this.serviceFactory = serviceFactory;
+        this.serviceFactory = new ServiceFactory(ServiceFactory.API_ENDPOINT, new AccessTokenManager(context));
     }
 
     /**
@@ -54,14 +52,14 @@ public class FavoriteCache {
      * @param onSuccess  {@link Consumer} which is called with the loaded favorites
      * @param onError    {@link Consumer} which is called with a possible error message
      */
-    public void getFavorite(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<UserMessage> onError) {
+    public void getFavorite(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<UserMessage> onError, Runnable loadingState) {
         File file = new File(context.getFilesDir(), CACHE_FILENAME);
         if (file.exists()) {
             try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
                 Map<String, StoredFavorite> storedFavorites = (Map<String, StoredFavorite>) inputStream.readObject();
                 StoredFavorite storedFavorite = storedFavorites.get(favoriteId);
                 if (storedFavorite == null) {
-                    updateFavorites(favoriteId, onSuccess, onError);
+                    updateFavorites(favoriteId, onSuccess, onError, loadingState);
                     return;
                 }
                 onSuccess.accept(storedFavorite);
@@ -71,10 +69,10 @@ public class FavoriteCache {
                 onError.accept(userMessage);
             }
         }
-        updateFavorites(favoriteId, onSuccess, onError);
+        updateFavorites(favoriteId, onSuccess, onError, loadingState);
     }
 
-    void updateFavorites(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<UserMessage> onError) {
+    void updateFavorites(String favoriteId, Consumer<StoredFavorite> onSuccess, Consumer<UserMessage> onError, Runnable loadingState) {
         loadFavorites(favorites -> {
             for (Item item : favorites.items) {
                 if (favoriteId.equals(item.id)) {
@@ -85,7 +83,7 @@ public class FavoriteCache {
             }
             UserMessage userMessage = UserMessage.create(R.string.favorite_not_found_in_cache, favoriteId);
             onError.accept(userMessage);
-        }, onError);
+        }, onError, loadingState);
     }
 
     /**
@@ -94,14 +92,8 @@ public class FavoriteCache {
      * @param onSuccess {@link Consumer} which is called with the loaded favorites
      * @param onError   {@link Consumer} which is called with a possible error message
      */
-    public void loadFavorites(Consumer<Favorites> onSuccess, Consumer<UserMessage> onError) {
-        if (refreshTokenIfNeeded(() -> loadFavorites(onSuccess, onError), onError)) {
-            return;
-        }
-
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        FavoriteService service = serviceFactory.createFavoriteService(accessToken);
-
+    public void loadFavorites(Consumer<Favorites> onSuccess, Consumer<UserMessage> onError, Runnable loadingState) {
+        FavoriteService service = serviceFactory.createFavoriteService(loadingState);
         service.getFavorites(sharedPreferencesStore.getHouseholdId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Favorites> call, Response<Favorites> response) {
@@ -140,13 +132,4 @@ public class FavoriteCache {
             outputStream.writeObject(storedFavorites);
         }
     }
-
-    private boolean refreshTokenIfNeeded(Runnable runnable, Consumer<UserMessage> onError) {
-        if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(runnable, onError);
-            return true;
-        }
-        return false;
-    }
-
 }

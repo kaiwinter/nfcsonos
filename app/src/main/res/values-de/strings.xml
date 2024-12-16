@@ -71,6 +71,4 @@
     <string name="other">Sonstiges</string>
     <string name="shuffle_playback">Shuffle Wiedergabe</string>
     <string name="shuffle_playback_summary">Wiedergabe der Titel in zufälliger Reihenfolge</string>
-    <string name="playlist_empty">Wiedergabeliste leer</string>
-    <string name="playlist_empty_hint">Scan ein NFC Tag zum Abspielen</string>
 </resources>

@@ -35,7 +35,6 @@ public class DiscoverActivity extends AppCompatActivity {
     private ActivityDiscoverBinding binding;
 
     private SharedPreferencesStore sharedPreferencesStore;
-    private AccessTokenManager accessTokenManager;
     private ServiceFactory serviceFactory;
 
     private RetryAction retryAction; // Contains a RetryAction, which is just passed back
@@ -47,8 +46,8 @@ public class DiscoverActivity extends AppCompatActivity {
         retryAction = getIntent().getParcelableExtra(RetryAction.class.getSimpleName());
 
         sharedPreferencesStore = new SharedPreferencesStore(this);
-        accessTokenManager = new AccessTokenManager(this);
-        serviceFactory = new ServiceFactory(ServiceFactory.API_ENDPOINT);
+        AccessTokenManager accessTokenManager = new AccessTokenManager(this);
+        serviceFactory = new ServiceFactory(ServiceFactory.API_ENDPOINT, accessTokenManager);
 
         binding = ActivityDiscoverBinding.inflate(getLayoutInflater());
         binding.selectButton.setOnClickListener(__ -> selectHouseholdAndGroup());
@@ -69,11 +68,7 @@ public class DiscoverActivity extends AppCompatActivity {
     private void loadHouseholds() {
         displayLoading(getString(R.string.loading_households));
 
-        if (refreshTokenIfNeeded(this::loadHouseholds)) {
-            return;
-        }
-
-        DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
+        DiscoverService service = serviceFactory.createDiscoverService(this::displayRefreshLoadingState);
         Call<Households> household = service.getHouseholds();
         household.enqueue(new Callback<>() {
             @Override
@@ -106,11 +101,7 @@ public class DiscoverActivity extends AppCompatActivity {
         displayLoading(getString(R.string.loading_groups));
         binding.group.setItems(Collections.emptyList());
 
-        if (refreshTokenIfNeeded(this::loadHouseholds)) {
-            return;
-        }
-
-        DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
+        DiscoverService service = serviceFactory.createDiscoverService(this::displayRefreshLoadingState);
         Call<Groups> group = service.getGroups(householdId);
         group.enqueue(new Callback<>() {
             @Override
@@ -160,15 +151,6 @@ public class DiscoverActivity extends AppCompatActivity {
         switchToMainActivity();
     }
 
-    private boolean refreshTokenIfNeeded(Runnable runnable) {
-        if (accessTokenManager.accessTokenRefreshNeeded()) {
-            displayLoading(getString(R.string.refresh_access_token));
-            accessTokenManager.refreshAccessToken(runnable, this::hideLoadingState);
-            return true;
-        }
-        return false;
-    }
-
     private void switchToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         if (retryAction != null) {
@@ -176,6 +158,10 @@ public class DiscoverActivity extends AppCompatActivity {
         }
         startActivity(intent);
         finish();
+    }
+
+    private void displayRefreshLoadingState() {
+        displayLoading(getString(R.string.refresh_access_token));
     }
 
     private void displayLoading(String loadingMessage) {

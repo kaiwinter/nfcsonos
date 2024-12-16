@@ -28,7 +28,6 @@ import com.github.kaiwinter.nfcsonos.login.LoginActivity;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
 import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModelFactory;
 import com.github.kaiwinter.nfcsonos.main.model.RetryAction;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -107,16 +106,6 @@ public class MainFragment extends Fragment {
         return binding.getRoot();
     }
 
-    /**
-     * Sets the volume to the middle value if it is muted currently.
-     */
-//    private void setVolume() {
-//        AudioManager audioManager = (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
-//        if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
-//            int volume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) / 2;
-//            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
-//        }
-//    }
     private void playSound(int sound) {
         if (!viewModel.shouldPlaySounds()) {
             return;

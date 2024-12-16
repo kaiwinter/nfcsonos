@@ -37,12 +37,6 @@
         <license>Apache Software License 2.0</license>
     </notice>
     <notice>
-        <name>Material Dialogs</name>
-        <url>https://github.com/afollestad/material-dialogs</url>
-        <copyright>Copyright 2018 Aidan Follestad</copyright>
-        <license>Apache Software License 2.0</license>
-    </notice>
-    <notice>
         <name>Browser</name>
         <url>https://developer.android.com/jetpack/androidx/releases/browser</url>
         <copyright></copyright>

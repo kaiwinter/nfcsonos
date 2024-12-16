@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
@@ -17,20 +18,14 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.github.kaiwinter.nfcsonos.R;
 import com.github.kaiwinter.nfcsonos.databinding.ActivityMainBinding;
-import com.github.kaiwinter.nfcsonos.rest.GroupVolumeService;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
-import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModel;
+import com.github.kaiwinter.nfcsonos.main.model.MainFragmentViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String NFC_SCANNED_INTENT = "NFC_SCANNED_INTENT";
 
-    private SharedPreferencesStore sharedPreferencesStore;
-    private ServiceFactory serviceFactory;
+    private MainFragmentViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,41 +37,24 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        sharedPreferencesStore = new SharedPreferencesStore(getApplicationContext());
-        serviceFactory = new ServiceFactory(ServiceFactory.API_ENDPOINT);
+        viewModel = new ViewModelProvider(this, new MainFragmentViewModelFactory(getApplication())).get(MainFragmentViewModel.class);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP: {
-                setVolumeOnSonosGroup(5);
+                viewModel.setVolumeOnSonosGroup(5);
                 Toast.makeText(this, getString(R.string.volume_changed, "+5"), Toast.LENGTH_SHORT).show();
                 return true;
             }
             case KeyEvent.KEYCODE_VOLUME_DOWN: {
-                setVolumeOnSonosGroup(-5);
+                viewModel.setVolumeOnSonosGroup(-5);
                 Toast.makeText(this, getString(R.string.volume_changed, "-5"), Toast.LENGTH_SHORT).show();
                 return true;
             }
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    private void setVolumeOnSonosGroup(int volumeDelta) {
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        String groupId = sharedPreferencesStore.getGroupId();
-        GroupVolumeService service = serviceFactory.createGroupVolumeService(accessToken);
-        Call<Void> call = service.setRelativeVolume(groupId, new GroupVolumeService.VolumeDeltaRequest(volumeDelta));
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-            }
-        });
     }
 
     @Override

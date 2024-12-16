@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -22,7 +23,6 @@ import com.github.kaiwinter.nfcsonos.databinding.FragmentPairBinding;
 import com.github.kaiwinter.nfcsonos.main.model.FavoriteCache;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
-import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.Item;
 import com.github.kaiwinter.nfcsonos.util.SnackbarUtil;
 import com.github.kaiwinter.nfcsonos.util.UserMessage;
@@ -44,30 +44,25 @@ public class PairFragment extends Fragment {
 
         binding = FragmentPairBinding.inflate(getLayoutInflater());
 
-        FavoriteCache favoriteCache = new FavoriteCache(getActivity(), new ServiceFactory(ServiceFactory.API_ENDPOINT));
+        FavoriteCache favoriteCache = new FavoriteCache(getActivity());
 
         displayLoading(getString(R.string.loading_favorites));
-        favoriteCache.loadFavorites(favorites -> {
-            if (getActivity() == null) {
-                return;
+        favoriteCache.loadFavorites(favorites -> runOnUiThread(() -> {
+            hideLoadingState();
+            if (favorites.items.isEmpty()) {
+                binding.noSonosFavoriteHint.setVisibility(View.VISIBLE);
+            } else {
+                binding.spinner.setItems(favorites.items);
+                binding.linkButton.setEnabled(true);
             }
-            getActivity().runOnUiThread(() -> {
-                        hideLoadingState();
-                        if (favorites.items.isEmpty()) {
-                            binding.noSonosFavoriteHint.setVisibility(View.VISIBLE);
-                        } else {
-                            binding.spinner.setItems(favorites.items);
-                            binding.linkButton.setEnabled(true);
-                        }
-                    }
-            );
-        }, this::hideLoadingState);
+        }), this::hideLoadingState,
+        this::displayRefreshLoadingState);
 
         binding.linkButton.setOnClickListener(__ -> writeTag());
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return binding.getRoot();
     }
 
@@ -169,6 +164,10 @@ public class PairFragment extends Fragment {
     private NdefMessage createNdefMessage() {
         NfcPayload nfcPayload = new NfcPayload(getSelectedFavorite().id);
         return NfcPayloadUtil.createMessage(nfcPayload);
+    }
+
+    private void displayRefreshLoadingState() {
+        displayLoading(getString(R.string.refresh_access_token));
     }
 
     private void displayLoading(String loadingMessage) {

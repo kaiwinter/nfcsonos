@@ -22,6 +22,7 @@ import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayload;
 import com.github.kaiwinter.nfcsonos.main.nfc.NfcPayloadUtil;
 import com.github.kaiwinter.nfcsonos.rest.DiscoverService;
 import com.github.kaiwinter.nfcsonos.rest.FavoriteService;
+import com.github.kaiwinter.nfcsonos.rest.GroupVolumeService;
 import com.github.kaiwinter.nfcsonos.rest.LoadFavoriteRequest;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackService;
@@ -32,7 +33,6 @@ import com.github.kaiwinter.nfcsonos.rest.model.Group;
 import com.github.kaiwinter.nfcsonos.rest.model.Groups;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackMetadata;
 import com.github.kaiwinter.nfcsonos.rest.model.PlaybackStatus;
-import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.SingleLiveEvent;
 import com.github.kaiwinter.nfcsonos.util.UserMessage;
@@ -65,13 +65,11 @@ public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<Integer> skipToNextButtonVisibility = new MutableLiveData<>(View.GONE);
 
     private final SharedPreferencesStore sharedPreferencesStore;
-    private final AccessTokenManager accessTokenManager;
     private final FavoriteCache favoriteCache;
     private final ServiceFactory serviceFactory;
 
-    public MainFragmentViewModel(SharedPreferencesStore sharedPreferencesStore, AccessTokenManager accessTokenManager, FavoriteCache favoriteCache, ServiceFactory serviceFactory) {
+    public MainFragmentViewModel(SharedPreferencesStore sharedPreferencesStore, FavoriteCache favoriteCache, ServiceFactory serviceFactory) {
         this.sharedPreferencesStore = sharedPreferencesStore;
-        this.accessTokenManager = accessTokenManager;
         this.favoriteCache = favoriteCache;
         this.serviceFactory = serviceFactory;
     }
@@ -179,27 +177,14 @@ public class MainFragmentViewModel extends ViewModel {
         return householdSelected && groupSelected;
     }
 
-    private boolean refreshTokenIfNeeded(Runnable runnable) {
-        if (accessTokenManager.accessTokenRefreshNeeded()) {
-            displayLoading(R.string.refresh_access_token);
-            accessTokenManager.refreshAccessToken(runnable, this::hideLoadingState);
-            return true;
-        }
-        return false;
-    }
-
     void loadAndStartFavorite(String favoriteId) {
-        if (refreshTokenIfNeeded(() -> loadAndStartFavorite(favoriteId))) {
-            return;
-        }
-
         displayLoading(R.string.starting_favorite);
         albumTitle.setValue("");
         trackTitle.setValue("");
         showAlbumCoverAndTitle(favoriteId);
 
         String accessToken = sharedPreferencesStore.getAccessToken();
-        FavoriteService service = serviceFactory.createFavoriteService(accessToken);
+        FavoriteService service = serviceFactory.createFavoriteService(this::displayRefreshLoadingState);
 
         LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId, new LoadFavoriteRequest.PlayModes(sharedPreferencesStore.getShufflePlayback()));
 
@@ -224,14 +209,8 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     private void loadPlaybackMetadata() {
-        if (refreshTokenIfNeeded(this::loadPlaybackMetadata)) {
-            return;
-        }
-
         displayLoading(R.string.loading_metadata);
-
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackMetadataService service = serviceFactory.createPlaybackMetadataService(accessToken);
+        PlaybackMetadataService service = serviceFactory.createPlaybackMetadataService(this::displayRefreshLoadingState);
 
         service.loadPlaybackMetadata(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
@@ -271,8 +250,7 @@ public class MainFragmentViewModel extends ViewModel {
     private void loadPlayerState() {
         displayLoading(R.string.loading_playerstate);
 
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
+        PlaybackService service = serviceFactory.createPlaybackService(this::displayRefreshLoadingState);
         service.playbackStatus(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<PlaybackStatus> call, Response<PlaybackStatus> response) {
@@ -335,13 +313,8 @@ public class MainFragmentViewModel extends ViewModel {
      * Sets the player state to playing.
      */
     public void play() {
-        if (refreshTokenIfNeeded(this::play)) {
-            return;
-        }
-
         displayLoading(R.string.start_playback);
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
+        PlaybackService service = serviceFactory.createPlaybackService(this::displayRefreshLoadingState);
         service.play(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -365,13 +338,8 @@ public class MainFragmentViewModel extends ViewModel {
      * Sets the player state to paused.
      */
     public void pause() {
-        if (refreshTokenIfNeeded(this::pause)) {
-            return;
-        }
-
         displayLoading(R.string.stop_playback);
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
+        PlaybackService service = serviceFactory.createPlaybackService(this::displayRefreshLoadingState);
         service.pause(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -392,13 +360,8 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     public void skipToPrevious() {
-        if (refreshTokenIfNeeded(this::skipToPrevious)) {
-            return;
-        }
-
         displayLoading(R.string.skip_to_previous);
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
+        PlaybackService service = serviceFactory.createPlaybackService(this::displayRefreshLoadingState);
         service.skipToPreviousTrack(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -418,13 +381,8 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     public void skipToNext() {
-        if (refreshTokenIfNeeded(this::skipToNext)) {
-            return;
-        }
-
         displayLoading(R.string.skip_to_next);
-        String accessToken = sharedPreferencesStore.getAccessToken();
-        PlaybackService service = serviceFactory.createPlaybackService(accessToken);
+        PlaybackService service = serviceFactory.createPlaybackService(this::displayRefreshLoadingState);
         service.skipToNextTrack(sharedPreferencesStore.getGroupId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -482,7 +440,7 @@ public class MainFragmentViewModel extends ViewModel {
             return;
         }
 
-        DiscoverService service = serviceFactory.createDiscoverService(sharedPreferencesStore.getAccessToken());
+        DiscoverService service = serviceFactory.createDiscoverService(this::displayRefreshLoadingState);
         Call<Groups> groupsCall = service.getGroups(householdId);
         groupsCall.enqueue(new Callback<>() {
             @Override
@@ -512,19 +470,39 @@ public class MainFragmentViewModel extends ViewModel {
         });
     }
 
+
+    public void setVolumeOnSonosGroup(int volumeDelta) {
+        String groupId = sharedPreferencesStore.getGroupId();
+        GroupVolumeService service = serviceFactory.createGroupVolumeService(this::displayRefreshLoadingState);
+        Call<Void> call = service.setRelativeVolume(groupId, new GroupVolumeService.VolumeDeltaRequest(volumeDelta));
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+            }
+        });
+    }
+
     private void showAlbumCoverAndTitle(String favoriteId) {
         favoriteCache.getFavorite(favoriteId, storedFavorite -> {
             albumTitle.setValue(storedFavorite.name);
 
             String imageUrl = storedFavorite.imageUrl;
             coverImageToLoad.setValue(imageUrl);
-        }, this::hideLoadingState);
+        }, this::hideLoadingState, this::displayRefreshLoadingState);
+    }
+
+    private void displayRefreshLoadingState() {
+        displayLoading(R.string.refresh_access_token);
     }
 
     private void displayLoading(Integer resId) {
-        loadingContainerVisibility.setValue(View.VISIBLE);
-        loadingDescriptionResId.setValue(resId);
-        errorContainerVisibility.setValue(View.GONE);
+        loadingContainerVisibility.postValue(View.VISIBLE);
+        loadingDescriptionResId.postValue(resId);
+        errorContainerVisibility.postValue(View.GONE);
     }
 
     private void hideLoadingState() {

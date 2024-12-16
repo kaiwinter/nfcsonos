@@ -2,6 +2,7 @@ package com.github.kaiwinter.nfcsonos.main.model;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -16,14 +17,15 @@ public class MainFragmentViewModelFactory implements ViewModelProvider.Factory {
         this.application = application;
     }
 
+    @NonNull
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.equals(MainFragmentViewModel.class)) {
             SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStore(application);
             AccessTokenManager accessTokenManager = new AccessTokenManager(application);
-            ServiceFactory serviceFactory = new ServiceFactory(ServiceFactory.API_ENDPOINT);
-            FavoriteCache favoriteCache = new FavoriteCache(application, serviceFactory);
-            return (T) new MainFragmentViewModel(sharedPreferencesStore, accessTokenManager, favoriteCache, serviceFactory);
+            ServiceFactory serviceFactory = new ServiceFactory(ServiceFactory.API_ENDPOINT, accessTokenManager);
+            FavoriteCache favoriteCache = new FavoriteCache(application);
+            return (T) new MainFragmentViewModel(sharedPreferencesStore, favoriteCache, serviceFactory);
         }
         throw new RuntimeException("Cannot create an instance of " + modelClass);
     }
