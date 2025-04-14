@@ -22,12 +22,13 @@
                 android:screenOrientation="portrait"
                 android:exported="true">
 
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="com.github.kaiwinter.nfcsonos"
-                    android:host="callback"/>
+                <data android:scheme="https"
+                    android:host="vorlesungsfrei.de"
+                    android:pathPrefix="/nfcsonos/login" />
             </intent-filter>
         </activity>
 
@@ -44,12 +45,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Keeping this to not break old tags which used this deep link -->
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:scheme="https"
                     android:host="github.com"
                     android:pathPrefix="/kaiwinter/nfcsonos/scanned" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="https"
+                    android:host="vorlesungsfrei.de"
+                    android:pathPrefix="/nfcsonos/scanned" />
             </intent-filter>
         </activity>
 

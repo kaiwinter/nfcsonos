@@ -26,7 +26,7 @@ public class NfcPayloadUtil {
 
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[]{
-                        NdefRecord.createUri("https://github.com/kaiwinter/nfcsonos/scanned"),
+                        NdefRecord.createUri("https://vorlesungsfrei.de/nfcsonos/scanned"),
                         NdefRecord.createTextRecord("de", jsonPayload),
                         /*NdefRecord.createApplicationRecord(BuildConfig.APPLICATION_ID)*/}
         );

@@ -37,7 +37,7 @@ public final class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private static final String AUTHORIZATION_ENDPOINT_URI = "https://api.sonos.com/login/v3/oauth";
-    private static final String REDIRECT_URI = "https://vorlesungsfrei.de/nfcsonos-redirect.php";
+    private static final String REDIRECT_URI = "https://vorlesungsfrei.de/nfcsonos/login";
 
     private ActivityLoginBinding binding;
 
