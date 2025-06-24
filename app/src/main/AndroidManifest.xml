@@ -54,13 +54,16 @@
                     android:pathPrefix="/kaiwinter/nfcsonos/scanned" />
             </intent-filter>
 
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:scheme="https"
                     android:host="vorlesungsfrei.de"
                     android:pathPrefix="/nfcsonos/scanned" />
             </intent-filter>
+
         </activity>
 
         <activity
