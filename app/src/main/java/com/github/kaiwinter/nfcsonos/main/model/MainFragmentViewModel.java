@@ -28,6 +28,7 @@ import com.github.kaiwinter.nfcsonos.rest.PlaybackMetadataService;
 import com.github.kaiwinter.nfcsonos.rest.PlaybackService;
 import com.github.kaiwinter.nfcsonos.rest.ServiceFactory;
 import com.github.kaiwinter.nfcsonos.rest.model.APIError;
+import com.github.kaiwinter.nfcsonos.rest.model.Container;
 import com.github.kaiwinter.nfcsonos.rest.model.CurrentItem;
 import com.github.kaiwinter.nfcsonos.rest.model.Group;
 import com.github.kaiwinter.nfcsonos.rest.model.Groups;
@@ -223,10 +224,14 @@ public class MainFragmentViewModel extends ViewModel {
                     albumTitle.setValue(playbackMetadata.container.name);
 
                     CurrentItem currentItem = playbackMetadata.currentItem;
+                    Container container = playbackMetadata.container;
                     if (currentItem != null) {
                         trackTitle.setValue(currentItem.track.name);
                         String imageUrl = currentItem.track.imageUrl;
                         coverImageToLoad.setValue(imageUrl);
+                    } else if (container != null) {
+                        // Case for Radio
+                        coverImageToLoad.setValue(container.imageUrl);
                     }
                     loadPlayerState();
                 } else {
