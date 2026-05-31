@@ -7,8 +7,11 @@ public class Household {
     @SerializedName("id")
     public String id;
 
+    @SerializedName("name")
+    public String name;
+
     @Override
     public String toString() {
-        return id;
+        return name;
     }
 }

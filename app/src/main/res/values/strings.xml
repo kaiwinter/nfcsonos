@@ -21,7 +21,7 @@
     <string name="tag_written_error">Error writing tag: %1$s</string>
     <string name="tag_invalid">Tag supports: %1$s, we need \'android.nfc.tech.Ndef\' or \'android.nfc.tech.NdefFormattable\'</string>
     <string name="household_and_group_selection">Household and Group selection</string>
-    <string name="household_and_group_selection_description">Before you can start you have to select a Sonos Group which the app should use. The Household is pretty unreadable, please select one and see which Group belongs to it.</string>
+    <string name="household_and_group_selection_description">Before you can start you have to select a Sonos Household and Group which the app should use.</string>
     <string name="household">Household</string>
     <string name="group">Group</string>
     <string name="use_selection">Use selection</string>
