@@ -183,7 +183,6 @@ public class MainFragmentViewModel extends ViewModel {
         trackTitle.setValue("");
         showAlbumCoverAndTitle(favoriteId);
 
-        String accessToken = sharedPreferencesStore.getAccessToken();
         FavoriteService service = serviceFactory.createFavoriteService(this::displayRefreshLoadingState);
 
         LoadFavoriteRequest request = new LoadFavoriteRequest(favoriteId, new LoadFavoriteRequest.PlayModes(sharedPreferencesStore.getShufflePlayback()));
@@ -193,7 +192,6 @@ public class MainFragmentViewModel extends ViewModel {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     loadPlayerState();
-                    hideLoadingState();
                 } else {
                     handleError(response, new RetryAction(RetryActionType.RETRY_LOAD_FAVORITE, favoriteId));
                 }
