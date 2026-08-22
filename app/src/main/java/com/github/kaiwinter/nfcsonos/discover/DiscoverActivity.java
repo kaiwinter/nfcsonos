@@ -25,6 +25,7 @@ import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -114,6 +115,13 @@ public class DiscoverActivity extends AppCompatActivity {
                         return;
                     }
                     binding.group.setItems(body.groups);
+                    var currentlySelectedGroup = sharedPreferencesStore.getGroupCoordinatorId();
+                    for (int i=0; i<body.groups.size(); i++) {
+                        if (Objects.equals(body.groups.get(i).coordinatorId, currentlySelectedGroup)) {
+                            binding.group.setSelectedIndex(i);
+                            break;
+                        }
+                    }
                     binding.selectButton.setEnabled(true);
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);
