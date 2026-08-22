@@ -49,7 +49,7 @@ public final class LoginActivity extends AppCompatActivity {
 
         sharedPreferencesStore = new SharedPreferencesStore(this);
         sharedPreferencesStore.setTokens(null, null);
-        sharedPreferencesStore.setHouseholdAndGroup(null, null, null);
+        sharedPreferencesStore.setHouseholdAndGroup(null, null, null, null, null);
 
         CustomTabsServiceConnection customTabsServiceConnection = new CustomTabsServiceConnection() {
             @Override

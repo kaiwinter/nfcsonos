@@ -14,7 +14,7 @@
             app:title="@string/shuffle_playback" />
         <Preference
             app:key="householdAndGroupSelection"
-            app:summary="Household: #1...\nGroup: #2..."
+            app:summary="Household: #1\nGroup: #2"
             app:title="@string/choose_household_group" >
         </Preference>
 

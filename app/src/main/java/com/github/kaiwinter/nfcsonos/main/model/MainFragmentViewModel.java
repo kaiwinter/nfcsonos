@@ -436,6 +436,7 @@ public class MainFragmentViewModel extends ViewModel {
 
         String householdId = sharedPreferencesStore.getHouseholdId();
         String groupCoordinatorId = sharedPreferencesStore.getGroupCoordinatorId();
+        String householdName = sharedPreferencesStore.getHouseholdName();
 
         if (TextUtils.isEmpty(groupCoordinatorId)) {
             // Without coordinator ID we cannot look up the group ID
@@ -457,7 +458,7 @@ public class MainFragmentViewModel extends ViewModel {
 
                     for (Group group : body.groups) {
                         if (groupCoordinatorId.equals(group.coordinatorId)) {
-                            sharedPreferencesStore.setHouseholdAndGroup(householdId, group.id, groupCoordinatorId);
+                            sharedPreferencesStore.setHouseholdAndGroup(householdId, group.id, groupCoordinatorId, householdName, group.name);
                             onSuccess.run();
                             return;
                         }

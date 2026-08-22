@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -149,7 +150,7 @@ public class MainFragmentViewModelTest {
 
             viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
             viewModel.createInitialState(mock(Intent.class), null);
-            verify(sharedPreferencesStore, timeout(3_000)).setHouseholdAndGroup(eq("household-id"), eq("RINCON_123456:NEWID"), eq("RINCON_123456"));
+            verify(sharedPreferencesStore, timeout(3_000)).setHouseholdAndGroup(eq("household-id"), eq("RINCON_123456:NEWID"), eq("RINCON_123456"), eq(null), eq("Room1"));
         }, new Dispatcher() {
             @NonNull
             @Override

@@ -13,6 +13,8 @@ public class SharedPreferencesStore {
     private static final String HOUSEHOLD_ID = "HOUSEHOLD_ID";
     private static final String GROUP_ID = "GROUP_ID";
     private static final String GROUP_COORDINATOR_ID = "GROUP_COORDINATOR_ID";
+    private static final String HOUSEHOLD_NAME = "HOUSEHOLD_NAME"; // Used for display only
+    private static final String GROUP_NAME = "GROUP_NAME"; // Used for display only
 
     private static final String PLAY_SOUNDS = "PLAY_SOUNDS";
 
@@ -24,11 +26,13 @@ public class SharedPreferencesStore {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public void setHouseholdAndGroup(String householdId, String groupId, String groupCoordinatorId) {
+    public void setHouseholdAndGroup(String householdId, String groupId, String groupCoordinatorId, String householdName, String groupName) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(HOUSEHOLD_ID, householdId);
         editor.putString(GROUP_ID, groupId);
         editor.putString(GROUP_COORDINATOR_ID, groupCoordinatorId);
+        editor.putString(HOUSEHOLD_NAME, householdName);
+        editor.putString(GROUP_NAME, groupName);
         editor.apply();
     }
 
@@ -53,6 +57,14 @@ public class SharedPreferencesStore {
 
     public String getGroupId() {
         return sharedPreferences.getString(GROUP_ID, null);
+    }
+
+    public String getHouseholdName() {
+        return sharedPreferences.getString(HOUSEHOLD_NAME, "");
+    }
+
+    public String getGroupName() {
+        return sharedPreferences.getString(GROUP_NAME, "");
     }
 
     /**

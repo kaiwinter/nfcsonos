@@ -147,7 +147,7 @@ public class DiscoverActivity extends AppCompatActivity {
             return;
         }
 
-        sharedPreferencesStore.setHouseholdAndGroup(selectedHousehold.id, selectedGroup.id, selectedGroup.coordinatorId);
+        sharedPreferencesStore.setHouseholdAndGroup(selectedHousehold.id, selectedGroup.id, selectedGroup.coordinatorId, selectedHousehold.name, selectedGroup.name);
         switchToMainActivity();
     }
 

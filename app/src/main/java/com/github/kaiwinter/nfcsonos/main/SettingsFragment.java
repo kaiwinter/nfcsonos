@@ -33,8 +33,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         householdAndGroupSelection.setIntent(new Intent(getActivity(), DiscoverActivity.class));
         householdAndGroupSelection.setSummaryProvider(preference ->
                 getString(R.string.household_and_group_selection_summary,
-                        sharedPreferencesStore.getHouseholdId().substring(0, 20),
-                        sharedPreferencesStore.getGroupId().substring(0, 20)));
+                        sharedPreferencesStore.getHouseholdName(),
+                        sharedPreferencesStore.getGroupName()));
 
         Preference thirdParty = findPreference("thirdParty");
         thirdParty.setOnPreferenceClickListener(preference -> {
