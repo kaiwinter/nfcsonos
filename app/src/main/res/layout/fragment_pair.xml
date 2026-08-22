@@ -25,16 +25,15 @@
                 android:orientation="vertical"
                 android:paddingTop="24dp" />
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="-64dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                app:cardUseCompatPadding="true"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
                 app:contentPadding="16dp"
                 app:contentPaddingTop="0dp">
 
@@ -56,10 +55,10 @@
                         <TextView
                             android:id="@+id/loading_description"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            style="?attr/textAppearanceBodyMedium" />
 
-                        <ProgressBar
-                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:indeterminate="true" />
@@ -71,14 +70,14 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="24dp"
                         android:text="@string/link_tag_description"
-                        android:textColor="#000000"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/favorite"
-                        android:textColor="#000000" />
+                        android:textColor="?attr/colorOnSurface" />
 
                     <com.jaredrummler.materialspinner.MaterialSpinner
                         android:id="@+id/spinner"
@@ -92,11 +91,12 @@
                         android:text="@string/no_favorites"
                         android:visibility="gone" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/link_button"
-                        style="@style/Widget.AppCompat.Button.Colored"
+                        style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/section_margin"
                         android:layout_gravity="center"
                         android:enabled="false"
                         android:text="@string/pair_button" />
@@ -111,7 +111,7 @@
 
                         <TextView
                             android:id="@+id/error_description"
-                            style="@style/Base.TextAppearance.AppCompat.Body1"
+                            style="?attr/textAppearanceBodyLarge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -121,7 +121,7 @@
                     </LinearLayout>
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

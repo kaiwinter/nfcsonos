@@ -3,4 +3,19 @@
     <color name="colorPrimary">#00aeef</color>
     <color name="colorPrimaryDark">#00A2DF</color>
     <color name="colorAccent">#FFAB00</color>
+
+    <!-- Material 3 Colors -->
+    <color name="md_theme_light_primary">#00658F</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#C8E6FF</color>
+    <color name="md_theme_light_onPrimaryContainer">#001E2E</color>
+    <color name="md_theme_light_secondary">#4F606E</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#D3E5F5</color>
+    <color name="md_theme_light_onSecondaryContainer">#0B1D29</color>
+    <color name="md_theme_light_surface">#FBFCFF</color>
+    <color name="md_theme_light_onSurface">#191C1E</color>
+    <color name="md_theme_light_surfaceVariant">#DDE3EA</color>
+    <color name="md_theme_light_onSurfaceVariant">#41484D</color>
+    <color name="md_theme_light_outline">#71787E</color>
 </resources>
