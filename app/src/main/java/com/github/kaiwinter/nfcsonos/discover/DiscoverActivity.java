@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
+import android.widget.ArrayAdapter;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.nfcsonos.R;
@@ -21,7 +23,6 @@ import com.github.kaiwinter.nfcsonos.rest.model.Households;
 import com.github.kaiwinter.nfcsonos.storage.AccessTokenManager;
 import com.github.kaiwinter.nfcsonos.storage.SharedPreferencesStore;
 import com.github.kaiwinter.nfcsonos.util.UserMessage;
-import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +41,12 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private RetryAction retryAction; // Contains a RetryAction, which is just passed back
 
+    private Households households;
+    private Groups groups;
+
+    private int selectedHouseholdIndex = -1;
+    private int selectedGroupIndex = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +61,15 @@ public class DiscoverActivity extends AppCompatActivity {
         binding.selectButton.setOnClickListener(__ -> selectHouseholdAndGroup());
         setContentView(binding.getRoot());
 
-        binding.household.setOnItemSelectedListener((MaterialSpinner.OnItemSelectedListener<Household>) (view, position, id, item) ->
-                loadGroups(item.id)
-        );
+        binding.household.setOnItemClickListener((parent, view, position, id) -> {
+            selectedHouseholdIndex = position;
+            loadGroups(households.households.get(position).id);
+        });
+
+        binding.group.setOnItemClickListener((parent, view, position, id) -> {
+            selectedGroupIndex = position;
+            binding.selectButton.setEnabled(true);
+        });
     }
 
     @Override
@@ -75,14 +88,18 @@ public class DiscoverActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Households> call, Response<Households> response) {
                 if (response.isSuccessful()) {
-                    Households body = response.body();
-                    binding.household.setItems(body.households);
-                    if (body.households == null || body.households.isEmpty()) {
+                    households = response.body();
+                    ArrayAdapter<Household> adapter = new ArrayAdapter<>(DiscoverActivity.this, android.R.layout.simple_dropdown_item_1line, households.households);
+                    binding.household.setAdapter(adapter);
+
+                    if (households.households == null || households.households.isEmpty()) {
                         UserMessage userMessage = UserMessage.create(R.string.no_household_found);
                         hideLoadingState(userMessage);
                         return;
                     }
-                    loadGroups(body.households.get(0).id);
+                    selectedHouseholdIndex = 0;
+                    binding.household.setText(households.households.get(0).toString(), false);
+                    loadGroups(households.households.get(0).id);
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);
                     UserMessage userMessage = UserMessage.create(apiError);
@@ -100,7 +117,6 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private void loadGroups(String householdId) {
         displayLoading(getString(R.string.loading_groups));
-        binding.group.setItems(Collections.emptyList());
 
         DiscoverService service = serviceFactory.createDiscoverService(this::displayRefreshLoadingState);
         Call<Groups> group = service.getGroups(householdId);
@@ -108,21 +124,25 @@ public class DiscoverActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Groups> call, Response<Groups> response) {
                 if (response.isSuccessful()) {
-                    Groups body = response.body();
-                    if (isNullOrEmpty(body.groups)) {
+                    groups = response.body();
+                    if (isNullOrEmpty(groups.groups)) {
                         UserMessage userMessage = UserMessage.create(R.string.no_group_found);
                         hideLoadingState(userMessage);
                         return;
                     }
-                    binding.group.setItems(body.groups);
+
+                    ArrayAdapter<Group> adapter = new ArrayAdapter<>(DiscoverActivity.this, android.R.layout.simple_dropdown_item_1line, groups.groups);
+                    binding.group.setAdapter(adapter);
+
                     var currentlySelectedGroup = sharedPreferencesStore.getGroupCoordinatorId();
-                    for (int i=0; i<body.groups.size(); i++) {
-                        if (Objects.equals(body.groups.get(i).coordinatorId, currentlySelectedGroup)) {
-                            binding.group.setSelectedIndex(i);
+                    for (int i=0; i<groups.groups.size(); i++) {
+                        if (Objects.equals(groups.groups.get(i).coordinatorId, currentlySelectedGroup)) {
+                            selectedGroupIndex = i;
+                            binding.group.setText(groups.groups.get(i).toString(), false);
                             break;
                         }
                     }
-                    binding.selectButton.setEnabled(true);
+                    binding.selectButton.setEnabled(selectedGroupIndex != -1);
                 } else {
                     APIError apiError = ServiceFactory.parseError(response);
                     UserMessage userMessage = UserMessage.create(apiError);
@@ -140,11 +160,11 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     public void selectHouseholdAndGroup() {
-        if (isNullOrEmpty(binding.household.getItems()) || isNullOrEmpty(binding.group.getItems())) {
+        if (households == null || groups == null || selectedHouseholdIndex < 0 || selectedGroupIndex < 0) {
             return;
         }
-        Household selectedHousehold = (Household) binding.household.getItems().get(binding.household.getSelectedIndex());
-        Group selectedGroup = (Group) binding.group.getItems().get(binding.group.getSelectedIndex());
+        Household selectedHousehold = households.households.get(selectedHouseholdIndex);
+        Group selectedGroup = groups.groups.get(selectedGroupIndex);
         if (selectedHousehold == null) {
             UserMessage userMessage = UserMessage.create(R.string.no_household_selected);
             hideLoadingState(userMessage);

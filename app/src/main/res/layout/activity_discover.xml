@@ -83,47 +83,39 @@
                             android:indeterminate="true" />
                     </LinearLayout>
 
-                    <LinearLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/household_container"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/section_margin"
                         android:layout_marginBottom="8dp"
-                        android:orientation="vertical">
+                        android:hint="@string/household">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/household"
-                            android:textColor="?attr/colorOnSurface" />
-
-                        <com.jaredrummler.materialspinner.MaterialSpinner
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/household"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
 
-                    </LinearLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <LinearLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/group_container"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/section_margin"
                         android:layout_marginBottom="8dp"
-                        android:orientation="vertical">
+                        android:hint="@string/group">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/group"
-                            android:textColor="?attr/colorOnSurface" />
-
-                        <com.jaredrummler.materialspinner.MaterialSpinner
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/group"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
 
-                    </LinearLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
                         android:id="@+id/auth_container"

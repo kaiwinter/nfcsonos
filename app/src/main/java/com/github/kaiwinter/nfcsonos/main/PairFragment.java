@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -37,6 +40,8 @@ public class PairFragment extends Fragment {
 
     private FragmentPairBinding binding;
     private AlertDialog pairDialog;
+    private List<Item> favoriteItems;
+    private int selectedFavoriteIndex = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,8 +57,13 @@ public class PairFragment extends Fragment {
             if (favorites.items.isEmpty()) {
                 binding.noSonosFavoriteHint.setVisibility(View.VISIBLE);
             } else {
-                binding.spinner.setItems(favorites.items);
-                binding.linkButton.setEnabled(true);
+                favoriteItems = favorites.items;
+                ArrayAdapter<Item> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, favoriteItems);
+                binding.spinner.setAdapter(adapter);
+                binding.spinner.setOnItemClickListener((parent, view, position, id) -> {
+                    selectedFavoriteIndex = position;
+                    binding.linkButton.setEnabled(true);
+                });
             }
         }), this::hideLoadingState,
         this::displayRefreshLoadingState);
@@ -77,7 +87,10 @@ public class PairFragment extends Fragment {
     }
 
     private Item getSelectedFavorite() {
-        return (Item) binding.spinner.getItems().get(binding.spinner.getSelectedIndex());
+        if (selectedFavoriteIndex < 0 || favoriteItems == null) {
+            return null;
+        }
+        return favoriteItems.get(selectedFavoriteIndex);
     }
 
     /**
@@ -95,7 +108,7 @@ public class PairFragment extends Fragment {
             return;
         }
 
-        if (binding.spinner.getSelectedIndex() < 0) {
+        if (selectedFavoriteIndex < 0) {
             SnackbarUtil.createAndShowSnackbarAboveBottomNav(getActivity(), binding.coordinator, R.string.no_selection, Snackbar.LENGTH_LONG);
             return;
         }
