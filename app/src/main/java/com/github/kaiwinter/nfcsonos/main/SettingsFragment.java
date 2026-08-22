@@ -44,7 +44,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void startLicensesDialog() {
-        LicenseResolver.registerLicense(createLicense("mixkit", R.raw.mixkit_license_summary, ""));
         LicenseResolver.registerLicense(createLicense("freepik", -1, "http://www.freepik.com"));
         LicenseResolver.registerLicense(createLicense("flaticon", -1, "https://www.flaticon.com/authors/flat-icons"));
         new LicensesDialog.Builder(getActivity())

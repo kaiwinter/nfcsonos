@@ -61,7 +61,6 @@ public class MainFragment extends Fragment {
         viewModel.loadingDescriptionResId.observe(this, binding.loadingDescription::setText);
 
         viewModel.coverImageToLoad.observe(this, this::loadAndShowCoverImage);
-        viewModel.soundToPlay.observe(this, this::playSound);
 
         viewModel.skipToPreviousButtonVisibility.observe(this, binding.skipToPreviousButton::setVisibility);
         viewModel.playButtonVisibility.observe(this, binding.playButton::setVisibility);
@@ -104,23 +103,6 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return binding.getRoot();
-    }
-
-    private void playSound(int sound) {
-        if (!viewModel.shouldPlaySounds()) {
-            return;
-        }
-        //setVolume();
-        try (AssetFileDescriptor afd = getResources().openRawResourceFd(sound)) {
-            FileDescriptor fileDescriptor = afd.getFileDescriptor();
-            MediaPlayer player = new MediaPlayer();
-            player.setDataSource(fileDescriptor, afd.getStartOffset(), afd.getLength());
-            player.setLooping(false);
-            player.prepare();
-            player.start();
-        } catch (IOException ex) {
-            Log.e(TAG, Log.getStackTraceString(ex));
-        }
     }
 
     private void startLoginActivity() {

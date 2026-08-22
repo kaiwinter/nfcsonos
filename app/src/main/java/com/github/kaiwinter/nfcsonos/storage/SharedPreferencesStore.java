@@ -16,8 +16,6 @@ public class SharedPreferencesStore {
     private static final String HOUSEHOLD_NAME = "HOUSEHOLD_NAME"; // Used for display only
     private static final String GROUP_NAME = "GROUP_NAME"; // Used for display only
 
-    private static final String PLAY_SOUNDS = "PLAY_SOUNDS";
-
     private static final String SHUFFLE_PLAYBACK = "SHUFFLE_PLAYBACK";
 
     private final SharedPreferences sharedPreferences;
@@ -65,14 +63,6 @@ public class SharedPreferencesStore {
 
     public String getGroupName() {
         return sharedPreferences.getString(GROUP_NAME, "");
-    }
-
-    /**
-     * Returns the setting if a sound should be played after a tag was scanned.
-     * @return true when a sound should be played, false otherwise
-     */
-    public boolean getPlaySounds() {
-        return sharedPreferences.getBoolean(PLAY_SOUNDS, false);
     }
 
     /**

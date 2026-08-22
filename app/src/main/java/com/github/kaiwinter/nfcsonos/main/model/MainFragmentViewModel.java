@@ -54,7 +54,6 @@ public class MainFragmentViewModel extends ViewModel {
     public final MutableLiveData<UserMessage> errorMessageMutableLiveData = new MutableLiveData<>();
 
     public final SingleLiveEvent<String> coverImageToLoad = new SingleLiveEvent<>();
-    public final SingleLiveEvent<Integer> soundToPlay = new SingleLiveEvent<>();
 
     public SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
     public SingleLiveEvent<RetryAction> navigateToDiscoverActivity = new SingleLiveEvent<>();
@@ -151,11 +150,8 @@ public class MainFragmentViewModel extends ViewModel {
             NfcPayload nfcPayload = NfcPayloadUtil.parseMessage(ndefMessage);
 
             if (nfcPayload == null) {
-                soundToPlay.postValue(R.raw.negative);
                 showSnackbarMessage.postValue(UserMessage.create(R.string.tag_read_empty));
-
             } else {
-                soundToPlay.postValue(R.raw.positive);
                 loadAndStartFavorite(nfcPayload.getFavoriteId());
             }
 
@@ -200,7 +196,6 @@ public class MainFragmentViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                soundToPlay.setValue(R.raw.negative);
                 UserMessage userMessage = UserMessage.create(R.string.error_starting_favorite, t.getMessage());
                 hideLoadingState(userMessage);
             }
@@ -419,7 +414,6 @@ public class MainFragmentViewModel extends ViewModel {
             // Try to look up group ID, on success run retry action, on error go to DiscoverActivity
             lookupGroupId(() -> handleRetryAction(retryAction), () -> navigateToDiscoverActivity.postValue(retryAction));
         } else {
-            soundToPlay.setValue(R.raw.negative);
             UserMessage userMessage = UserMessage.create(apiError);
             hideLoadingState(userMessage);
         }
@@ -521,13 +515,5 @@ public class MainFragmentViewModel extends ViewModel {
     private void hideLoadingState(UserMessage userMessage) {
         errorMessageMutableLiveData.setValue(userMessage);
         hideLoadingState();
-    }
-
-    /**
-     * Returns the setting if a sound should be played after a tag was scanned.
-     * @return true when a sound should be played, false otherwise
-     */
-    public boolean shouldPlaySounds() {
-        return sharedPreferencesStore.getPlaySounds();
     }
 }
