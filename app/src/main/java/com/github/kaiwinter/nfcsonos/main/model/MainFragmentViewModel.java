@@ -79,9 +79,8 @@ public class MainFragmentViewModel extends ViewModel {
      * Also this is the entry point for a {@link RetryAction} and a scanned NFC tag.
      *
      * @param intent    the {@link Intent}, may contain a {@link RetryAction} or a NFC tag
-     * @param arguments may contain a {@link Intent} with a NFC tag which was redirected to this Fragment
      */
-    public void createInitialState(Intent intent, Bundle arguments) {
+    public void createInitialState(Intent intent) {
         if (!isUserLoggedIn()) {
             navigateToLoginActivity.call();
             return;
@@ -92,13 +91,6 @@ public class MainFragmentViewModel extends ViewModel {
             return;
         }
 
-        if (arguments != null) {
-            // May be passed from the MainActivity when the MainFragment wasn't selected when a NFC tag was scanned.
-            Parcelable parcelable = arguments.getParcelable(MainActivity.NFC_SCANNED_INTENT);
-            if (parcelable instanceof Intent) {
-                intent = (Intent) parcelable;
-            }
-        }
         if (intent != null && intent.hasExtra(RetryAction.class.getSimpleName())) {
             handleRetryAction(intent);
         } else if (intent != null && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {

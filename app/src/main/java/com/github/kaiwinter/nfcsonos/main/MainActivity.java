@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         viewModel = new ViewModelProvider(this, new MainFragmentViewModelFactory(getApplication())).get(MainFragmentViewModel.class);
+        Intent intent = getIntent();
+        handleNfcIntent(intent);
     }
 
     @Override
@@ -79,11 +81,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Called if a NFC tag is scanned while the app is on foreground
-    // If the app is on background MainFragment.onCreate is called
+    // If the app is on background MainActivity.onCreate is called
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
+        handleNfcIntent(intent);
+    }
+
+    private void handleNfcIntent(Intent intent) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         if (fragment == null) {
             return;

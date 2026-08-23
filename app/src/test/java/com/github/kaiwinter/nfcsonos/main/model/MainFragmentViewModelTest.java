@@ -58,7 +58,7 @@ public class MainFragmentViewModelTest {
         MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, null);
 
         viewModel.navigateToLoginActivity = mock(SingleLiveEvent.class);
-        viewModel.createInitialState(new Intent(), null);
+        viewModel.createInitialState(new Intent());
 
         verify(viewModel.navigateToLoginActivity).call();
     }
@@ -72,7 +72,7 @@ public class MainFragmentViewModelTest {
         MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, null);
 
         viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
-        viewModel.createInitialState(new Intent(), null);
+        viewModel.createInitialState(new Intent());
 
         verify(viewModel.navigateToDiscoverActivity).call();
     }
@@ -91,7 +91,7 @@ public class MainFragmentViewModelTest {
             MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, serviceFactory);
 
             viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
-            viewModel.createInitialState(mock(Intent.class), null);
+            viewModel.createInitialState(mock(Intent.class));
             verify(viewModel.navigateToDiscoverActivity, timeout(3_000)).postValue(any(RetryAction.class));
         }, new Dispatcher() {
             @NonNull
@@ -149,7 +149,7 @@ public class MainFragmentViewModelTest {
             MainFragmentViewModel viewModel = new MainFragmentViewModel(sharedPreferencesStore, null, serviceFactory);
 
             viewModel.navigateToDiscoverActivity = mock(SingleLiveEvent.class);
-            viewModel.createInitialState(mock(Intent.class), null);
+            viewModel.createInitialState(mock(Intent.class));
             verify(sharedPreferencesStore, timeout(3_000)).setHouseholdAndGroup(eq("household-id"), eq("RINCON_123456:NEWID"), eq("RINCON_123456"), eq(null), eq("Room1"));
         }, new Dispatcher() {
             @NonNull

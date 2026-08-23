@@ -96,8 +96,7 @@ public class MainFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
         getActivity().setIntent(null);
-        Bundle arguments = getArguments();
-        viewModel.createInitialState(intent, arguments);
+        viewModel.createInitialState(intent);
     }
 
     @Override
