@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#89CEFF</color>
+    <color name="colorPrimaryDark">#004C6D</color>
+    <color name="colorAccent">#FFA600</color>
+
+    <!-- Material 3 Colors (Dark Mode values) -->
+    <color name="md_theme_light_primary">#89CEFF</color>
+    <color name="md_theme_light_onPrimary">#00344D</color>
+    <color name="md_theme_light_primaryContainer">#004C6D</color>
+    <color name="md_theme_light_onPrimaryContainer">#C8E6FF</color>
+    <color name="md_theme_light_secondary">#B7C9D9</color>
+    <color name="md_theme_light_onSecondary">#22323F</color>
+    <color name="md_theme_light_secondaryContainer">#384956</color>
+    <color name="md_theme_light_onSecondaryContainer">#D3E5F5</color>
+    <color name="md_theme_light_surface">#111416</color>
+    <color name="md_theme_light_onSurface">#E2E2E5</color>
+    <color name="md_theme_light_surfaceVariant">#41484D</color>
+    <color name="md_theme_light_onSurfaceVariant">#C1C7CE</color>
+    <color name="md_theme_light_outline">#8B9198</color>
+</resources>
